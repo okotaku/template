@@ -14,7 +14,7 @@ $ docker compose up -d modules
 
 # Prepare configs
 
-For basic usage of configs, see [MMClassification: Learn about Configs](https://mmclassification.readthedocs.io/en/1.x/user_guides/config.html)
+For basic usage of configs, see [MMPreTrain: Learn about Configs](https://mmpretrain.readthedocs.io/en/latest/user_guides/config.html)
 
 # Usage
 
