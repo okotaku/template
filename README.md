@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/github/license/okotaku/template.svg)](https://github.com/okotaku/template/blob/main/LICENSE)
 [![open issues](https://isitmaintained.com/badge/open/okotaku/template.svg)](https://github.com/okotaku/template/issues)
 
-[📘 Documentation](https://template.readthedocs.io/en/latest/) |
+[📘 Documentation](https://template0.readthedocs.io/en/latest/) |
 [🤔 Reporting Issues](https://github.com/okotaku/template/issues/new/choose)
 
 ## 📄 Table of Contents
@@ -42,9 +42,9 @@ How to start template.
 
 ## 📘 Documentation [🔝](#-table-of-contents)
 
-For detailed user guides and advanced guides, please refer to our [Documentation](https://template.readthedocs.io/en/latest/):
+For detailed user guides and advanced guides, please refer to our [Documentation](https://template0.readthedocs.io/en/latest/):
 
-- [Get Started](https://template.readthedocs.io/en/latest/get_started.html) for get started.
+- [Get Started](https://template0.readthedocs.io/en/latest/get_started.html) for get started.
 
 ## 🙌 Contributing [🔝](#-table-of-contents)
 

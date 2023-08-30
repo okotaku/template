@@ -29,7 +29,7 @@ author = 'modules Contributors'
 # The full version, including alpha/beta/rc tags
 release = '2023'
 
-version_file = '../../diffengine/version.py'
+version_file = '../../modules/version.py'
 
 
 def get_version():
