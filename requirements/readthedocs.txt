@@ -1,3 +1,6 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchvision
 albumentations
 imgaug
 mmpretrain==1.0.2

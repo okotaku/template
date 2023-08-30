@@ -1,37 +1,60 @@
 # template
 
 [![build](https://github.com/okotaku/template/actions/workflows/build.yml/badge.svg)](https://github.com/okotaku/template/actions/workflows/build.yml)
+[![Docs](https://img.shields.io/badge/docs-latest-blue)](https://template.readthedocs.io/en/latest/)
 [![license](https://img.shields.io/github/license/okotaku/template.svg)](https://github.com/okotaku/template/blob/main/LICENSE)
+[![open issues](https://isitmaintained.com/badge/open/okotaku/template.svg)](https://github.com/okotaku/template/issues)
 
-## Table of Contents
+[📘 Documentation](https://template.readthedocs.io/en/latest/) |
+[🤔 Reporting Issues](https://github.com/okotaku/template/issues/new/choose)
 
-- [Introduction](#introduction)
-- [Get Started](#get-started)
-- [Contributing](#contributing)
-- [Citation](#citation)
-- [License](#license)
-- [Acknowledgement](#acknowledgement)
+## 📄 Table of Contents
 
-## Introduction
+- [📖 Introduction](#-introduction-)
+- [🛠️ Installation](#-installation-)
+- [👨‍🏫 Get Started](#-get-started-)
+- [📘 Documentation](#-documentation-)
+- [🙌 Contributing](#-contributing-)
+- [🎫 License](#-license-)
+- [🖊️ Citation](#-citation-)
+- [🤝 Acknowledgement](#-acknowledgement-)
+
+## 📖 Introduction [🔝](#-table-of-contents)
 
 template is an open source template.
 
 Documentation: [docs](docs)
 
-## Get Started
+## 🛠️ Installation [🔝](#-table-of-contents)
 
-Please refer to [get_started.md](docs/source/get_started.md) for get started.
-Other tutorials for:
+Before installing template, please ensure that PyTorch has been successfully installed following the [official guide](https://pytorch.org/get-started/locally/).
 
-- [run train](docs/source/run.md)
+Install template
 
-## Contributing
+```
+pip install openmim
+pip install git+https://github.com/okotaku/template.git
+```
 
-### CONTRIBUTING
+## 👨‍🏫 Get Started [🔝](#-table-of-contents)
+
+How to start template.
+
+## 📘 Documentation [🔝](#-table-of-contents)
+
+For detailed user guides and advanced guides, please refer to our [Documentation](https://template.readthedocs.io/en/latest/):
+
+- [Get Started](https://template.readthedocs.io/en/latest/get_started.html) for get started.
+
+## 🙌 Contributing [🔝](#-table-of-contents)
 
 We appreciate all contributions to improve clshub. Please refer to [CONTRIBUTING.md](https://github.com/open-mmlab/mmpretrain/blob/main/CONTRIBUTING.md) for the contributing guideline.
 
-## Citation
+## 🎫 License [🔝](#-table-of-contents)
+
+This project is released under the [Apache 2.0 license](LICENSE).
+
+## 🖊️ Citation [🔝](#-table-of-contents)
 
 If Modules is helpful to your research, please cite it as below.
 
@@ -44,13 +67,9 @@ If Modules is helpful to your research, please cite it as below.
 }
 ```
 
-## License
-
-This project is released under the [Apache 2.0 license](LICENSE).
-
 ## Acknowledgement
 
-This repo borrows the architecture design and part of the code from [mmpretrain](https://github.com/open-mmlab/mmpretrain).
+This repo borrows the architecture design and part of the code from [mmengine](https://github.com/open-mmlab/mmengine).
 
 Also, please check the following openmmlab projects and the corresponding Documentation.
 
@@ -60,10 +79,10 @@ Also, please check the following openmmlab projects and the corresponding Docume
 - [MMEngine](https://github.com/open-mmlab/mmengine): OpenMMLab foundational library for training deep learning models.
 
 ```
-@misc{2023mmpretrain,
-    title={OpenMMLab's Pre-training Toolbox and Benchmark},
-    author={MMPreTrain Contributors},
-    howpublished = {\url{https://github.com/open-mmlab/mmpretrain}},
-    year={2023}
+@article{mmengine2022,
+  title   = {{MMEngine}: OpenMMLab Foundational Library for Training Deep Learning Models},
+  author  = {MMEngine Contributors},
+  howpublished = {\url{https://github.com/open-mmlab/mmengine}},
+  year={2022}
 }
 ```
