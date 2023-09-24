@@ -4,8 +4,14 @@ RUN apt update -y && apt install -y \
     git
 RUN apt-get update && apt-get install -y \
     vim \
-    libgl1-mesa-dev
+    libgl1-mesa-dev \
+    zsh
 ENV FORCE_CUDA="1"
+
+# Zsh install
+ENV SHELL /bin/zsh
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.1.5/zsh-in-docker.sh)" -- \
+    -t robbyrussell
 
 # Install python package.
 WORKDIR /modules
