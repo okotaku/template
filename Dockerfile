@@ -1,7 +1,7 @@
 FROM nvcr.io/nvidia/pytorch:23.07-py3
 
 RUN apt update -y && apt install -y \
-    git
+    git tmux
 RUN apt-get update && apt-get install -y \
     vim \
     libgl1-mesa-dev \
