@@ -4,6 +4,8 @@
 [![Docs](https://img.shields.io/badge/docs-latest-blue)](https://template.readthedocs.io/en/latest/)
 [![license](https://img.shields.io/github/license/okotaku/template.svg)](https://github.com/okotaku/template/blob/main/LICENSE)
 [![open issues](https://isitmaintained.com/badge/open/okotaku/template.svg)](https://github.com/okotaku/template/issues)
+[![Linting: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 
 [📘 Documentation](https://template0.readthedocs.io/en/latest/) |
 [🤔 Reporting Issues](https://github.com/okotaku/template/issues/new/choose)
