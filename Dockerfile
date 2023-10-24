@@ -18,7 +18,8 @@ WORKDIR /modules
 COPY ./ /modules
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir openmim==0.3.9 && \
-    pip install .
+    pip install . && \
+    pip install pre-commit
 
 # Language settings
 ENV LANG C.UTF-8
