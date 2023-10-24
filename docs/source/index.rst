@@ -14,10 +14,10 @@ Welcome to modules's documentation!
    run.md
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: API Reference
 
-   api.rst
+   modules <autoapi/modules/index.rst>
 
 Indices and tables
 ==================

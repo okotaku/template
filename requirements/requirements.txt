@@ -1,6 +1,0 @@
-albumentations
-imgaug
-mmcv==2.0.1
-mmengine==0.8.2
-mmpretrain==1.0.2
-ujson
