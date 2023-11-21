@@ -1,6 +1,8 @@
 {
-    "dockerComposeFile": ["../docker-compose.yml"],
-    "service": "template",
+	"dockerComposeFile": [
+		"../docker-compose.yml"
+	],
+	"service": "template",
 	"workspaceFolder": "/workspace",
 	"postCreateCommand": "pre-commit install",
 	"customizations": {
@@ -28,8 +30,13 @@
 				"wayou.vscode-todo-highlight",
 				"Gruntfuggly.todo-tree",
 				"streetsidesoftware.code-spell-checker",
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"github.vscode-github-actions",
+				"tamasfe.even-better-toml",
+				"oderwat.indent-rainbow",
+				"yzhang.markdown-all-in-one",
+				"ionutvmi.path-autocomplete"
 			]
 		}
 	}
-  }
+}

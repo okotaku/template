@@ -1,23 +1,16 @@
 [project]
 name = "modules"
 description = "modules"
-authors = [{name="takuoko",email="to78314910@gmail.com"}]
+authors = [{ name = "takuoko", email = "to78314910@gmail.com" }]
 version = "0.1.0"
 requires-python = ">= 3.10"
 readme = "README.md"
-dependencies = [
-    "torch>=2.0.1",
-    "torchvision>=0.15.2",
-    "openmim>=0.3.9",
-]
-license = {file = "LICENSE"}
+dependencies = ["torch>=2.0.1", "torchvision>=0.15.2", "openmim>=0.3.9"]
+license = { file = "LICENSE" }
 keywords = ["computer vision"]
 
 [project.optional-dependencies]
-dev = [
-    "pytest",
-    "coverage"
-]
+dev = ["pytest", "coverage"]
 docs = [
     "docutils==0.18.1",
     "modelindex",
@@ -31,7 +24,7 @@ docs = [
     "sphinx-rtd-theme",
     "sphinx-tabs",
     "sphinxcontrib-jquery",
-    "tabulate"
+    "tabulate",
 ]
 
 [tool.setuptools.cmdclass]
@@ -39,11 +32,35 @@ build = "add_mim_extension.MIMBuild"
 
 [tool.setuptools.packages.find]
 include = ["template*", "add_mim_extension.py"]
-exclude = ["build*", "docs*", "dist*", "tools*", "configs*", "tests*", "docker*", "demo*", "data*", "work_dirs*", "projects*"]
+exclude = [
+    "build*",
+    "docs*",
+    "dist*",
+    "tools*",
+    "configs*",
+    "tests*",
+    "docker*",
+    "demo*",
+    "data*",
+    "work_dirs*",
+    "projects*",
+]
 
 [tool.wheel]
 include = ["template*", "add_mim_extension.py"]
-exclude = ["build*", "docs*", "dist*", "tools*", "configs*", "tests*", "docker*", "demo*", "data*", "work_dirs*", "projects*"]
+exclude = [
+    "build*",
+    "docs*",
+    "dist*",
+    "tools*",
+    "configs*",
+    "tests*",
+    "docker*",
+    "demo*",
+    "data*",
+    "work_dirs*",
+    "projects*",
+]
 
 [tool.distutils.bdist_wheel]
 universal = true
@@ -65,8 +82,18 @@ ignore = [
 ]
 
 [tool.ruff.per-file-ignores]
-"add_mim_extension.py" = ["C901", "FBT002", "PLW2901", "PLR0912", "PTH", "S102", "D",
- "ANN", "INP001", "T201"]
+"add_mim_extension.py" = [
+    "C901",
+    "FBT002",
+    "PLW2901",
+    "PLR0912",
+    "PTH",
+    "S102",
+    "D",
+    "ANN",
+    "INP001",
+    "T201",
+]
 
 [tool.mypy]
 python_version = "3.11"
