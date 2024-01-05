@@ -1,11 +1,5 @@
-include modules/.mim/model-index.yml
-recursive-include modules/.mim/configs *.py *.yml
-recursive-include modules/.mim/tools *.sh *.py
-recursive-include modules/.mim/demo *.sh *.py
 recursive-exclude tests *
-recursive-exclude demo *
 recursive-exclude data *
-recursive-exclude configs *
 recursive-exclude docs *
 recursive-exclude work_dirs *
 recursive-exclude dist *

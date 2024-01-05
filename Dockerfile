@@ -24,8 +24,7 @@ RUN export TORCH_CUDA_ARCH_LIST="5.2 6.0 6.1 7.0 7.5 8.0 8.6 9.0+PTX" MAX_JOBS=1
     pip install -v -U git+https://github.com/facebookresearch/xformers.git@v0.0.20#egg=xformers
 
 # Install modules
-RUN pip install --no-cache-dir openmim==0.3.9 && \
-    pip install . && \
+RUN pip install . && \
     pip install pre-commit
 
 # Language settings

@@ -7,7 +7,6 @@ Before installing template, please ensure that PyTorch has been successfully ins
 Below are quick steps for installation:
 
 ```
-pip install openmim
 pip install git+https://github.com/okotaku/template.git
 ```
 

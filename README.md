@@ -12,14 +12,16 @@
 
 ## 📄 Table of Contents
 
-- [📖 Introduction](#-introduction-)
-- [🛠️ Installation](#-installation-)
-- [👨‍🏫 Get Started](#-get-started-)
-- [📘 Documentation](#-documentation-)
-- [🙌 Contributing](#-contributing-)
-- [🎫 License](#-license-)
-- [🖊️ Citation](#-citation-)
-- [🤝 Acknowledgement](#-acknowledgement-)
+- [template](#template)
+  - [📄 Table of Contents](#-table-of-contents)
+  - [📖 Introduction 🔝](#-introduction-)
+  - [🛠️ Installation 🔝](#️-installation-)
+  - [👨‍🏫 Get Started 🔝](#-get-started-)
+  - [📘 Documentation 🔝](#-documentation-)
+  - [🙌 Contributing 🔝](#-contributing-)
+  - [🎫 License 🔝](#-license-)
+  - [🖊️ Citation 🔝](#️-citation-)
+  - [Acknowledgement](#acknowledgement)
 
 ## 📖 Introduction [🔝](#-table-of-contents)
 
@@ -34,7 +36,6 @@ Before installing template, please ensure that PyTorch has been successfully ins
 Install template
 
 ```
-pip install openmim
 pip install git+https://github.com/okotaku/template.git
 ```
 
@@ -76,8 +77,6 @@ This repo borrows the architecture design and part of the code from [mmengine](h
 Also, please check the following openmmlab projects and the corresponding Documentation.
 
 - [OpenMMLab](https://openmmlab.com/)
-- [MMCV](https://github.com/open-mmlab/mmcv): OpenMMLab foundational library for computer vision.
-- [MIM](https://github.com/open-mmlab/mim): MIM Installs OpenMMLab Packages.
 - [MMEngine](https://github.com/open-mmlab/mmengine): OpenMMLab foundational library for training deep learning models.
 
 ```
