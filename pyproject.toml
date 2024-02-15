@@ -31,7 +31,6 @@ docs = [
 modules = "modules:cli"
 
 [tool.setuptools.packages.find]
-include = ["template*"]
 exclude = [
     "build*",
     "docs*",
@@ -44,7 +43,6 @@ exclude = [
 ]
 
 [tool.wheel]
-include = ["template*"]
 exclude = [
     "build*",
     "docs*",
