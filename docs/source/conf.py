@@ -6,7 +6,7 @@
 
 # -- Path setup --------------------------------------------------------------
 
-# If extensions (or modules to document with autodoc) are in another directory,
+# If extensions (or diffengine to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
@@ -20,14 +20,11 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'modules'
-copyright = '2023, modules'
-author = 'modules Contributors'
+project = 'diffengine'
+copyright = '2023, diffengine'
+author = 'diffengine Contributors'
 
-# The full version, including alpha/beta/rc tags
-release = '2023'
-
-__version__ = load_version('modules')
+__version__ = load_version('diffengine')
 # The short X.Y version
 version = __version__
 # The full version, including alpha/beta/rc tags
@@ -48,14 +45,14 @@ extensions = [
     'sphinx_copybutton',
     'sphinx.ext.autodoc.typehints',
     'sphinx_tabs.tabs',
-    'autoapi.extension',
+    'autoapi.extension'
 ]  # yapf: disable
 
 autodoc_typehints = 'description'
 myst_heading_anchors = 4
 myst_enable_extensions = ['colon_fence']
 autoapi_type = 'python'
-autoapi_dirs = ['../../modules']
+autoapi_dirs = ['../../diffengine']
 autoapi_add_toctree_entry = False
 autoapi_template_dir = '_templates'
 

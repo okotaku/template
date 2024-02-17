@@ -20,4 +20,34 @@ jobs:
       - name: Check docstring coverage
         run: |
           pip install interrogate
-          interrogate -v --ignore-init-method --ignore-module --ignore-nested-functions --ignore-regex "__repr__" --fail-under 0 modules
+          interrogate -v --ignore-init-method --ignore-module --ignore-nested-functions --ignore-regex "__repr__" --fail-under 50 diffengine
+
+  build:
+    runs-on: ubuntu-22.04
+    container:
+      image: pytorch/pytorch:2.2.0-cuda12.1-cudnn8-runtime
+      options: --tty --ipc host
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.11'
+      - name: Upgrade pip
+        run: pip install pip --upgrade
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y ffmpeg libsm6 libxext6 git ninja-build libglib2.0-0 libxrender-dev libc6 libc6-dev
+      - name: Install diffengine dependencies
+        run: |
+          pip install setuptools
+      - name: Build and install
+        run: rm -rf .eggs && pip install -e .[dev,optional]
+      - name: Install diffusers from main branch
+        run: pip install git+https://github.com/huggingface/diffusers.git
+      - name: Run unittests and generate coverage report
+        run: |
+          coverage run --branch --source=diffengine -m pytest tests/
+          coverage xml
+          coverage report -m

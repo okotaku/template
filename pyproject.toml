@@ -1,16 +1,29 @@
 [project]
-name = "modules"
-description = "modules"
+name = "diffengine"
+description = "diffengine"
 authors = [{ name = "takuoko", email = "to78314910@gmail.com" }]
 version = "0.1.0"
 requires-python = ">= 3.10"
 readme = "README.md"
-dependencies = ["torch>=2.1.2", "torchvision>=0.16.2", "mmengine"]
+dependencies = [
+    "torch>=2.1.2",
+    "torchvision>=0.16.2",
+    "datasets>=2.16.1",
+    "diffusers@git+https://github.com/huggingface/diffusers@ec9840a#egg=diffusers",
+    "mmengine>=0.10.3",
+    "sentencepiece>=0.1.99",
+    "tqdm",
+    "transformers>=4.37.2",
+    "ujson",
+    "peft>=0.8.1",
+    "joblib",
+]
 license = { file = "LICENSE" }
-keywords = ["computer vision"]
+keywords = ["computer vision", "diffusion models"]
 
 [project.optional-dependencies]
 dev = ["pytest", "coverage"]
+optional = ["deepspeed", "colossalai"]
 docs = [
     "docutils==0.18.1",
     "modelindex",
@@ -28,7 +41,7 @@ docs = [
 ]
 
 [project.scripts]
-modules = "modules:cli"
+diffengine = "diffengine:cli"
 
 [tool.setuptools.packages.find]
 exclude = [
@@ -58,7 +71,7 @@ exclude = [
 universal = true
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -73,13 +86,39 @@ ignore = [
     "D100",
     "D107",
     "D104",
+    "S101",
+    "ANN101",
+    "PTH118",
+    "S311",
 ]
 
+[tool.ruff.lint.pylint]
+max-args = 9
+
 [tool.ruff.lint.per-file-ignores]
-"modules/configs/*" = ["F403", "F405", "TID252"]
+"tests/*" = [
+    "PLR2004",
+    "N806",
+    "PTH",
+    "SLF001",
+    "PT009",
+    "D",
+    "ANN201",
+    "INP001",
+    "ANN202",
+    "ANN001",
+]
+"diffengine/tools/*" = [
+    "T201", "ISC002", "PTH", "D", "INP001",
+    "ANN201", "ANN202", "ANN001"]
+"projects/*" = ["F403", "F405", "TID252"]
+"diffengine/configs/*" = ["F403", "F405", "TID252"]
 
 [tool.mypy]
 python_version = "3.11"
 no_strict_optional = true
 ignore_missing_imports = true
 check_untyped_defs = true
+
+[tool.codespell]
+ignore-words-list = "enver,"
