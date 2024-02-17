@@ -2,10 +2,8 @@ import torch
 import torch.nn.functional as F  # noqa
 
 from diffengine.models.losses.base import BaseLoss
-from diffengine.registry import MODELS
 
 
-@MODELS.register_module()
 class HuberLoss(BaseLoss):
     """Huber loss.
 

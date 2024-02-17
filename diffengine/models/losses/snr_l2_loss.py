@@ -3,10 +3,8 @@ import torch.nn.functional as F  # noqa
 
 from diffengine.models.losses.base import BaseLoss
 from diffengine.models.losses.utils import compute_snr
-from diffengine.registry import MODELS
 
 
-@MODELS.register_module()
 class SNRL2Loss(BaseLoss):
     """SNR weighting gamma L2 loss.
 

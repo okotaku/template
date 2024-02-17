@@ -91,8 +91,7 @@ train_dataloader = dict(
         type=HFDreamBoothDataset,
         dataset="diffusers/dog-example",
         instance_prompt="a photo of sks dog",
-        pipeline=train_pipeline,
-        class_prompt=None),
+        pipeline=train_pipeline),
     sampler=dict(type=InfiniteSampler, shuffle=True),
 )
 

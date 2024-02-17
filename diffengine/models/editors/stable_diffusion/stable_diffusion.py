@@ -11,6 +11,11 @@ from peft import get_peft_model
 from torch import nn
 
 from diffengine.models.archs import create_peft_config
+from diffengine.models.editors.stable_diffusion.data_preprocessor import (
+    SDDataPreprocessor,
+)
+from diffengine.models.losses import L2Loss
+from diffengine.models.utils import TimeSteps, WhiteNoise
 
 
 class StableDiffusion(BaseModel):
@@ -84,7 +89,7 @@ class StableDiffusion(BaseModel):
         enable_xformers: bool = False,
     ) -> None:
         if data_preprocessor is None:
-            data_preprocessor = {"type": "SDDataPreprocessor"}
+            data_preprocessor = {"type": SDDataPreprocessor}
         if loss is None:
             loss = {}
         if noise_generator is None:
@@ -124,7 +129,7 @@ class StableDiffusion(BaseModel):
         if not isinstance(loss, nn.Module):
             loss = MODELS.build(
                 loss,
-                default_args={"type": "L2Loss", "loss_weight": 1.0})
+                default_args={"type": L2Loss, "loss_weight": 1.0})
         self.loss_module: nn.Module = loss
 
         assert prediction_type in [None, "epsilon", "v_prediction"]
@@ -148,10 +153,10 @@ class StableDiffusion(BaseModel):
             default_args={"pretrained_model_name_or_path": model})
         self.noise_generator = MODELS.build(
             noise_generator,
-            default_args={"type": "WhiteNoise"})
+            default_args={"type": WhiteNoise})
         self.timesteps_generator = MODELS.build(
             timesteps_generator,
-            default_args={"type": "TimeSteps"})
+            default_args={"type": TimeSteps})
         self.prepare_model()
         self.set_lora()
         self.set_xformers()

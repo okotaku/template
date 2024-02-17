@@ -154,3 +154,6 @@ data/
 dump/
 build/
 .dist_test/
+
+# test
+!tests/testdata/bucket_ids.pkl

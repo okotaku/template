@@ -3,10 +3,7 @@ import random
 import torch
 from torch import nn
 
-from diffengine.registry import MODELS
 
-
-@MODELS.register_module()
 class WhiteNoise(nn.Module):
     """White noise module."""
 
@@ -23,7 +20,6 @@ class WhiteNoise(nn.Module):
         return torch.randn_like(latents)
 
 
-@MODELS.register_module()
 class OffsetNoise(nn.Module):
     """Offset noise module.
 
@@ -54,7 +50,6 @@ class OffsetNoise(nn.Module):
                 latents.shape[0], latents.shape[1], 1, 1, device=noise.device)
 
 
-@MODELS.register_module()
 class PyramidNoise(nn.Module):
     """Pyramid noise module.
 

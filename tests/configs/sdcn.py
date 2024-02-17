@@ -2,8 +2,10 @@ from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from transformers import CLIPTextModel, CLIPTokenizer
 
 from diffengine.models.editors import (
-    SDControlNetDataPreprocessor,
     StableDiffusionControlNet,
+)
+from diffengine.models.editors.controlnet.data_preprocessor import (
+    SDControlNetDataPreprocessor,
 )
 from diffengine.models.losses import L2Loss
 

@@ -29,8 +29,7 @@ train_dataloader = dict(
         type=HFDreamBoothDataset,
         dataset="diffusers/keramer-face-example",
         instance_prompt="a photo of sks person",
-        pipeline=train_pipeline,
-        class_prompt="a photo of person"),
+        pipeline=train_pipeline),
     sampler=dict(type=InfiniteSampler, shuffle=True),
 )
 

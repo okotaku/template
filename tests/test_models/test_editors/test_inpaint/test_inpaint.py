@@ -8,19 +8,19 @@ from mmengine.registry import MODELS
 from torch.optim import SGD
 from transformers import CLIPTextModel, CLIPTokenizer
 
-from diffengine.models.editors import StableDiffusion
-from diffengine.models.editors.stable_diffusion.data_preprocessor import (
-    SDDataPreprocessor,
+from diffengine.models.editors import StableDiffusionInpaint
+from diffengine.models.editors.inpaint.data_preprocessor import (
+    SDInpaintDataPreprocessor,
 )
 from diffengine.models.losses import DeBiasEstimationLoss, L2Loss, SNRL2Loss
 
 
-class TestStableDiffusion(TestCase):
+class TestStableDiffusionInpaint(TestCase):
 
     def _get_config(self) -> dict:
         base_model = "diffusers/tiny-stable-diffusion-torch"
         return dict(
-            type=StableDiffusion,
+            type=StableDiffusionInpaint,
              model=base_model,
              tokenizer=dict(type=CLIPTokenizer.from_pretrained,
                             pretrained_model_name_or_path=base_model,
@@ -38,7 +38,7 @@ class TestStableDiffusion(TestCase):
              unet=dict(type=UNet2DConditionModel.from_pretrained,
                              pretrained_model_name_or_path=base_model,
                              subfolder="unet"),
-            data_preprocessor=dict(type=SDDataPreprocessor),
+            data_preprocessor=dict(type=SDInpaintDataPreprocessor),
             loss=dict(type=L2Loss))
 
     def test_init(self):
@@ -57,11 +57,13 @@ class TestStableDiffusion(TestCase):
 
     def test_infer(self):
         cfg = self._get_config()
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
 
         # test infer
         result = StableDiffuser.infer(
             ["an insect robot preparing a delicious meal"],
+            ["tests/testdata/color.jpg"],
+            ["tests/testdata/color.jpg"],
             height=64,
             width=64)
         assert len(result) == 1
@@ -73,6 +75,8 @@ class TestStableDiffusion(TestCase):
         # test infer with negative_prompt
         result = StableDiffuser.infer(
             ["an insect robot preparing a delicious meal"],
+            ["tests/testdata/color.jpg"],
+            ["tests/testdata/color.jpg"],
             negative_prompt="noise",
             height=64,
             width=64)
@@ -81,6 +85,8 @@ class TestStableDiffusion(TestCase):
 
         result = StableDiffuser.infer(
             ["an insect robot preparing a delicious meal"],
+            ["tests/testdata/color.jpg"],
+            ["tests/testdata/color.jpg"],
             output_type="latent",
             height=64,
             width=64)
@@ -99,11 +105,13 @@ class TestStableDiffusion(TestCase):
                 target_modules=["q_proj", "k_proj", "v_proj", "out_proj"]),
             finetune_text_encoder=True,
         )
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
 
         # test infer
         result = StableDiffuser.infer(
             ["an insect robot preparing a delicious meal"],
+            ["tests/testdata/color.jpg"],
+            ["tests/testdata/color.jpg"],
             height=64,
             width=64)
         assert len(result) == 1
@@ -112,11 +120,14 @@ class TestStableDiffusion(TestCase):
     def test_train_step(self):
         # test load with loss module
         cfg = self._get_config()
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
 
         # test train step
         data = dict(
-            inputs=dict(img=[torch.zeros((3, 64, 64))], text=["a dog"]))
+            inputs=dict(img=[torch.zeros((3, 64, 64))],
+                        mask=[torch.zeros((1, 64, 64))],
+                        masked_image=[torch.zeros((3, 64, 64))],
+                        text=["a dog"]))
         optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
         optim_wrapper = OptimWrapper(optimizer)
         log_vars = StableDiffuser.train_step(data, optim_wrapper)
@@ -127,12 +138,15 @@ class TestStableDiffusion(TestCase):
         # test load with loss module
         cfg = self._get_config()
         cfg.update(prediction_type="v_prediction")
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
         assert StableDiffuser.prediction_type == "v_prediction"
 
         # test train step
         data = dict(
-            inputs=dict(img=[torch.zeros((3, 64, 64))], text=["a dog"]))
+            inputs=dict(img=[torch.zeros((3, 64, 64))],
+                        mask=[torch.zeros((1, 64, 64))],
+                        masked_image=[torch.zeros((3, 64, 64))],
+                        text=["a dog"]))
         optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
         optim_wrapper = OptimWrapper(optimizer)
         log_vars = StableDiffuser.train_step(data, optim_wrapper)
@@ -150,11 +164,14 @@ class TestStableDiffusion(TestCase):
                 type="LoRA", r=4,
                 target_modules=["q_proj", "k_proj", "v_proj", "out_proj"]),
         )
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
 
         # test train step
         data = dict(
-            inputs=dict(img=[torch.zeros((3, 64, 64))], text=["a dog"]))
+            inputs=dict(img=[torch.zeros((3, 64, 64))],
+                        mask=[torch.zeros((1, 64, 64))],
+                        masked_image=[torch.zeros((3, 64, 64))],
+                        text=["a dog"]))
         optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
         optim_wrapper = OptimWrapper(optimizer)
         log_vars = StableDiffuser.train_step(data, optim_wrapper)
@@ -165,11 +182,14 @@ class TestStableDiffusion(TestCase):
         # test load with loss module
         cfg = self._get_config()
         cfg.update(input_perturbation_gamma=0.1)
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
 
         # test train step
         data = dict(
-            inputs=dict(img=[torch.zeros((3, 64, 64))], text=["a dog"]))
+            inputs=dict(img=[torch.zeros((3, 64, 64))],
+                        mask=[torch.zeros((1, 64, 64))],
+                        masked_image=[torch.zeros((3, 64, 64))],
+                        text=["a dog"]))
         optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
         optim_wrapper = OptimWrapper(optimizer)
         log_vars = StableDiffuser.train_step(data, optim_wrapper)
@@ -180,11 +200,14 @@ class TestStableDiffusion(TestCase):
         # test load with loss module
         cfg = self._get_config()
         cfg.update(gradient_checkpointing=True)
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
 
         # test train step
         data = dict(
-            inputs=dict(img=[torch.zeros((3, 64, 64))], text=["a dog"]))
+            inputs=dict(img=[torch.zeros((3, 64, 64))],
+                        mask=[torch.zeros((1, 64, 64))],
+                        masked_image=[torch.zeros((3, 64, 64))],
+                        text=["a dog"]))
         optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
         optim_wrapper = OptimWrapper(optimizer)
         log_vars = StableDiffuser.train_step(data, optim_wrapper)
@@ -195,11 +218,14 @@ class TestStableDiffusion(TestCase):
         # test load with loss module
         cfg = self._get_config()
         cfg.update(loss=dict(type=SNRL2Loss))
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
 
         # test train step
         data = dict(
-            inputs=dict(img=[torch.zeros((3, 64, 64))], text=["a dog"]))
+            inputs=dict(img=[torch.zeros((3, 64, 64))],
+                        mask=[torch.zeros((1, 64, 64))],
+                        masked_image=[torch.zeros((3, 64, 64))],
+                        text=["a dog"]))
         optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
         optim_wrapper = OptimWrapper(optimizer)
         log_vars = StableDiffuser.train_step(data, optim_wrapper)
@@ -210,11 +236,14 @@ class TestStableDiffusion(TestCase):
         # test load with loss module
         cfg = self._get_config()
         cfg.update(loss=dict(type=DeBiasEstimationLoss))
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
 
         # test train step
         data = dict(
-            inputs=dict(img=[torch.zeros((3, 64, 64))], text=["a dog"]))
+            inputs=dict(img=[torch.zeros((3, 64, 64))],
+                        mask=[torch.zeros((1, 64, 64))],
+                        masked_image=[torch.zeros((3, 64, 64))],
+                        text=["a dog"]))
         optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
         optim_wrapper = OptimWrapper(optimizer)
         log_vars = StableDiffuser.train_step(data, optim_wrapper)
@@ -223,7 +252,7 @@ class TestStableDiffusion(TestCase):
 
     def test_val_and_test_step(self):
         cfg = self._get_config()
-        StableDiffuser =  MODELS.build(cfg)
+        StableDiffuser = MODELS.build(cfg)
 
         # test val_step
         with pytest.raises(NotImplementedError, match="val_step is not"):

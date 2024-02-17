@@ -2,10 +2,7 @@ import torch
 from diffusers import DDPMScheduler
 from torch import nn
 
-from diffengine.registry import MODELS
 
-
-@MODELS.register_module()
 class TimeSteps(nn.Module):
     """Time Steps module."""
 
@@ -30,7 +27,6 @@ class TimeSteps(nn.Module):
 
 
 
-@MODELS.register_module()
 class LaterTimeSteps(nn.Module):
     """Later biased Time Steps module.
 
@@ -78,7 +74,6 @@ class LaterTimeSteps(nn.Module):
         return timesteps.long()
 
 
-@MODELS.register_module()
 class EarlierTimeSteps(nn.Module):
     """Earlier biased Time Steps module.
 
@@ -126,7 +121,6 @@ class EarlierTimeSteps(nn.Module):
         return timesteps.long()
 
 
-@MODELS.register_module()
 class RangeTimeSteps(nn.Module):
     """Range biased Time Steps module.
 
@@ -182,7 +176,6 @@ class RangeTimeSteps(nn.Module):
         return timesteps.long()
 
 
-@MODELS.register_module()
 class CubicSamplingTimeSteps(nn.Module):
     """Cubic Sampling Time Steps module.
 
@@ -211,7 +204,6 @@ class CubicSamplingTimeSteps(nn.Module):
             0, scheduler.config.num_train_timesteps - 1)
 
 
-@MODELS.register_module()
 class WuerstchenRandomTimeSteps(nn.Module):
     """Wuerstchen Random Time Steps module."""
 
@@ -231,7 +223,6 @@ class WuerstchenRandomTimeSteps(nn.Module):
         return torch.rand((num_batches, ), device=device)
 
 
-@MODELS.register_module()
 class DDIMTimeSteps(nn.Module):
     """DDIM Time Steps module.
 

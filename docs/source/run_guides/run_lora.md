@@ -1,12 +1,12 @@
 # Stable Diffusion LoRA Training
 
-You can also check [`configs/stable_diffusion_lora/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_lora/README.md) file.
+You can also check [`configs/lora/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/lora/README.md) file.
 
 ## Configs
 
-All configuration files are placed under the [`configs/stable_diffusion_lora`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_lora/) folder.
+All configuration files are placed under the [`configs/lora`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/lora/) folder.
 
-Following is the example config fixed from the stable_diffusion_v15_lora_pokemon_blip config file in [`configs/stable_diffusion_lora/stable_diffusion_v15_lora_pokemon_blip.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_lora/stable_diffusion_v15_lora_pokemon_blip.py):
+Following is the example config fixed from the stable_diffusion_v15_lora_pokemon_blip config file in [`configs/lora/stable_diffusion_v15_lora_pokemon_blip.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/lora/stable_diffusion_v15_lora_pokemon_blip.py):
 
 ```
 from mmengine.config import read_base
@@ -108,4 +108,4 @@ image.save('demo.png')
 
 ![example1](https://github.com/okotaku/diffengine/assets/24734142/24899409-554d-4393-88e5-f8b8d6e6b36d)
 
-You can check [`configs/stable_diffusion_lora/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_lora/README.md#results-example) for more details.
+You can check [`configs/lora/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/lora/README.md#results-example) for more details.

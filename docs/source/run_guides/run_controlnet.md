@@ -1,12 +1,12 @@
 # Stable Diffusion ControlNet Training
 
-You can also check [`configs/stable_diffusion_controlnet/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_controlnet/README.md) file.
+You can also check [`configs/controlnet/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/controlnet/README.md) file.
 
 ## Configs
 
-All configuration files are placed under the [`configs/stable_diffusion_controlnet`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_controlnet/) folder.
+All configuration files are placed under the [`configs/controlnet`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/controlnet/) folder.
 
-Following is the example config fixed from the stable_diffusion_v15_controlnet_fill50k config file in [`configs/stable_diffusion_controlnet/stable_diffusion_v15_controlnet_fill50k.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_controlnet/stable_diffusion_v15_controlnet_fill50k.py):
+Following is the example config fixed from the stable_diffusion_v15_controlnet_fill50k config file in [`configs/controlnet/stable_diffusion_v15_controlnet_fill50k.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/controlnet/stable_diffusion_v15_controlnet_fill50k.py):
 
 ```
 from mmengine.config import read_base
@@ -86,4 +86,4 @@ image.save('demo.png')
 
 ![example1](https://github.com/okotaku/diffengine/assets/24734142/a14cc9a6-3a40-4577-bd5a-2ddbab60970d)
 
-You can check [`configs/stable_diffusion_controlnet/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_controlnet/README.md#results-example) for more details.
+You can check [`configs/controlnet/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/controlnet/README.md#results-example) for more details.

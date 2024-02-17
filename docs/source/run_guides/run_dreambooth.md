@@ -1,15 +1,15 @@
 # Stable Diffusion DremBooth Training
 
-You can also check [`configs/stable_diffusion_dreambooth/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_dreambooth/README.md) file.
+You can also check [`configs/dreambooth/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/README.md) file.
 
 ## Configs
 
-All configuration files are placed under the [`configs/stable_diffusion_dreambooth`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_dreambooth/) folder.
+All configuration files are placed under the [`configs/dreambooth`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/) folder.
 
 #### Finetuning the text encoder and UNet
 
 The script also allows you to finetune the text_encoder along with the unet.
-Following is the example config fixed from the stable_diffusion_v15_dreambooth_lora_dog config file in [`configs/stable_diffusion_dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py):
+Following is the example config fixed from the stable_diffusion_v15_dreambooth_lora_dog config file in [`configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py):
 
 ```
 from mmengine.config import read_base
@@ -24,7 +24,7 @@ with read_base():
 #### Finetuning with Full Parameters (without LoRA)
 
 The script also allows you to finetune full parameters.
-Following is the example config fixed from the stable_diffusion_v15_dreambooth_lora_dog config file in [`configs/stable_diffusion_dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py):
+Following is the example config fixed from the stable_diffusion_v15_dreambooth_lora_dog config file in [`configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py):
 
 ```
 from mmengine.config import read_base
@@ -86,4 +86,4 @@ image.save('demo.png')
 
 ![examplev15](https://github.com/okotaku/diffengine/assets/24734142/f9c2430c-cee7-43cf-868f-35c6301dc573)
 
-You can check [`configs/stable_diffusion_dreambooth/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion_dreambooth/README.md#results-example) for more details.
+You can check [`configs/dreambooth/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/README.md#results-example) for more details.

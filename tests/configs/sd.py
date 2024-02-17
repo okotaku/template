@@ -1,7 +1,10 @@
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from transformers import CLIPTextModel, CLIPTokenizer
 
-from diffengine.models.editors import SDDataPreprocessor, StableDiffusion
+from diffengine.models.editors import StableDiffusion
+from diffengine.models.editors.stable_diffusion.data_preprocessor import (
+   SDDataPreprocessor,
+)
 from diffengine.models.losses import L2Loss
 
 base_model = "diffusers/tiny-stable-diffusion-torch"

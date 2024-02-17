@@ -46,7 +46,7 @@ pip install git+https://github.com/okotaku/diffengine.git
 
 DiffEngine makes training easy through its pre-defined configs. These configs provide a streamlined way to start your training process. Here's how you can get started using one of the pre-defined configs:
 
-1. **Choose a config**: You can find various pre-defined configs in the [`configs`](diffengine/configs/) directory of the DiffEngine repository. For example, if you wish to train a DreamBooth model using the Stable Diffusion algorithm, you can use the [`configs/stable_diffusion_dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py`](diffengine/configs/stable_diffusion_dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py).
+1. **Choose a config**: You can find various pre-defined configs in the [`configs`](diffengine/configs/) directory of the DiffEngine repository. For example, if you wish to train a DreamBooth model using the Stable Diffusion algorithm, you can use the [`configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py`](diffengine/configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py).
 
 2. **Start Training**: Open a terminal and run the following command to start training with the selected config:
 
@@ -114,9 +114,9 @@ For detailed user guides and advanced guides, please refer to our [Documentation
 <summary>Run Guides</summary>
 
 - [Run Stable Diffusion](https://diffengine.readthedocs.io/en/latest/run_guides/run_sd.html)
-- [Run Stable Diffusion DreamBooth](https://diffengine.readthedocs.io/en/latest/run_guides/run_dreambooth.html)
-- [Run Stable Diffusion LoRA](https://diffengine.readthedocs.io/en/latest/run_guides/run_lora.html)
-- [Run Stable Diffusion ControlNet](https://diffengine.readthedocs.io/en/latest/run_guides/run_controlnet.html)
+- [Run DreamBooth](https://diffengine.readthedocs.io/en/latest/run_guides/run_dreambooth.html)
+- [Run LoRA](https://diffengine.readthedocs.io/en/latest/run_guides/run_lora.html)
+- [Run ControlNet](https://diffengine.readthedocs.io/en/latest/run_guides/run_controlnet.html)
 
 </details>
 
@@ -149,10 +149,10 @@ For detailed user guides and advanced guides, please refer to our [Documentation
       <td>
         <ul>
             <li><a href="diffengine/configs/stable_diffusion/README.md">Stable Diffusion (2022)</a></li>
-            <li><a href="diffengine/configs/stable_diffusion_controlnet/README.md">ControlNet (ICCV'2023)</a></li>
-            <li><a href="diffengine/configs/stable_diffusion_dreambooth/README.md">DreamBooth (CVPR'2023)</a></li>
-            <li><a href="diffengine/configs/stable_diffusion_lora/README.md">LoRA (ICLR'2022)</a></li>
-            <li><a href="diffengine/configs/stable_diffusion_inpaint/README.md">Inpaint</a></li>
+            <li><a href="diffengine/configs/controlnet/README.md">ControlNet (ICCV'2023)</a></li>
+            <li><a href="diffengine/configs/dreambooth/README.md">DreamBooth (CVPR'2023)</a></li>
+            <li><a href="diffengine/configs/lora/README.md">LoRA (ICLR'2022)</a></li>
+            <li><a href="diffengine/configs/inpaint/README.md">Inpaint</a></li>
       </ul>
       </td>
       <td>
