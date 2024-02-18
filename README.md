@@ -27,8 +27,6 @@
 
 template is an open source template.
 
-Documentation: [docs](docs)
-
 ## 🛠️ Installation [🔝](#-table-of-contents)
 
 Before installing template, please ensure that PyTorch has been successfully installed following the [official guide](https://pytorch.org/get-started/locally/).
