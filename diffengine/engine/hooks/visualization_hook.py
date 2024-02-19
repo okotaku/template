@@ -18,12 +18,10 @@ class VisualizationHook(Hook):
         interval (int): Visualization interval (every k iterations).
             Defaults to 1.
         by_epoch (bool): Whether to visualize by epoch. Defaults to True.
-        height (`int`, *optional*, defaults to
-            `self.unet.config.sample_size * self.vae_scale_factor`):
-            The height in pixels of the generated image.
-        width (`int`, *optional*, defaults to
-            `self.unet.config.sample_size * self.vae_scale_factor`):
-            The width in pixels of the generated image.
+        height (int): The height in pixels of the generated image.
+            Defaults to 512.
+        width (int): The width in pixels of the generated image.
+            Defaults to 512.
 
     """
 
@@ -32,8 +30,8 @@ class VisualizationHook(Hook):
     def __init__(self,
                  prompt: list[str],
                  interval: int = 1,
-                 height: int | None = None,
-                 width: int | None = None,
+                 height: int = 512,
+                 width: int = 512,
                  *,
                  by_epoch: bool = True,
                  **kwargs) -> None:

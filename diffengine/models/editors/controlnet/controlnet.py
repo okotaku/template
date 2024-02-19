@@ -132,8 +132,8 @@ class StableDiffusionControlNet(StableDiffusion):
               prompt: list[str],
               condition_image: list[str | Image.Image],
               negative_prompt: str | None = None,
-              height: int | None = None,
-              width: int | None = None,
+              height: int = 512,
+              width: int = 512,
               num_inference_steps: int = 50,
               output_type: str = "pil",
               **kwargs) -> list[np.ndarray]:
@@ -148,10 +148,10 @@ class StableDiffusionControlNet(StableDiffusion):
             negative_prompt (`Optional[str]`):
                 The prompt or prompts to guide the image generation.
                 Defaults to None.
-            height (int, optional):
-                The height in pixels of the generated image. Defaults to None.
-            width (int, optional):
-                The width in pixels of the generated image. Defaults to None.
+            height (int):
+                The height in pixels of the generated image. Defaults to 512.
+            width (int):
+                The width in pixels of the generated image. Defaults to 512.
             num_inference_steps (int): Number of inference steps.
                 Defaults to 50.
             output_type (str): The output format of the generate image.
@@ -176,6 +176,7 @@ class StableDiffusionControlNet(StableDiffusion):
             scheduler_args = {"prediction_type": self.prediction_type}
             pipeline.scheduler = pipeline.scheduler.from_config(
                 pipeline.scheduler.config, **scheduler_args)
+        pipeline.to(self.device)
         pipeline.set_progress_bar_config(disable=True)
         images = []
         for p, img in zip(prompt, condition_image, strict=True):
