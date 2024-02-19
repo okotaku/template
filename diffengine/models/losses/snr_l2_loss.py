@@ -74,10 +74,10 @@ class SNRL2Loss(BaseLoss):
         if prediction_type == "v_prediction":
             # Velocity objective requires that we add one to SNR values before
             # we divide by them.
-            snr = snr + 1
-        mse_loss_weights = (
-            torch.stack([snr, self.snr_gamma * torch.ones_like(timesteps)],
-                        dim=1).min(dim=1)[0] / snr)
+            mse_loss_weights = snr.clamp(
+                max=self.snr_gamma) / (snr + 1)
+        else:
+            mse_loss_weights = snr.clamp(max=self.snr_gamma) / snr
         loss = F.mse_loss(pred, gt, reduction="none")
         loss = loss.mean(
             dim=list(range(1, len(loss.shape)))) * mse_loss_weights
