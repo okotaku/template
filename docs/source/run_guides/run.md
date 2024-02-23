@@ -6,7 +6,7 @@ You can also check [`configs/stable_diffusion/README.md`](https://github.com/oko
 
 All configuration files are placed under the [`configs/stable_diffusion`](https://github.com/okotaku/diffengine/blob/main/diffengine/configs/stable_diffusion) folder.
 
-Following is the example config fixed from the stable_diffusion_v15_pokemon_blip config file in [`configs/stable_diffusion/stable_diffusion_v15_pokemon_blip.py`](https://github.com/okotaku/diffengine/blob/main/diffengine/configs/stable_diffusion/stable_diffusion_v15_pokemon_blip.py):
+Following is the example config from the stable_diffusion_v15_pokemon_blip config file in [`configs/stable_diffusion/stable_diffusion_v15_pokemon_blip.py`](https://github.com/okotaku/diffengine/blob/main/diffengine/configs/stable_diffusion/stable_diffusion_v15_pokemon_blip.py):
 
 ```
 from mmengine.config import read_base

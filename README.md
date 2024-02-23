@@ -113,7 +113,7 @@ For detailed user guides and advanced guides, please refer to our [Documentation
 <details>
 <summary>Run Guides</summary>
 
-- [Run Stable Diffusion](https://diffengine.readthedocs.io/en/latest/run_guides/run_sd.html)
+- [Run Stable Diffusion](https://diffengine.readthedocs.io/en/latest/run_guides/run.html)
 - [Run DreamBooth](https://diffengine.readthedocs.io/en/latest/run_guides/run_dreambooth.html)
 - [Run LoRA](https://diffengine.readthedocs.io/en/latest/run_guides/run_lora.html)
 - [Run ControlNet](https://diffengine.readthedocs.io/en/latest/run_guides/run_controlnet.html)

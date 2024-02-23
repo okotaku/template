@@ -18,27 +18,3 @@ Denoising diffusion models have been a mainstream approach for image generation,
     pages     = {7441-7451}
 }
 ```
-
-## Run Training
-
-Run Training
-
-```
-# single gpu
-$ diffengine train ${CONFIG_FILE}
-# multi gpus
-$ NPROC_PER_NODE=${GPU_NUM} diffengine train ${CONFIG_FILE}
-
-# Example.
-$ diffengine train stable_diffusion_v15_snr_pokemon_blip
-```
-
-## Inference with diffusers
-
-You can see more details on [`docs/source/run_guides/run_sd.md`](../../docs/source/run_guides/run_sd.md#inference-with-diffusers).
-
-## Results Example
-
-#### stable_diffusion_v15_snr_pokemon_blip
-
-![example4](https://github.com/okotaku/diffengine/assets/24734142/b98e887a-d3af-49bb-ad15-9e8250c09578)

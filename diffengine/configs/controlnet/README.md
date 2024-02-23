@@ -1,4 +1,4 @@
-# Stable Diffusion ControlNet
+# ControlNet
 
 [Adding Conditional Control to Text-to-Image Diffusion Models](https://arxiv.org/abs/2302.05543)
 
@@ -73,12 +73,6 @@ You can see more details on [`docs/source/run_guides/run_controlnet.md`](../../d
 ![input1](https://github.com/okotaku/diffengine/assets/24734142/1af9dbb0-b056-435c-bc4b-62a823889191)
 
 ![example1](https://github.com/okotaku/diffengine/assets/24734142/a14cc9a6-3a40-4577-bd5a-2ddbab60970d)
-
-#### stable_diffusion_v15_controlnet_face_spiga
-
-![input2](https://github.com/okotaku/diffengine/assets/24734142/73da6604-e4e6-4789-a9af-7f71ae2ba750)
-
-![example2](https://github.com/okotaku/diffengine/assets/24734142/172b7c7a-a5a0-493a-8bcf-2d6491f44f90)
 
 ## Acknowledgement
 

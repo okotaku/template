@@ -17,7 +17,7 @@ class TestCompileHook(RunnerTestCase):
         cfg = copy.deepcopy(self.epoch_based_cfg)
         cfg.model = Config.fromfile("tests/configs/sd.py").model
         runner = self.build_runner(cfg)
-        hook = CompileHook(compile_main=True)
+        hook = CompileHook()
         assert isinstance(runner.model.unet, UNet2DConditionModel)
         assert isinstance(runner.model.vae, AutoencoderKL)
         assert isinstance(runner.model.text_encoder, CLIPTextModel)
@@ -31,7 +31,7 @@ class TestCompileHook(RunnerTestCase):
         cfg = copy.deepcopy(self.epoch_based_cfg)
         cfg.model = Config.fromfile("tests/configs/sdcn.py").model
         runner = self.build_runner(cfg)
-        hook = CompileHook(compile_main=True)
+        hook = CompileHook()
         func = runner.model._forward_compile
         assert runner.model._forward_compile == func
         assert isinstance(runner.model.vae, AutoencoderKL)

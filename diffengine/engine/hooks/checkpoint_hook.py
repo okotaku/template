@@ -1,3 +1,4 @@
+import os.path as osp
 from collections import OrderedDict
 
 from mmengine.hooks import Hook
@@ -38,3 +39,31 @@ class SDCheckpointHook(Hook):
                 # if not finetune text_encoder, then not save
                 new_ckpt[k] = checkpoint["state_dict"][k]
         checkpoint["state_dict"] = new_ckpt
+
+    def after_run(self, runner: Runner) -> None:
+        """After run hook."""
+        model = runner.model
+        if is_model_wrapper(model):
+            model = model.module
+        ckpt_path = osp.join(runner.work_dir, f"step{runner.iter}")
+        if hasattr(model, "prior"):
+            model.prior.save_pretrained(osp.join(ckpt_path, "prior"))
+        if hasattr(model, "decoder"):
+            model.decoder.save_pretrained(osp.join(ckpt_path, "prior"))
+        if hasattr(model, "unet"):
+            model.unet.save_pretrained(osp.join(ckpt_path, "unet"))
+        if hasattr(model, "transformer"):
+            model.unet.save_pretrained(osp.join(ckpt_path, "transformer"))
+        if hasattr(
+                    model,
+                    "finetune_text_encoder",
+            ) and model.finetune_text_encoder:
+            if hasattr(model, "text_encoder"):
+                model.text_encoder.save_pretrained(
+                    osp.join(ckpt_path, "text_encoder"))
+            if hasattr(model, "text_encoder_one"):
+                model.text_encoder_one.save_pretrained(
+                    osp.join(ckpt_path, "text_encoder_one"))
+            if hasattr(model, "text_encoder_two"):
+                model.text_encoder_two.save_pretrained(
+                    osp.join(ckpt_path, "text_encoder_two"))

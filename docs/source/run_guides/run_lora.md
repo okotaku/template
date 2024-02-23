@@ -6,7 +6,7 @@ You can also check [`configs/lora/README.md`](https://github.com/okotaku/diffeng
 
 All configuration files are placed under the [`configs/lora`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/lora/) folder.
 
-Following is the example config fixed from the stable_diffusion_v15_lora_pokemon_blip config file in [`configs/lora/stable_diffusion_v15_lora_pokemon_blip.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/lora/stable_diffusion_v15_lora_pokemon_blip.py):
+Following is the example config from the stable_diffusion_v15_lora_pokemon_blip config file in [`configs/lora/stable_diffusion_v15_lora_pokemon_blip.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/lora/stable_diffusion_v15_lora_pokemon_blip.py):
 
 ```
 from mmengine.config import read_base

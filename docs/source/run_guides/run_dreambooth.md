@@ -6,10 +6,7 @@ You can also check [`configs/dreambooth/README.md`](https://github.com/okotaku/d
 
 All configuration files are placed under the [`configs/dreambooth`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/) folder.
 
-#### Finetuning the text encoder and UNet
-
-The script also allows you to finetune the text_encoder along with the unet.
-Following is the example config fixed from the stable_diffusion_v15_dreambooth_lora_dog config file in [`configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py):
+Following is the example config from the stable_diffusion_v15_dreambooth_lora_dog config file in [`configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py):
 
 ```
 from mmengine.config import read_base
@@ -18,21 +15,6 @@ with read_base():
     from .._base_.datasets.dog_dreambooth import *
     from .._base_.default_runtime import *
     from .._base_.models.stable_diffusion_v15_lora import *
-    from .._base_.schedules.stable_diffusion_1k import *
-```
-
-#### Finetuning with Full Parameters (without LoRA)
-
-The script also allows you to finetune full parameters.
-Following is the example config fixed from the stable_diffusion_v15_dreambooth_lora_dog config file in [`configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/stable_diffusion_v15_dreambooth_lora_dog.py):
-
-```
-from mmengine.config import read_base
-
-with read_base():
-    from .._base_.datasets.dog_dreambooth import *
-    from .._base_.default_runtime import *
-    from .._base_.models.stable_diffusion_v15 import *
     from .._base_.schedules.stable_diffusion_1k import *
 ```
 

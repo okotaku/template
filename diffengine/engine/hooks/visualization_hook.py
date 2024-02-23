@@ -54,7 +54,7 @@ class VisualizationHook(Hook):
             **self.kwargs)
         for i, image in enumerate(images):
             runner.visualizer.add_image(
-                f"image{i}_step", image, step=runner.iter)
+                f"image{i}_beforetrain", image, step=runner.iter)
 
     def after_train_iter(
             self,

@@ -22,7 +22,7 @@ Welcome to diffengine's documentation!
    :maxdepth: 1
    :caption: Run Guides
 
-   run_guides/run_sd.md
+   run_guides/run.md
    run_guides/run_dreambooth.md
    run_guides/run_lora.md
    run_guides/run_controlnet.md

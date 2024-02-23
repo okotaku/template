@@ -10,6 +10,8 @@ from mmengine.logging import print_log
 
 import diffengine
 from diffengine.tools import copy_cfg, list_cfg, train
+from diffengine.tools.model_converters import publish_model2diffusers
+from diffengine.tools.preprocess import bucket_ids
 
 # Define valid modes
 MODES = ("list-cfg", "copy-cfg",
@@ -35,11 +37,34 @@ CLI_HELP_MSG = \
             diffengine train $CONFIG
         3-2. Fine-tune by multiple GPUs:
             NPROC_PER_NODE=$GPU_NUM diffengine train $CONFIG
+        4-1. Convert the pth model to HuggingFace's model:
+            diffengine convert pth_to_hf $CONFIG $PATH_TO_PTH_MODEL $SAVE_PATH_TO_HF_MODEL
+        5-1. Preprocess bucket ids:
+            diffengine preprocess bucket_ids
 
     Run special commands:
 
         diffengine help
         diffengine version
+
+    GitHub: https://github.com/okotaku/diffengine
+    """  # noqa: E501
+
+
+PREPROCESS_HELP_MSG = \
+    f"""
+    Arguments received: {['diffengine'] + sys.argv[1:]!s}. diffengine commands use the following syntax:
+
+        diffengine MODE MODE_ARGS ARGS
+
+        Where   MODE (required) is one of {MODES}
+                MODE_ARG (optional) is the argument for specific mode
+                ARGS (optional) are the arguments for specific command
+
+    Some usages for preprocess: (See more by using -h for specific command!)
+
+        1. Preprocess arxiv dataset:
+            diffengine preprocess bucket_ids
 
     GitHub: https://github.com/okotaku/diffengine
     """  # noqa: E501
@@ -61,6 +86,12 @@ modes: dict = {
     "list-cfg": list_cfg.__file__,
     "copy-cfg": copy_cfg.__file__,
     "train": train.__file__,
+    "convert": publish_model2diffusers.__file__,
+    "preprocess": {
+        "bucket_ids": bucket_ids.__file__,
+        "--help": lambda: print_log(PREPROCESS_HELP_MSG, "current"),
+        "-h": lambda: print_log(PREPROCESS_HELP_MSG, "current"),
+    },
 }
 
 

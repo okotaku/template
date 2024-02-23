@@ -1,4 +1,4 @@
-# Stable Diffusion DreamBooth
+# DreamBooth
 
 [DreamBooth: Fine Tuning Text-to-Image Diffusion Models for Subject-Driven Generation](https://arxiv.org/abs/2208.12242)
 
@@ -72,7 +72,3 @@ You can see more details on [Run DreamBooth docs](../../docs/source/run_guides/r
 #### stable_diffusion_v15_dreambooth_lora_dog
 
 ![examplev15](https://github.com/okotaku/diffengine/assets/24734142/f9c2430c-cee7-43cf-868f-35c6301dc573)
-
-#### stable_diffusion_v21_dreambooth_lora_dog
-
-![examplev21](https://github.com/okotaku/diffengine/assets/24734142/75e23332-4b92-480a-9bb2-4a84c00ac3a8)
