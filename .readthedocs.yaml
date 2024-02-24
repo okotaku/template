@@ -6,10 +6,10 @@ build:
     python: "3.11"
 
 sphinx:
-   configuration: docs/source/conf.py
+  configuration: docs/source/conf.py
 
 formats:
-   - epub
+  - epub
 
 python:
   install:
