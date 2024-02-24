@@ -5,12 +5,13 @@ import torch
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from mmengine.optim import OptimWrapper
 from mmengine.registry import MODELS
+from peft import LoraConfig
 from torch.optim import SGD
 from transformers import CLIPTextModel, CLIPTokenizer
 
 from diffengine.models.editors import StableDiffusion
 from diffengine.models.editors.stable_diffusion.data_preprocessor import (
-    SDDataPreprocessor,
+    DataPreprocessor,
 )
 from diffengine.models.losses import DeBiasEstimationLoss, L2Loss, SNRL2Loss
 
@@ -38,7 +39,7 @@ class TestStableDiffusion(TestCase):
              unet=dict(type=UNet2DConditionModel.from_pretrained,
                              pretrained_model_name_or_path=base_model,
                              subfolder="unet"),
-            data_preprocessor=dict(type=SDDataPreprocessor),
+            data_preprocessor=dict(type=DataPreprocessor),
             loss=dict(type=L2Loss))
 
     def test_init(self):
@@ -79,6 +80,7 @@ class TestStableDiffusion(TestCase):
         assert len(result) == 1
         assert result[0].shape == (64, 64, 3)
 
+        # test infer with latent output
         result = StableDiffuser.infer(
             ["an insect robot preparing a delicious meal"],
             output_type="latent",
@@ -88,18 +90,48 @@ class TestStableDiffusion(TestCase):
         assert type(result[0]) == torch.Tensor
         assert result[0].shape == (4, 32, 32)
 
+    def test_infer_v_prediction(self):
+        cfg = self._get_config()
+        cfg.update(prediction_type="v_prediction")
+        StableDiffuser = MODELS.build(cfg)
+        assert StableDiffuser.prediction_type == "v_prediction"
+
+        # test infer
+        result = StableDiffuser.infer(
+            ["an insect robot preparing a delicious meal"],
+            height=64,
+            width=64)
+        assert len(result) == 1
+        assert result[0].shape == (64, 64, 3)
+
     def test_infer_with_lora(self):
         cfg = self._get_config()
         cfg.update(
             unet_lora_config=dict(
-                type="LoRA", r=4,
+                type=LoraConfig, r=4,
                 target_modules=["to_q", "to_v", "to_k", "to_out.0"]),
             text_encoder_lora_config = dict(
-                type="LoRA", r=4,
+                type=LoraConfig, r=4,
                 target_modules=["q_proj", "k_proj", "v_proj", "out_proj"]),
             finetune_text_encoder=True,
         )
         StableDiffuser =  MODELS.build(cfg)
+
+        # test infer
+        result = StableDiffuser.infer(
+            ["an insect robot preparing a delicious meal"],
+            height=64,
+            width=64)
+        assert len(result) == 1
+        assert result[0].shape == (64, 64, 3)
+
+    def test_infer_with_pre_compute_embs(self):
+        cfg = self._get_config()
+        cfg.update(pre_compute_text_embeddings=True)
+        StableDiffuser = MODELS.build(cfg)
+
+        assert not hasattr(StableDiffuser, "tokenizer")
+        assert not hasattr(StableDiffuser, "text_encoder")
 
         # test infer
         result = StableDiffuser.infer(
@@ -144,10 +176,10 @@ class TestStableDiffusion(TestCase):
         cfg = self._get_config()
         cfg.update(
             unet_lora_config=dict(
-                type="LoRA", r=4,
+                type=LoraConfig, r=4,
                 target_modules=["to_q", "to_v", "to_k", "to_out.0"]),
             text_encoder_lora_config=dict(
-                type="LoRA", r=4,
+                type=LoraConfig, r=4,
                 target_modules=["q_proj", "k_proj", "v_proj", "out_proj"]),
         )
         StableDiffuser =  MODELS.build(cfg)
@@ -185,6 +217,26 @@ class TestStableDiffusion(TestCase):
         # test train step
         data = dict(
             inputs=dict(img=[torch.zeros((3, 64, 64))], text=["a dog"]))
+        optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
+        optim_wrapper = OptimWrapper(optimizer)
+        log_vars = StableDiffuser.train_step(data, optim_wrapper)
+        assert log_vars
+        assert isinstance(log_vars["loss"], torch.Tensor)
+
+    def test_train_step_with_pre_compute_embs(self):
+        # test load with loss module
+        cfg = self._get_config()
+        cfg.update(pre_compute_text_embeddings=True)
+        StableDiffuser = MODELS.build(cfg)
+
+        assert not hasattr(StableDiffuser, "tokenizer")
+        assert not hasattr(StableDiffuser, "text_encoder")
+
+        # test train step
+        data = dict(
+            inputs=dict(
+                img=[torch.zeros((3, 64, 64))],
+                prompt_embeds=[torch.zeros((77, 32))]))
         optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
         optim_wrapper = OptimWrapper(optimizer)
         log_vars = StableDiffuser.train_step(data, optim_wrapper)

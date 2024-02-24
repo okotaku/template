@@ -2,8 +2,8 @@ import torch
 from mmengine.model.base_model.data_preprocessor import BaseDataPreprocessor
 
 
-class SDDataPreprocessor(BaseDataPreprocessor):
-    """SDDataPreprocessor."""
+class DataPreprocessor(BaseDataPreprocessor):
+    """DataPreprocessor."""
 
     def forward(
             self,
@@ -27,4 +27,8 @@ class SDDataPreprocessor(BaseDataPreprocessor):
 
         """
         data["inputs"]["img"] = torch.stack(data["inputs"]["img"])
+        # pre-compute text embeddings
+        if "prompt_embeds" in data["inputs"]:
+            data["inputs"]["prompt_embeds"] = torch.stack(
+                data["inputs"]["prompt_embeds"])
         return super().forward(data)

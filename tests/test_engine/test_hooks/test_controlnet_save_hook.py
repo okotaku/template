@@ -46,10 +46,17 @@ class TestControlNetSaveHook(RunnerTestCase):
         hook = ControlNetSaveHook()
         hook.before_save_checkpoint(runner, checkpoint)
 
+        for key in checkpoint["state_dict"]:
+            assert key.startswith("controlnet")
+
+    def test_after_run(self):
+        cfg = copy.deepcopy(self.epoch_based_cfg)
+        cfg.model = Config.fromfile("tests/configs/sdcn.py").model
+        runner = self.build_runner(cfg)
+        hook = ControlNetSaveHook()
+        hook.after_run(runner)
+
         assert Path(
             osp.join(runner.work_dir, f"step{runner.iter}", "controlnet",
                      "diffusion_pytorch_model.safetensors")).exists()
         shutil.rmtree(osp.join(runner.work_dir), ignore_errors=True)
-
-        for key in checkpoint["state_dict"]:
-            assert key.startswith("controlnet")

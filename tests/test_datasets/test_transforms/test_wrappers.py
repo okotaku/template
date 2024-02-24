@@ -7,7 +7,6 @@ from diffengine.datasets import RandomChoice
 from diffengine.datasets.transforms.base import BaseTransform
 
 
-@TRANSFORMS.register_module()
 class AddToValue(BaseTransform):
     """Dummy transform to add a given addend to results['value']"""
 

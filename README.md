@@ -117,6 +117,7 @@ For detailed user guides and advanced guides, please refer to our [Documentation
 - [Run DreamBooth](https://diffengine.readthedocs.io/en/latest/run_guides/run_dreambooth.html)
 - [Run LoRA](https://diffengine.readthedocs.io/en/latest/run_guides/run_lora.html)
 - [Run ControlNet](https://diffengine.readthedocs.io/en/latest/run_guides/run_controlnet.html)
+- [Run Inpaint](https://diffengine.readthedocs.io/en/latest/run_guides/run_inpaint.html)
 
 </details>
 

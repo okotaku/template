@@ -3,11 +3,9 @@ from collections import OrderedDict
 
 from mmengine.hooks import Hook
 from mmengine.model import is_model_wrapper
-from mmengine.registry import HOOKS
 from mmengine.runner import Runner
 
 
-@HOOKS.register_module()
 class ControlNetSaveHook(Hook):
     """ControlNet Save Hook.
 
@@ -30,8 +28,6 @@ class ControlNetSaveHook(Hook):
         model = runner.model
         if is_model_wrapper(model):
             model = model.module
-        ckpt_path = osp.join(runner.work_dir, f"step{runner.iter}")
-        model.controlnet.save_pretrained(osp.join(ckpt_path, "controlnet"))
 
         # not save no grad key
         new_ckpt = OrderedDict()
@@ -40,3 +36,11 @@ class ControlNetSaveHook(Hook):
             if "controlnet" in k:
                 new_ckpt[k] = checkpoint["state_dict"][k]
         checkpoint["state_dict"] = new_ckpt
+
+    def after_run(self, runner: Runner) -> None:
+        """After run hook."""
+        model = runner.model
+        if is_model_wrapper(model):
+            model = model.module
+        ckpt_path = osp.join(runner.work_dir, f"step{runner.iter}")
+        model.controlnet.save_pretrained(osp.join(ckpt_path, "controlnet"))

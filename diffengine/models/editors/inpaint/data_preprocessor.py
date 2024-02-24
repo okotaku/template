@@ -2,8 +2,8 @@ import torch
 from mmengine.model.base_model.data_preprocessor import BaseDataPreprocessor
 
 
-class SDInpaintDataPreprocessor(BaseDataPreprocessor):
-    """SDInpaintDataPreprocessor."""
+class InpaintDataPreprocessor(BaseDataPreprocessor):
+    """InpaintDataPreprocessor."""
 
     def forward(
             self,
@@ -29,4 +29,8 @@ class SDInpaintDataPreprocessor(BaseDataPreprocessor):
         data["inputs"]["img"] = torch.stack(data["inputs"]["img"])
         data["inputs"]["masked_image"] = torch.stack(data["inputs"]["masked_image"])
         data["inputs"]["mask"] = torch.stack(data["inputs"]["mask"])
+        # pre-compute text embeddings
+        if "prompt_embeds" in data["inputs"]:
+            data["inputs"]["prompt_embeds"] = torch.stack(
+                data["inputs"]["prompt_embeds"])
         return super().forward(data)

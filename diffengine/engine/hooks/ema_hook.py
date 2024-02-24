@@ -1,16 +1,25 @@
 import copy
 import logging
 
-from mmengine.hooks.ema_hook import EMAHook
+from mmengine.hooks.ema_hook import EMAHook as Base
 from mmengine.logging import print_log
 from mmengine.model import is_model_wrapper
-from mmengine.registry import HOOKS, MODELS
+from mmengine.registry import MODELS
 from mmengine.runner import Runner
 
 
-@HOOKS.register_module()
-class UnetEMAHook(EMAHook):
-    """Unet EMA Hook."""
+class EMAHook(Base):
+    """EMA Hook.
+
+    Args:
+    ----
+        ema_key (str): The key of the model to apply EMA.
+
+    """
+
+    def __init__(self, *args, ema_key: str, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.ema_key = ema_key
 
     def before_run(self, runner: Runner) -> None:
         """Create an ema copy of the model.
@@ -23,7 +32,7 @@ class UnetEMAHook(EMAHook):
         model = runner.model
         if is_model_wrapper(model):
             model = model.module
-        self.src_model = model.unet
+        self.src_model = getattr(model, self.ema_key)
         self.ema_model = MODELS.build(
             self.ema_cfg, default_args={"model": self.src_model})
 
@@ -34,9 +43,9 @@ class UnetEMAHook(EMAHook):
         for k in ema_state:
             if k[:7] == "module.":
                 tmp = ema_state[k]
-                # 'module.' -> 'unet.'
-                ema_state[k] = model_state["unet." + k[7:]]
-                model_state["unet." + k[7:]] = tmp
+                # 'module.' -> '{self.ema_key}.'
+                ema_state[k] = model_state[f"{self.ema_key}." + k[7:]]
+                model_state[f"{self.ema_key}." + k[7:]] = tmp
 
     def after_load_checkpoint(self, runner: Runner, checkpoint: dict) -> None:
         """Resume ema parameters from checkpoint.
@@ -65,7 +74,7 @@ class UnetEMAHook(EMAHook):
             sd = copy.deepcopy(checkpoint["state_dict"])
             new_sd = {}
             for k, v in sd.items():
-                if k.startswith("unet."):
-                    new_sd[k[5:]] = v
+                if k.startswith(f"{self.ema_key}."):
+                    new_sd[k[len(self.ema_key) + 1:]] = v
             load_state_dict(
                 self.ema_model.module, new_sd, strict=self.strict_load)

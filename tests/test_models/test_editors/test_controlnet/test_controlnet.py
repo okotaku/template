@@ -13,7 +13,7 @@ from diffengine.models.editors import (
     StableDiffusionControlNet,
 )
 from diffengine.models.editors.controlnet.data_preprocessor import (
-    SDControlNetDataPreprocessor,
+    ControlNetDataPreprocessor,
 )
 from diffengine.models.losses import L2Loss
 
@@ -42,7 +42,7 @@ class TestStableDiffusionControlNet(TestCase):
              unet=dict(type=UNet2DConditionModel.from_pretrained,
                              pretrained_model_name_or_path=base_model,
                              subfolder="unet"),
-            data_preprocessor=dict(type=SDControlNetDataPreprocessor),
+            data_preprocessor=dict(type=ControlNetDataPreprocessor),
             loss=dict(type=L2Loss))
 
     def test_init(self):
@@ -93,6 +93,7 @@ class TestStableDiffusionControlNet(TestCase):
         assert len(result) == 1
         assert result[0].shape == (64, 64, 3)
 
+        # test infer with latent output
         result = StableDiffuser.infer(
             ["an insect robot preparing a delicious meal"],
             ["tests/testdata/color.jpg"],
@@ -110,6 +111,23 @@ class TestStableDiffusionControlNet(TestCase):
         assert isinstance(StableDiffuser.controlnet.down_blocks[1],
                           DownBlock2D)
 
+        result = StableDiffuser.infer(
+            ["an insect robot preparing a delicious meal"],
+            ["tests/testdata/color.jpg"],
+            height=64,
+            width=64)
+        assert len(result) == 1
+        assert result[0].shape == (64, 64, 3)
+
+    def test_infer_with_pre_compute_embs(self):
+        cfg = self._get_config()
+        cfg.update(pre_compute_text_embeddings=True)
+        StableDiffuser = MODELS.build(cfg)
+
+        assert not hasattr(StableDiffuser, "tokenizer")
+        assert not hasattr(StableDiffuser, "text_encoder")
+
+        # test infer
         result = StableDiffuser.infer(
             ["an insect robot preparing a delicious meal"],
             ["tests/testdata/color.jpg"],
@@ -166,6 +184,27 @@ class TestStableDiffusionControlNet(TestCase):
                 img=[torch.zeros((3, 64, 64))],
                 text=["a dog"],
                 condition_img=[torch.zeros((3, 64, 64))]))
+        optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
+        optim_wrapper = OptimWrapper(optimizer)
+        log_vars = StableDiffuser.train_step(data, optim_wrapper)
+        assert log_vars
+        assert isinstance(log_vars["loss"], torch.Tensor)
+
+    def test_train_step_with_pre_compute_embs(self):
+        # test load with loss module
+        cfg = self._get_config()
+        cfg.update(pre_compute_text_embeddings=True)
+        StableDiffuser = MODELS.build(cfg)
+
+        assert not hasattr(StableDiffuser, "tokenizer")
+        assert not hasattr(StableDiffuser, "text_encoder")
+
+        # test train step
+        data = dict(
+            inputs=dict(
+                img=[torch.zeros((3, 64, 64))],
+                condition_img=[torch.zeros((3, 64, 64))],
+                prompt_embeds=[torch.zeros((77, 32))]))
         optimizer = SGD(StableDiffuser.parameters(), lr=0.1)
         optim_wrapper = OptimWrapper(optimizer)
         log_vars = StableDiffuser.train_step(data, optim_wrapper)

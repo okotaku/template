@@ -2,8 +2,8 @@ import torch
 from mmengine.model.base_model.data_preprocessor import BaseDataPreprocessor
 
 
-class SDControlNetDataPreprocessor(BaseDataPreprocessor):
-    """SDControlNetDataPreprocessor."""
+class ControlNetDataPreprocessor(BaseDataPreprocessor):
+    """ControlNetDataPreprocessor."""
 
     def forward(
             self,
@@ -29,4 +29,8 @@ class SDControlNetDataPreprocessor(BaseDataPreprocessor):
         data["inputs"]["img"] = torch.stack(data["inputs"]["img"])
         data["inputs"]["condition_img"] = torch.stack(
             data["inputs"]["condition_img"])
+        # pre-compute text embeddings
+        if "prompt_embeds" in data["inputs"]:
+            data["inputs"]["prompt_embeds"] = torch.stack(
+                data["inputs"]["prompt_embeds"])
         return super().forward(data)

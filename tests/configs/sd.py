@@ -3,7 +3,7 @@ from transformers import CLIPTextModel, CLIPTokenizer
 
 from diffengine.models.editors import StableDiffusion
 from diffengine.models.editors.stable_diffusion.data_preprocessor import (
-   SDDataPreprocessor,
+   DataPreprocessor,
 )
 from diffengine.models.losses import L2Loss
 
@@ -22,5 +22,5 @@ model = dict(
                 subfolder="vae"),
              unet=dict(type=UNet2DConditionModel.from_pretrained,
                              subfolder="unet"),
-            data_preprocessor=dict(type=SDDataPreprocessor),
+            data_preprocessor=dict(type=DataPreprocessor),
             loss=dict(type=L2Loss))

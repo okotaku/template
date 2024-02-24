@@ -1,14 +1,21 @@
 # flake8: noqa: TRY004,S311
+import functools
+import gc
 import os
 import random
 from collections.abc import Sequence
 from pathlib import Path
 
 import numpy as np
+import torch
 from datasets import load_dataset
+from datasets.fingerprint import Hasher
 from mmengine.dataset.base_dataset import Compose
+from mmengine.registry import MODELS
 from PIL import Image
 from torch.utils.data import Dataset
+
+from diffengine.datasets.utils import encode_prompt
 
 Image.MAX_IMAGE_PIXELS = 1000000000
 
@@ -92,4 +99,96 @@ class HFDataset(Dataset):
                    "contain either strings or lists of strings.")
             raise ValueError(msg)
         result = {"img": image, "text": caption}
+        return self.pipeline(result)
+
+
+class HFDatasetPreComputeEmbs(HFDataset):
+    """Dataset for huggingface datasets.
+
+    The difference from HFDataset is
+        1. pre-compute Text Encoder embeddings to save memory.
+
+    Args:
+    ----
+        tokenizer (dict): Config of tokenizer.
+        scheduler (dict): Config of scheduler.
+        text_encoder (dict): Config of text encoder.
+        model (str): pretrained model name of stable diffusion.
+            Defaults to 'runwayml/stable-diffusion-v1-5'.xt'.
+        device (str): Device used to compute embeddings. Defaults to 'cuda'.
+        proportion_empty_prompts (float): The probabilities to replace empty
+            text. Defaults to 0.0.
+
+    """
+
+    def __init__(self,
+                 *args,
+                 tokenizer: dict,
+                 text_encoder: dict,
+                 model: str = "runwayml/stable-diffusion-v1-5",
+                 text_hasher: str = "text",
+                 device: str = "cuda",
+                 proportion_empty_prompts: float = 0.0,
+                 **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.proportion_empty_prompts = proportion_empty_prompts
+
+        tokenizer = MODELS.build(
+            tokenizer,
+            default_args={"pretrained_model_name_or_path": model})
+        text_encoder = MODELS.build(
+            text_encoder,
+            default_args={"pretrained_model_name_or_path": model}).to(device)
+
+        new_fingerprint = Hasher.hash(text_hasher)
+        compute_embeddings_fn = functools.partial(
+            encode_prompt,
+            text_encoder=text_encoder,
+            tokenizer=tokenizer,
+            caption_column=self.caption_column,
+        )
+        self.dataset = self.dataset.map(
+            compute_embeddings_fn,
+            batched=True,
+            batch_size=32,
+            new_fingerprint=new_fingerprint)
+        self.empty_embed = encode_prompt(
+            {"text": [""]},
+            text_encoder=text_encoder,
+            tokenizer=tokenizer,
+            caption_column="text",
+        )
+
+        del text_encoder, tokenizer
+        gc.collect()
+        torch.cuda.empty_cache()
+
+    def __getitem__(self, idx: int) -> dict:
+        """Get item.
+
+        Get the idx-th image and data information of dataset after
+        ``self.train_transforms`.
+
+        Args:
+        ----
+            idx (int): The index of self.data_list.
+
+        Returns:
+        -------
+            dict: The idx-th image and data information of dataset after
+            ``self.train_transforms``.
+
+        """
+        data_info = self.dataset[idx]
+        image = data_info[self.image_column]
+        if isinstance(image, str):
+            image = Image.open(os.path.join(self.dataset_name, image))
+        image = image.convert("RGB")
+        result = {
+            "img": image,
+            "prompt_embeds": data_info["prompt_embeds"] if (
+                random.random() < self.proportion_empty_prompts
+                ) else self.empty_embed["prompt_embeds"][0],
+        }
         return self.pipeline(result)

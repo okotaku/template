@@ -1,11 +1,9 @@
 import torch
 from mmengine.hooks import Hook
 from mmengine.model import is_model_wrapper
-from mmengine.registry import HOOKS
 from mmengine.runner import Runner
 
 
-@HOOKS.register_module()
 class CompileHook(Hook):
     """Compile Hook.
 

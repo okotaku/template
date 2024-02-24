@@ -3,38 +3,38 @@ from mmengine.testing import RunnerTestCase
 from PIL import Image
 from transformers import CLIPTextModel, CLIPTokenizer
 
-from diffengine.datasets import HFDataset, HFDatasetPreComputeEmbs
+from diffengine.datasets import (
+    HFConditionDataset,
+    HFConditionDatasetPreComputeEmbs,
+)
 
 
-class TestHFDataset(RunnerTestCase):
+class TestHFConditionDataset(RunnerTestCase):
 
     def test_dataset_from_local(self):
-        dataset = HFDataset(
-            dataset="tests/testdata/dataset", image_column="file_name")
+        dataset = HFConditionDataset(
+            dataset="tests/testdata/dataset",
+            image_column="file_name",
+            csv="metadata_cn.csv")
         assert len(dataset) == 1
 
         data = dataset[0]
         assert data["text"] == "a dog"
         assert isinstance(data["img"], Image.Image)
         assert data["img"].width == 400
-
-        dataset = HFDataset(
-            dataset="tests/testdata/dataset",
-            image_column="file_name",
-            csv="metadata2.csv")
-        assert len(dataset) == 1
-
-        data = dataset[0]
-        assert data["text"] == "a cat"
         assert isinstance(data["img"], Image.Image)
         assert data["img"].width == 400
+        assert isinstance(data["condition_img"], Image.Image)
+        assert data["condition_img"].width == 400
 
 
-class TestHFDatasetPreComputeEmbs(RunnerTestCase):
+class TestHFConditionDatasetPreComputeEmbs(RunnerTestCase):
 
     def test_dataset_from_local(self):
-        dataset = HFDatasetPreComputeEmbs(
-            dataset="tests/testdata/dataset", image_column="file_name",
+        dataset = HFConditionDatasetPreComputeEmbs(
+            dataset="tests/testdata/dataset",
+            image_column="file_name",
+            csv="metadata_cn.csv",
             model="hf-internal-testing/tiny-stable-diffusion-torch",
             tokenizer=dict(type=CLIPTokenizer.from_pretrained,
                         subfolder="tokenizer"),
@@ -47,3 +47,7 @@ class TestHFDatasetPreComputeEmbs(RunnerTestCase):
         assert np.array(data["prompt_embeds"]).shape == (77, 32)
         assert isinstance(data["img"], Image.Image)
         assert data["img"].width == 400
+        assert isinstance(data["img"], Image.Image)
+        assert data["img"].width == 400
+        assert isinstance(data["condition_img"], Image.Image)
+        assert data["condition_img"].width == 400

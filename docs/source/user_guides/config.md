@@ -102,7 +102,7 @@ from diffengine.datasets.transforms import (
     RandomHorizontalFlip,
     TorchVisonTransformWrapper,
 )
-from diffengine.engine.hooks import SDCheckpointHook, VisualizationHook
+from diffengine.engine.hooks import CheckpointHook, VisualizationHook
 
 train_pipeline = [  # augmentation settings
     dict(type=TorchVisonTransformWrapper,
@@ -133,7 +133,7 @@ test_evaluator = val_evaluator
 
 custom_hooks = [
     dict(type=VisualizationHook, prompt=['yoda pokemon'] * 4),  # validation visualize prompt
-    dict(type=SDCheckpointHook)
+    dict(type=CheckpointHook)
 ]
 ```
 

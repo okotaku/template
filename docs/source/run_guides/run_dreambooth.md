@@ -50,10 +50,6 @@ pipe = DiffusionPipeline.from_pretrained(
     'runwayml/stable-diffusion-v1-5', torch_dtype=torch.float16)
 pipe.to('cuda')
 pipe.unet = PeftModel.from_pretrained(pipe.unet, checkpoint / "unet", adapter_name="default")
-if (checkpoint / "text_encoder").exists():
-    pipe.text_encoder = PeftModel.from_pretrained(
-        pipe.text_encoder, checkpoint / "text_encoder", adapter_name="default"
-    )
 
 image = pipe(
     prompt,
@@ -61,11 +57,3 @@ image = pipe(
 ).images[0]
 image.save('demo.png')
 ```
-
-## Results Example
-
-#### stable_diffusion_v15_dreambooth_lora_dog
-
-![examplev15](https://github.com/okotaku/diffengine/assets/24734142/f9c2430c-cee7-43cf-868f-35c6301dc573)
-
-You can check [`configs/dreambooth/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/dreambooth/README.md#results-example) for more details.

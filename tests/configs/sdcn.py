@@ -5,7 +5,7 @@ from diffengine.models.editors import (
     StableDiffusionControlNet,
 )
 from diffengine.models.editors.controlnet.data_preprocessor import (
-    SDControlNetDataPreprocessor,
+    ControlNetDataPreprocessor,
 )
 from diffengine.models.losses import L2Loss
 
@@ -25,5 +25,5 @@ model = dict(
                 subfolder="vae"),
              unet=dict(type=UNet2DConditionModel.from_pretrained,
                              subfolder="unet"),
-            data_preprocessor=dict(type=SDControlNetDataPreprocessor),
+            data_preprocessor=dict(type=ControlNetDataPreprocessor),
             loss=dict(type=L2Loss))

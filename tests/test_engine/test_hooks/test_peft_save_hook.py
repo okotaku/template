@@ -38,38 +38,9 @@ class TestPeftSaveHook(RunnerTestCase):
         PeftSaveHook()
 
     def test_before_save_checkpoint(self):
-        cfg = copy.deepcopy(self.epoch_based_cfg)
-        cfg.model = Config.fromfile("tests/configs/sd.py").model
-        cfg.model.unet_lora_config = dict(
-                    type="LoRA", r=4,
-                    target_modules=["to_q", "to_v", "to_k", "to_out.0"])
-        runner = self.build_runner(cfg)
-        checkpoint = dict(
-            state_dict=MODELS.build(cfg.model).state_dict())
-        hook = PeftSaveHook()
-        hook.before_save_checkpoint(runner, checkpoint)
-
-        assert Path(
-            osp.join(runner.work_dir, f"step{runner.iter}/unet",
-                     "adapter_model.safetensors")).exists()
-        shutil.rmtree(
-            osp.join(runner.work_dir, f"step{runner.iter}"))
-
-        for key in checkpoint["state_dict"]:
-            assert key.startswith(("unet", "text_encoder"))
-            assert "default" in key
-
-    def test_before_save_checkpoint_text_encoder(self):
         # with text encoder
         cfg = copy.deepcopy(self.epoch_based_cfg)
-        cfg.model = Config.fromfile("tests/configs/sd.py").model
-        cfg.model.unet_lora_config = dict(
-                    type="LoRA", r=4,
-                    target_modules=["to_q", "to_v", "to_k", "to_out.0"])
-        cfg.model.text_encoder_lora_config = dict(
-                    type="LoRA", r=4,
-                    target_modules=["q_proj", "k_proj", "v_proj", "out_proj"])
-        cfg.model.finetune_text_encoder = True
+        cfg.model = Config.fromfile("tests/configs/sd_lora.py").model
         runner = self.build_runner(cfg)
         checkpoint = dict(
             state_dict=MODELS.build(cfg.model).state_dict())

@@ -3,12 +3,10 @@ from collections import OrderedDict
 
 from mmengine.hooks import Hook
 from mmengine.model import is_model_wrapper
-from mmengine.registry import HOOKS
 from mmengine.runner import Runner
 
 
-@HOOKS.register_module()
-class SDCheckpointHook(Hook):
+class CheckpointHook(Hook):
     """Delete 'vae' from checkpoint for efficient save."""
 
     priority = "VERY_LOW"

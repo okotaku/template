@@ -3,11 +3,9 @@ from typing import Optional
 from mmengine.hooks import Hook
 from mmengine.hooks.hook import DATA_BATCH
 from mmengine.model import is_model_wrapper
-from mmengine.registry import HOOKS
 from mmengine.runner import Runner
 
 
-@HOOKS.register_module()
 class VisualizationHook(Hook):
     """Basic hook that invoke visualizers after train epoch.
 

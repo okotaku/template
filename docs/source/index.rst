@@ -35,7 +35,6 @@ Welcome to diffengine's documentation!
    diffengine.datasets.transforms <autoapi/diffengine/datasets/transforms/index.rst>
    diffengine.datasets.samplers <autoapi/diffengine/datasets/samplers/index.rst>
    diffengine.engine.hooks <autoapi/diffengine/engine/hooks/index.rst>
-   diffengine.models.archs <autoapi/diffengine/models/archs/index.rst>
    diffengine.models.losses <autoapi/diffengine/models/losses/index.rst>
    diffengine.models.editors <autoapi/diffengine/models/editors/index.rst>
 

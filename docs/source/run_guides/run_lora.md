@@ -19,44 +19,11 @@ with read_base():
     from .._base_.models.stable_diffusion_v15_lora import *
     from .._base_.schedules.stable_diffusion_50e import *
 
-model.update(unet_lora_config=dict(r=32,
-        lora_alpha=32))
-
 custom_hooks = [
     dict(type=VisualizationHook, prompt=["yoda pokemon"] * 4),
-    dict(type=PeftSaveHook),  # Need to change from SDCheckpointHook
+    dict(type=PeftSaveHook),  # Need to change from CheckpointHook
 ]
 ```
-
-#### Finetuning the text encoder and UNet with LoRA
-
-The script also allows you to finetune the text_encoder along with the unet, [LoRA](https://arxiv.org/abs/2106.09685) parameters.
-
-```
-from mmengine.config import read_base
-
-from diffengine.engine.hooks import PeftSaveHook, VisualizationHook
-
-with read_base():
-    from .._base_.datasets.pokemon_blip import *
-    from .._base_.default_runtime import *
-    from .._base_.models.stable_diffusion_v15_lora_textencoder import *
-    from .._base_.schedules.stable_diffusion_50e import *
-
-
-model.update(
-    unet_lora_config=dict(r=32,
-        lora_alpha=32),
-    text_encoder_lora_config=dict(r=32,
-        lora_alpha=32))
-
-custom_hooks = [
-    dict(type=VisualizationHook, prompt=["yoda pokemon"] * 4),
-    dict(type=PeftSaveHook),  # Need to change from SDCheckpointHook
-]
-```
-
-We also provide [`configs/_base_/models/stable_diffusion_v15_lora_textencoder.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/_base_/models/stable_diffusion_v15_lora_textencoder.py) as a base config and [`configs/stable_diffusion/stable_diffusion_v15_lora_textencoder_pokemon_blip.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion/stable_diffusion_v15_lora_textencoder_pokemon_blip.py) as a whole config.
 
 ## Run LoRA training
 
@@ -90,10 +57,6 @@ pipe = DiffusionPipeline.from_pretrained(
     'runwayml/stable-diffusion-v1-5', torch_dtype=torch.float16)
 pipe.to('cuda')
 pipe.unet = PeftModel.from_pretrained(pipe.unet, checkpoint / "unet", adapter_name="default")
-if (checkpoint / "text_encoder").exists():
-    pipe.text_encoder = PeftModel.from_pretrained(
-        pipe.text_encoder, checkpoint / "text_encoder", adapter_name="default"
-    )
 
 image = pipe(
     prompt,
@@ -101,11 +64,3 @@ image = pipe(
 ).images[0]
 image.save('demo.png')
 ```
-
-## Results Example
-
-#### stable_diffusion_v15_lora_pokemon_blip
-
-![example1](https://github.com/okotaku/diffengine/assets/24734142/24899409-554d-4393-88e5-f8b8d6e6b36d)
-
-You can check [`configs/lora/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/lora/README.md#results-example) for more details.

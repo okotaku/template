@@ -18,4 +18,5 @@ default_hooks = dict(
         type=CheckpointHook,
         interval=1,
         max_keep_ckpts=3,
+        save_optimizer=True,
     ))

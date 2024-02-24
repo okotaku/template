@@ -1,12 +1,12 @@
 import torchvision
 from mmengine.dataset import DefaultSampler
+from transformers import CLIPTextModel, CLIPTokenizer
 
-from diffengine.datasets import HFDataset
+from diffengine.datasets import HFDatasetPreComputeEmbs
 from diffengine.datasets.transforms import (
     PackInputs,
     RandomCrop,
     RandomHorizontalFlip,
-    RandomTextDrop,
     TorchVisonTransformWrapper,
 )
 from diffengine.engine.hooks import CheckpointHook, VisualizationHook
@@ -21,15 +21,21 @@ train_pipeline = [
          transform=torchvision.transforms.ToTensor),
     dict(type=TorchVisonTransformWrapper,
          transform=torchvision.transforms.Normalize, mean=[0.5], std=[0.5]),
-    dict(type=RandomTextDrop),
-    dict(type=PackInputs),
+    dict(type=PackInputs, input_keys=["img", "prompt_embeds"]),
 ]
 train_dataloader = dict(
     batch_size=4,
     num_workers=4,
     dataset=dict(
-        type=HFDataset,
+        type=HFDatasetPreComputeEmbs,
         dataset="lambdalabs/pokemon-blip-captions",
+        text_hasher="text_pokemon_blip_v1-5",
+        model="runwayml/stable-diffusion-v1-5",
+        tokenizer=dict(type=CLIPTokenizer.from_pretrained,
+                    subfolder="tokenizer"),
+        text_encoder=dict(type=CLIPTextModel.from_pretrained,
+                        subfolder="text_encoder"),
+        proportion_empty_prompts=0.1,
         pipeline=train_pipeline),
     sampler=dict(type=DefaultSampler, shuffle=True),
 )

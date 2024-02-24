@@ -9,7 +9,7 @@ from mmengine.testing import RunnerTestCase, assert_allclose
 from mmengine.testing.runner_test_case import ToyModel
 from torch import nn
 
-from diffengine.engine.hooks import UnetEMAHook
+from diffengine.engine.hooks import EMAHook
 
 
 class DummyWrapper(BaseModel):
@@ -47,32 +47,30 @@ class TestEMAHook(RunnerTestCase):
         return super().tearDown()
 
     def test_init(self):
-        UnetEMAHook()
+        EMAHook(ema_key="unet")
 
         with pytest.raises(AssertionError, match="`begin_iter` must"):
-            UnetEMAHook(begin_iter=-1)
+            EMAHook(ema_key="unet", begin_iter=-1)
 
         with pytest.raises(AssertionError, match="`begin_epoch` must"):
-            UnetEMAHook(begin_epoch=-1)
+            EMAHook(ema_key="unet", begin_epoch=-1)
 
         with pytest.raises(
                 AssertionError, match="`begin_iter` and `begin_epoch`"):
-            UnetEMAHook(begin_iter=1, begin_epoch=1)
+            EMAHook(ema_key="unet", begin_iter=1, begin_epoch=1)
 
     def _get_ema_hook(self, runner):
         for hook in runner.hooks:
-            if isinstance(hook, UnetEMAHook):
+            if isinstance(hook, EMAHook):
                 return hook
         return None
 
     def test_after_train_iter(self):
         cfg = copy.deepcopy(self.epoch_based_cfg)
         cfg.model.type = "ToyModel2"
-        cfg.custom_hooks = [dict(type="UnetEMAHook")]
         runner = self.build_runner(cfg)
-        ema_hook = self._get_ema_hook(runner)
 
-        ema_hook = self._get_ema_hook(runner)
+        ema_hook = EMAHook(ema_key="unet")
         ema_hook.before_run(runner)
         ema_hook.before_train(runner)
 
@@ -103,7 +101,7 @@ class TestEMAHook(RunnerTestCase):
         cfg.model.type = "ToyModel2"
         runner = self.build_runner(cfg)
         checkpoint = dict(state_dict=ToyModel2().state_dict())
-        ema_hook = UnetEMAHook()
+        ema_hook = EMAHook(ema_key="unet")
         ema_hook.before_run(runner)
         ema_hook.before_train(runner)
 
@@ -126,7 +124,7 @@ class TestEMAHook(RunnerTestCase):
         cfg.model.type = "ToyModel2"
         runner = self.build_runner(cfg)
         checkpoint = dict(state_dict=ToyModel2().state_dict())
-        ema_hook = UnetEMAHook()
+        ema_hook = EMAHook(ema_key="unet")
         ema_hook.before_run(runner)
         ema_hook.before_train(runner)
         ema_hook.after_load_checkpoint(runner, checkpoint)

@@ -2,7 +2,6 @@ import torch
 from mmengine.hooks import Hook
 from mmengine.logging import print_log
 from mmengine.model import is_model_wrapper
-from mmengine.registry import HOOKS
 from mmengine.runner import Runner
 from torch import nn
 from torch.nn import functional as F  # noqa
@@ -28,7 +27,6 @@ def _fast_gn_forward(self, x: torch.Tensor) -> torch.Tensor:  # noqa
         return F.group_norm(x, self.num_groups, weight, bias, self.eps)
 
 
-@HOOKS.register_module()
 class FastNormHook(Hook):
     """Fast Normalization Hook.
 

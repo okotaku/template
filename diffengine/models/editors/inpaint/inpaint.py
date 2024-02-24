@@ -10,7 +10,7 @@ from PIL import Image
 from torch import nn
 
 from diffengine.models.editors.inpaint.data_preprocessor import (
-    SDInpaintDataPreprocessor,
+    InpaintDataPreprocessor,
 )
 from diffengine.models.editors.stable_diffusion import StableDiffusion
 
@@ -23,7 +23,7 @@ class StableDiffusionInpaint(StableDiffusion):
         model (str): pretrained model name of stable diffusion.
             Defaults to 'runwayml/stable-diffusion-v1-5'.
         data_preprocessor (dict, optional): The pre-process config of
-            :class:`SDInpaintDataPreprocessor`.
+            :class:`InpaintDataPreprocessor`.
 
     """
 
@@ -33,7 +33,7 @@ class StableDiffusionInpaint(StableDiffusion):
                  data_preprocessor: dict | nn.Module | None = None,
                  **kwargs) -> None:
         if data_preprocessor is None:
-            data_preprocessor = {"type": SDInpaintDataPreprocessor}
+            data_preprocessor = {"type": InpaintDataPreprocessor}
 
         super().__init__(
             *args,
@@ -68,7 +68,8 @@ class StableDiffusionInpaint(StableDiffusion):
 
         self.vae.requires_grad_(requires_grad=False)
         print_log("Set VAE untrainable.", "current")
-        if not self.finetune_text_encoder:
+        if (not self.finetune_text_encoder) and (
+                not self.pre_compute_text_embeddings):
             self.text_encoder.requires_grad_(requires_grad=False)
             print_log("Set Text Encoder untrainable.", "current")
 
@@ -108,16 +109,24 @@ class StableDiffusionInpaint(StableDiffusion):
 
         """
         assert len(prompt) == len(image) == len(mask)
-        pipeline = StableDiffusionInpaintPipeline.from_pretrained(
-            self.model,
-            vae=self.vae,
-            text_encoder=self.text_encoder,
-            tokenizer=self.tokenizer,
-            unet=self.unet,
-            safety_checker=None,
-            torch_dtype=(torch.float16 if self.device != torch.device("cpu")
-                         else torch.float32),
-        )
+        if self.pre_compute_text_embeddings:
+            pipeline = StableDiffusionInpaintPipeline.from_pretrained(
+                self.model,
+                vae=self.vae,
+                unet=self.unet,
+                safety_checker=None,
+                torch_dtype=torch.float32,
+            )
+        else:
+            pipeline = StableDiffusionInpaintPipeline.from_pretrained(
+                self.model,
+                vae=self.vae,
+                text_encoder=self.text_encoder,
+                tokenizer=self.tokenizer,
+                unet=self.unet,
+                safety_checker=None,
+                torch_dtype=torch.float32,
+            )
         if self.prediction_type is not None:
             # set prediction_type of scheduler if defined
             scheduler_args = {"prediction_type": self.prediction_type}
@@ -171,12 +180,6 @@ class StableDiffusionInpaint(StableDiffusion):
 
         """
         assert mode == "loss"
-        inputs["text"] = self.tokenizer(
-            inputs["text"],
-            max_length=self.tokenizer.model_max_length,
-            padding="max_length",
-            truncation=True,
-            return_tensors="pt").input_ids.to(self.device)
         num_batches = len(inputs["img"])
 
         latents = self._forward_vae(inputs["img"], num_batches)
@@ -194,7 +197,16 @@ class StableDiffusionInpaint(StableDiffusion):
 
         latent_model_input = torch.cat([noisy_latents, mask, masked_latents], dim=1)
 
-        encoder_hidden_states = self.text_encoder(inputs["text"])[0]
+        if not self.pre_compute_text_embeddings:
+            inputs["text"] = self.tokenizer(
+                inputs["text"],
+                max_length=self.tokenizer.model_max_length,
+                padding="max_length",
+                truncation=True,
+                return_tensors="pt").input_ids.to(self.device)
+            encoder_hidden_states = self.text_encoder(inputs["text"])[0]
+        else:
+            encoder_hidden_states = inputs["prompt_embeds"]
 
         model_pred = self.unet(
             latent_model_input,

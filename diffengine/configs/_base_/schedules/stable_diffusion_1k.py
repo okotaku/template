@@ -20,5 +20,6 @@ default_hooks = dict(
         interval=100,
         by_epoch=False,
         max_keep_ckpts=3,
+        save_optimizer=True,
     ))
 log_processor = dict(by_epoch=False)

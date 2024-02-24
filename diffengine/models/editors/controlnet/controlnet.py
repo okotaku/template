@@ -9,7 +9,7 @@ from PIL import Image
 from torch import nn
 
 from diffengine.models.editors.controlnet.data_preprocessor import (
-    SDControlNetDataPreprocessor,
+    ControlNetDataPreprocessor,
 )
 from diffengine.models.editors.stable_diffusion import StableDiffusion
 
@@ -40,7 +40,7 @@ class StableDiffusionControlNet(StableDiffusion):
             encoder. This should be `False` when training ControlNet.
             Defaults to False.
         data_preprocessor (dict, optional): The pre-process config of
-            :class:`SDControlNetDataPreprocessor`.
+            :class:`ControlNetDataPreprocessor`.
 
     """
 
@@ -54,7 +54,7 @@ class StableDiffusionControlNet(StableDiffusion):
                  data_preprocessor: dict | nn.Module | None = None,
                  **kwargs) -> None:
         if data_preprocessor is None:
-            data_preprocessor = {"type": SDControlNetDataPreprocessor}
+            data_preprocessor = {"type": ControlNetDataPreprocessor}
         assert unet_lora_config is None, \
             "`unet_lora_config` should be None when training ControlNet"
         assert text_encoder_lora_config is None, \
@@ -109,8 +109,9 @@ class StableDiffusionControlNet(StableDiffusion):
 
         self.vae.requires_grad_(requires_grad=False)
         print_log("Set VAE untrainable.", "current")
-        self.text_encoder.requires_grad_(requires_grad=False)
-        print_log("Set Text Encoder untrainable.", "current")
+        if not self.pre_compute_text_embeddings:
+            self.text_encoder.requires_grad_(requires_grad=False)
+            print_log("Set Text Encoder untrainable.", "current")
         self.unet.requires_grad_(requires_grad=False)
         print_log("Set Unet untrainable.", "current")
 
@@ -160,17 +161,26 @@ class StableDiffusionControlNet(StableDiffusion):
 
         """
         assert len(prompt) == len(condition_image)
-        pipeline = StableDiffusionControlNetPipeline.from_pretrained(
-            self.model,
-            vae=self.vae,
-            text_encoder=self.text_encoder,
-            tokenizer=self.tokenizer,
-            unet=self.unet,
-            controlnet=self.controlnet,
-            safety_checker=None,
-            torch_dtype=(torch.float16 if self.device != torch.device("cpu")
-                         else torch.float32),
-        )
+        if self.pre_compute_text_embeddings:
+            pipeline = StableDiffusionControlNetPipeline.from_pretrained(
+                self.model,
+                vae=self.vae,
+                unet=self.unet,
+                controlnet=self.controlnet,
+                safety_checker=None,
+                torch_dtype=torch.float32,
+            )
+        else:
+            pipeline = StableDiffusionControlNetPipeline.from_pretrained(
+                self.model,
+                vae=self.vae,
+                text_encoder=self.text_encoder,
+                tokenizer=self.tokenizer,
+                unet=self.unet,
+                controlnet=self.controlnet,
+                safety_checker=None,
+                torch_dtype=torch.float32,
+            )
         if self.prediction_type is not None:
             # set prediction_type of scheduler if defined
             scheduler_args = {"prediction_type": self.prediction_type}
@@ -242,12 +252,6 @@ class StableDiffusionControlNet(StableDiffusion):
 
         """
         assert mode == "loss"
-        inputs["text"] = self.tokenizer(
-            inputs["text"],
-            max_length=self.tokenizer.model_max_length,
-            padding="max_length",
-            truncation=True,
-            return_tensors="pt").input_ids.to(self.device)
         num_batches = len(inputs["img"])
 
         latents = self._forward_vae(inputs["img"], num_batches)
@@ -259,7 +263,16 @@ class StableDiffusionControlNet(StableDiffusion):
 
         noisy_latents = self._preprocess_model_input(latents, noise, timesteps)
 
-        encoder_hidden_states = self.text_encoder(inputs["text"])[0]
+        if not self.pre_compute_text_embeddings:
+            inputs["text"] = self.tokenizer(
+                inputs["text"],
+                max_length=self.tokenizer.model_max_length,
+                padding="max_length",
+                truncation=True,
+                return_tensors="pt").input_ids.to(self.device)
+            encoder_hidden_states = self.text_encoder(inputs["text"])[0]
+        else:
+            encoder_hidden_states = inputs["prompt_embeds"]
 
         model_pred = self._forward_compile(
             noisy_latents, timesteps, encoder_hidden_states,

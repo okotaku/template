@@ -1,7 +1,8 @@
 import torchvision
 from mmengine.dataset import InfiniteSampler
+from transformers import CLIPTextModel, CLIPTokenizer
 
-from diffengine.datasets import HFDreamBoothDataset
+from diffengine.datasets import HFDreamBoothDatasetPreComputeEmbs
 from diffengine.datasets.transforms import (
     DumpImage,
     GetMaskedImage,
@@ -35,15 +36,20 @@ train_pipeline = [
          transform=torchvision.transforms.Normalize, mean=[0.5], std=[0.5]),
     dict(type=GetMaskedImage),
     dict(type=PackInputs,
-         input_keys=["img", "mask", "masked_image", "text"]),
+         input_keys=["img", "mask", "masked_image", "prompt_embeds"]),
 ]
 train_dataloader = dict(
     batch_size=4,
     num_workers=4,
     dataset=dict(
-        type=HFDreamBoothDataset,
+        type=HFDreamBoothDatasetPreComputeEmbs,
         dataset="diffusers/dog-example",
         instance_prompt="a photo of sks dog",
+        model="runwayml/stable-diffusion-inpainting",
+        tokenizer=dict(type=CLIPTokenizer.from_pretrained,
+                    subfolder="tokenizer"),
+        text_encoder=dict(type=CLIPTextModel.from_pretrained,
+                        subfolder="text_encoder"),
         pipeline=train_pipeline),
     sampler=dict(type=InfiniteSampler, shuffle=True),
 )

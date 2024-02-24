@@ -1,13 +1,13 @@
 import torchvision
 from mmengine.dataset import DefaultSampler
+from transformers import CLIPTextModel, CLIPTokenizer
 
-from diffengine.datasets import HFConditionDataset
+from diffengine.datasets import HFConditionDatasetPreComputeEmbs
 from diffengine.datasets.transforms import (
     DumpImage,
     PackInputs,
     RandomCrop,
     RandomHorizontalFlip,
-    RandomTextDrop,
     TorchVisonTransformWrapper,
 )
 from diffengine.engine.hooks import ControlNetSaveHook, VisualizationHook
@@ -27,17 +27,22 @@ train_pipeline = [
     dict(type=DumpImage, max_imgs=10, dump_dir="work_dirs/dump"),
     dict(type=TorchVisonTransformWrapper,
          transform=torchvision.transforms.Normalize, mean=[0.5], std=[0.5]),
-    dict(type=RandomTextDrop),
-    dict(type=PackInputs, input_keys=["img", "condition_img", "text"]),
+    dict(type=PackInputs, input_keys=["img", "condition_img", "prompt_embeds"]),
 ]
 train_dataloader = dict(
     batch_size=8,
     num_workers=4,
     dataset=dict(
-        type=HFConditionDataset,
+        type=HFConditionDatasetPreComputeEmbs,
         dataset="fusing/fill50k",
         condition_column="conditioning_image",
         caption_column="text",
+        model="runwayml/stable-diffusion-v1-5",
+        tokenizer=dict(type=CLIPTokenizer.from_pretrained,
+                    subfolder="tokenizer"),
+        text_encoder=dict(type=CLIPTextModel.from_pretrained,
+                        subfolder="text_encoder"),
+        proportion_empty_prompts=0.1,
         pipeline=train_pipeline),
     sampler=dict(type=DefaultSampler, shuffle=True),
 )

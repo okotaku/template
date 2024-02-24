@@ -33,22 +33,12 @@ $ diffengine train stable_diffusion_v15_pokemon_blip
 
 Once you have trained a model, specify the path to the saved model and utilize it for inference using the `diffusers.pipeline` module.
 
-Before inferencing, we should convert weights for diffusers format,
-
-```bash
-$ diffengine convert ${CONFIG_FILE} ${INPUT_FILENAME} ${OUTPUT_DIR} --save-keys ${SAVE_KEYS}
-# Example
-$ diffengine convert stable_diffusion_v15_pokemon_blip work_dirs/stable_diffusion_v15_pokemon_blip/epoch_50.pth work_dirs/stable_diffusion_v15_pokemon_blip --save-keys unet
-```
-
-Then we can run inference.
-
 ```py
 import torch
 from diffusers import DiffusionPipeline, UNet2DConditionModel
 
 prompt = 'yoda pokemon'
-checkpoint = 'work_dirs/stable_diffusion_v15_pokemon_blip'
+checkpoint = 'work_dirs/stable_diffusion_v15_pokemon_blip/step10450'
 
 unet = UNet2DConditionModel.from_pretrained(
     checkpoint, subfolder='unet', torch_dtype=torch.float16)

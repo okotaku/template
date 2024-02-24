@@ -41,16 +41,6 @@ $ diffengine train stable_diffusion_inpaint_dog
 
 Once you have trained a model, specify the path to the saved model and utilize it for inference using the `diffusers.pipeline` module.
 
-Before inferencing, we should convert weights for diffusers format,
-
-```bash
-$ diffengine convert ${CONFIG_FILE} ${INPUT_FILENAME} ${OUTPUT_DIR} --save-keys ${SAVE_KEYS}
-# Example
-$ diffengine convert stable_diffusion_inpaint_dog work_dirs/stable_diffusion_inpaint_dog/iter_1000.pth work_dirs/stable_diffusion_inpaint_dog --save-keys unet
-```
-
-Then we can run inference.
-
 ```py
 import torch
 from diffusers import StableDiffusionInpaintPipeline, UNet2DConditionModel
@@ -59,7 +49,7 @@ from diffusers.utils import load_image
 prompt = 'a photo of sks dog'
 img = 'https://github.com/okotaku/diffengine/assets/24734142/8e02bd0e-9dcc-49b6-94b0-86ab3b40bc2b'
 mask = 'https://github.com/okotaku/diffengine/assets/24734142/d0de4fb9-9183-418a-970d-582e9324f05d'
-checkpoint = 'work_dirs/stable_diffusion_inpaint_dog'
+checkpoint = 'work_dirs/stable_diffusion_inpaint_dog/step999'
 
 unet = UNet2DConditionModel.from_pretrained(
     checkpoint, subfolder='unet', torch_dtype=torch.float16)
@@ -76,7 +66,7 @@ image = pipe(
 image.save('demo.png')
 ```
 
-You can see more details on [`docs/source/run_guides/run.md`](../../docs/source/run_guides/run.md#inference-with-diffusers).
+You can see more details on [`docs/source/run_guides/run_inpaint.md`](../../docs/source/run_guides/run_inpaint.md#inference-with-diffusers).
 
 ## Results Example
 

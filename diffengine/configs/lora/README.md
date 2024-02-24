@@ -55,10 +55,6 @@ pipe = DiffusionPipeline.from_pretrained(
     'runwayml/stable-diffusion-v1-5', torch_dtype=torch.float16)
 pipe.to('cuda')
 pipe.unet = PeftModel.from_pretrained(pipe.unet, checkpoint / "unet", adapter_name="default")
-if (checkpoint / "text_encoder").exists():
-    pipe.text_encoder = PeftModel.from_pretrained(
-        pipe.text_encoder, checkpoint / "text_encoder", adapter_name="default"
-    )
 
 image = pipe(
     prompt,
@@ -74,7 +70,3 @@ You can see more details on [LoRA docs](../../docs/source/run_guides/run_lora.md
 #### stable_diffusion_v15_lora_pokemon_blip
 
 ![example1](https://github.com/okotaku/diffengine/assets/24734142/24899409-554d-4393-88e5-f8b8d6e6b36d)
-
-#### stable_diffusion_v15_lora_textencoder_pokemon_blip
-
-![example1](https://github.com/okotaku/diffengine/assets/24734142/cc6d1f5e-7eee-4dfd-8d00-e93ff0518f14)

@@ -61,13 +61,3 @@ image = pipe(
 ).images[0]
 image.save('demo.png')
 ```
-
-## Results Example
-
-#### stable_diffusion_v15_controlnet_fill50k
-
-![input1](https://github.com/okotaku/diffengine/assets/24734142/1af9dbb0-b056-435c-bc4b-62a823889191)
-
-![example1](https://github.com/okotaku/diffengine/assets/24734142/a14cc9a6-3a40-4577-bd5a-2ddbab60970d)
-
-You can check [`configs/controlnet/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/controlnet/README.md#results-example) for more details.

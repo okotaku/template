@@ -1,14 +1,13 @@
 import os.path as osp
+import shutil
 from collections import OrderedDict
 
 from mmengine.hooks import Hook
 from mmengine.model import is_model_wrapper
-from mmengine.registry import HOOKS
 from mmengine.runner import Runner
 from peft import get_peft_model_state_dict
 
 
-@HOOKS.register_module()
 class PeftSaveHook(Hook):
     """Peft Save Hook.
 
@@ -17,6 +16,7 @@ class PeftSaveHook(Hook):
     """
 
     priority = "VERY_LOW"
+    last_step = -1
 
     def before_save_checkpoint(self, runner: Runner, checkpoint: dict) -> None:
         """Before save checkpoint hook.
@@ -51,6 +51,11 @@ class PeftSaveHook(Hook):
             model.text_encoder.save_pretrained(
                 osp.join(ckpt_path, "text_encoder"))
             model_keys.append("text_encoder")
+
+        # remove previous weights
+        if self.last_step >= 0:
+            shutil.rmtree(osp.join(runner.work_dir, f"step{self.last_step}"))
+        self.last_step = runner.iter
 
         # not save no grad key
         new_ckpt = OrderedDict()

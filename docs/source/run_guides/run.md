@@ -1,4 +1,4 @@
-# Stable Diffusion Training
+# Training
 
 You can also check [`configs/stable_diffusion/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion/README.md) file.
 
@@ -34,14 +34,13 @@ with read_base():
 model.update(finetune_text_encoder=True)  # fine tune text encoder
 ```
 
-We also provide [`configs/stable_diffusion/stable_diffusion_v15_textencoder_pokemon_blip.py`](https://github.com/okotaku/diffengine/blob/main/diffengine/configs/stable_diffusion/stable_diffusion_v15_textencoder_pokemon_blip.py) as a whole config.
-
 #### Finetuning with Unet EMA
 
 The script also allows you to finetune with Unet EMA.
 
 ```
 from mmengine.config import read_base
+from diffengine.engine.hooks import EMAHook
 
 with read_base():
     from .._base_.datasets.pokemon_blip import *
@@ -51,19 +50,18 @@ with read_base():
 
 custom_hooks = [  # Hook is list, we should write all custom_hooks again.
     dict(type=VisualizationHook, prompt=['yoda pokemon'] * 4),
-    dict(type=SDCheckpointHook),
-    dict(type=UnetEMAHook, momentum=1e-4, priority='ABOVE_NORMAL')  # setup EMA Hook
+    dict(type=CheckpointHook),
+    dict(type=EMAHook, ema_key="unet", momentum=1e-4, priority='ABOVE_NORMAL')  # setup EMA Hook
 ]
 ```
 
-We also provide [`configs/stable_diffusion/stable_diffusion_v15_ema_pokemon_blip.py`](https://github.com/okotaku/diffengine/blob/main/diffengine/configs/stable_diffusion/stable_diffusion_v15_ema_pokemon_blip.py) as a whole config.
-
-#### Finetuning with Min-SNR Weighting Strategy
+#### Finetuning with other losses
 
 The script also allows you to finetune with [Min-SNR Weighting Strategy](https://arxiv.org/abs/2303.09556).
 
 ```
 from mmengine.config import read_base
+from diffengine.models.losses import SNRL2Loss
 
 with read_base():
     from .._base_.datasets.pokemon_blip import *
@@ -71,10 +69,58 @@ with read_base():
     from .._base_.models.stable_diffusion_v15 import *
     from .._base_.schedules.stable_diffusion_50e import *
 
-model.update(loss=dict(type='SNRL2Loss', snr_gamma=5.0, loss_weight=1.0))  # setup Min-SNR Weighting Strategy
+model.update(loss=dict(type=SNRL2Loss, snr_gamma=5.0, loss_weight=1.0))  # setup Min-SNR Weighting Strategy
 ```
 
-We also provide [`configs/min_snr_loss/stable_diffusion_v15_snr_pokemon_blip.py`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/min_snr_loss/stable_diffusion_v15_snr_pokemon_blip.py) as a whole config.
+#### Finetuning with other noises
+
+The script also allows you to finetune with [OffsetNoise](https://www.crosslabs.org/blog/diffusion-with-offset-noise).
+
+```
+from mmengine.config import read_base
+from diffengine.models.utils import OffsetNoise
+
+with read_base():
+    from .._base_.datasets.pokemon_blip import *
+    from .._base_.default_runtime import *
+    from .._base_.models.stable_diffusion_v15 import *
+    from .._base_.schedules.stable_diffusion_50e import *
+
+model.update(noise_generator=dict(type=OffsetNoise, offset_weight=0.05))  # setup OffsetNoise
+```
+
+#### Finetuning with other timesteps
+
+The script also allows you to finetune with EarlierTimeSteps.
+
+```
+from mmengine.config import read_base
+from diffengine.models.utils import EarlierTimeSteps
+
+with read_base():
+    from .._base_.datasets.pokemon_blip import *
+    from .._base_.default_runtime import *
+    from .._base_.models.stable_diffusion_v15 import *
+    from .._base_.schedules.stable_diffusion_50e import *
+
+model.update(timesteps_generator=dict(type=EarlierTimeSteps))  # setup EarlierTimeSteps
+```
+
+#### Finetuning with pre-computed text embeddings
+
+The script also allows you to finetune with pre-computed text embeddings.
+
+```
+from mmengine.config import read_base
+
+with read_base():
+    from .._base_.datasets.pokemon_blip_pre_compute import *
+    from .._base_.default_runtime import *
+    from .._base_.models.stable_diffusion_v15 import *
+    from .._base_.schedules.stable_diffusion_50e import *
+
+model.update(pre_compute_text_embeddings=True)
+```
 
 ## Run training
 
@@ -94,22 +140,12 @@ $ NPROC_PER_NODE=${GPU_NUM} diffengine train ${CONFIG_FILE}
 
 Once you have trained a model, specify the path to the saved model and utilize it for inference using the `diffusers.pipeline` module.
 
-Before inferencing, we should convert weights for diffusers format,
-
-```bash
-$ diffengine convert ${CONFIG_FILE} ${INPUT_FILENAME} ${OUTPUT_DIR} --save-keys ${SAVE_KEYS}
-# Example
-$ diffengine convert stable_diffusion_v15_pokemon_blip work_dirs/stable_diffusion_v15_pokemon_blip/epoch_50.pth work_dirs/stable_diffusion_v15_pokemon_blip --save-keys unet
-```
-
-Then we can run inference.
-
 ```py
 import torch
 from diffusers import DiffusionPipeline, UNet2DConditionModel
 
 prompt = 'yoda pokemon'
-checkpoint = 'work_dirs/stable_diffusion_v15_pokemon_blip'
+checkpoint = 'work_dirs/stable_diffusion_v15_pokemon_blip/step10450'
 
 unet = UNet2DConditionModel.from_pretrained(
     checkpoint, subfolder='unet', torch_dtype=torch.float16)
@@ -124,49 +160,12 @@ image = pipe(
 image.save('demo.png')
 ```
 
-## Inference Text Encoder and Unet finetuned weight with diffusers
+## Convert weights for diffusers format
 
-Once you have trained a model, specify the path to the saved model and utilize it for inference using the `diffusers.pipeline` module.
-
-Before inferencing, we should convert weights for diffusers format,
+You can convert weights for diffusers format. The converted weights will be saved in the specified directory.
 
 ```bash
 $ diffengine convert ${CONFIG_FILE} ${INPUT_FILENAME} ${OUTPUT_DIR} --save-keys ${SAVE_KEYS}
 # Example
-$ diffengine convert stable_diffusion_v15_textencoder_pokemon_blip work_dirs/stable_diffusion_v15_textencoder_pokemon_blip/epoch_50.pth work_dirs/stable_diffusion_v15_textencoder_pokemon_blip --save-keys unet text_encoder
+$ diffengine convert stable_diffusion_v15_pokemon_blip work_dirs/stable_diffusion_v15_pokemon_blip/epoch_50.pth work_dirs/stable_diffusion_v15_pokemon_blip --save-keys unet
 ```
-
-Then we can run inference.
-
-```py
-import torch
-from transformers import CLIPTextModel
-from diffusers import DiffusionPipeline, UNet2DConditionModel
-
-prompt = 'yoda pokemon'
-checkpoint = 'work_dirs/stable_diffusion_v15_pokemon_blip'
-
-text_encoder = CLIPTextModel.from_pretrained(
-            checkpoint,
-            subfolder='text_encoder',
-            torch_dtype=torch.float16)
-unet = UNet2DConditionModel.from_pretrained(
-    checkpoint, subfolder='unet', torch_dtype=torch.float16)
-pipe = DiffusionPipeline.from_pretrained(
-    'runwayml/stable-diffusion-v1-5', unet=unet, text_encoder=text_encoder, torch_dtype=torch.float16)
-pipe.to('cuda')
-
-image = pipe(
-    prompt,
-    num_inference_steps=50,
-).images[0]
-image.save('demo.png')
-```
-
-## Results Example
-
-#### stable_diffusion_v15_pokemon_blip
-
-![example1](https://github.com/okotaku/diffengine/assets/24734142/24d5254d-95be-46eb-8982-b38b6a11f1ba)
-
-You can check [`configs/stable_diffusion/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion/README.md#results-example) for more details.

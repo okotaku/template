@@ -1,12 +1,15 @@
-# flake8: noqa: S311,RUF012
+# flake8: noqa: TRY004,S311
+import functools
 import gc
 import os
 import random
 from collections.abc import Sequence
 from pathlib import Path
 
+import numpy as np
 import torch
 from datasets import load_dataset
+from datasets.fingerprint import Hasher
 from mmengine.dataset.base_dataset import Compose
 from mmengine.registry import MODELS
 from PIL import Image
@@ -17,20 +20,19 @@ from diffengine.datasets.utils import encode_prompt
 Image.MAX_IMAGE_PIXELS = 1000000000
 
 
-class HFDreamBoothDataset(Dataset):
-    """DreamBooth Dataset for huggingface datasets.
+class HFConditionDataset(Dataset):
+    """Dataset with Condition images for huggingface datasets.
 
     Args:
     ----
-        dataset (str): Dataset name.
-        instance_prompt (str):
-            The prompt with identifier specifying the instance.
+        dataset (str): Dataset name or path to dataset.
         image_column (str): Image column name. Defaults to 'image'.
-        dataset_sub_dir (optional, str): Dataset sub directory name.
+        condition_column (str): Condition column name for ControlNet.
+            Defaults to 'condition'.
+        caption_column (str): Caption column name. Defaults to 'text'.
+        csv (str): Caption csv file name when loading local folder.
+            Defaults to 'metadata.csv'.
         pipeline (Sequence): Processing pipeline. Defaults to an empty tuple.
-        csv (str, optional): Image path csv file name when loading local
-            folder. If None, the dataset will be loaded from image folders.
-            Defaults to None.
         cache_dir (str, optional): The directory where the downloaded datasets
             will be stored.Defaults to None.
 
@@ -38,37 +40,26 @@ class HFDreamBoothDataset(Dataset):
 
     def __init__(self,
                  dataset: str,
-                 instance_prompt: str,
                  image_column: str = "image",
-                 dataset_sub_dir: str | None = None,
+                 condition_column: str = "condition",
+                 caption_column: str = "text",
+                 csv: str = "metadata.csv",
                  pipeline: Sequence = (),
-                 csv: str | None = None,
                  cache_dir: str | None = None) -> None:
-
         self.dataset_name = dataset
-        self.csv = csv
-
         if Path(dataset).exists():
             # load local folder
-            if csv is not None:
-                data_file = os.path.join(dataset, csv)
-                self.dataset = load_dataset(
-                    "csv", data_files=data_file, cache_dir=cache_dir)["train"]
-            else:
-                self.dataset = load_dataset(dataset, cache_dir=cache_dir)["train"]
-        else:  # noqa
+            data_file = os.path.join(dataset, csv)
+            self.dataset = load_dataset(
+                "csv", data_files=data_file, cache_dir=cache_dir)["train"]
+        else:
             # load huggingface online
-            if dataset_sub_dir is not None:
-                self.dataset = load_dataset(
-                    dataset, dataset_sub_dir, cache_dir=cache_dir)["train"]
-            else:
-                self.dataset = load_dataset(
-                    dataset, cache_dir=cache_dir)["train"]
-
+            self.dataset = load_dataset(dataset, cache_dir=cache_dir)["train"]
         self.pipeline = Compose(pipeline)
 
-        self.instance_prompt = instance_prompt
         self.image_column = image_column
+        self.condition_column = condition_column
+        self.caption_column = caption_column
 
     def __len__(self) -> int:
         """Get the length of dataset.
@@ -99,18 +90,37 @@ class HFDreamBoothDataset(Dataset):
         data_info = self.dataset[idx]
         image = data_info[self.image_column]
         if isinstance(image, str):
-            if self.csv is not None:
-                image = os.path.join(self.dataset_name, image)
-            image = Image.open(image)
+            image = Image.open(os.path.join(self.dataset_name, image))
         image = image.convert("RGB")
-        result = {"img": image, "text": self.instance_prompt}
+
+        condition_image = data_info[self.condition_column]
+        if isinstance(condition_image, str):
+            condition_image = Image.open(
+                os.path.join(self.dataset_name, condition_image))
+        condition_image = condition_image.convert("RGB")
+
+        caption = data_info[self.caption_column]
+        if isinstance(caption, str):
+            pass
+        elif isinstance(caption, list | np.ndarray):
+            # take a random caption if there are multiple
+            caption = random.choice(caption)
+        else:
+            msg = (f"Caption column `{self.caption_column}` should "
+                   "contain either strings or lists of strings.")
+            raise ValueError(msg)
+        result = {
+            "img": image,
+            "condition_img": condition_image,
+            "text": caption,
+        }
         return self.pipeline(result)
 
 
-class HFDreamBoothDatasetPreComputeEmbs(HFDreamBoothDataset):
-    """DreamBooth Dataset for huggingface datasets.
+class HFConditionDatasetPreComputeEmbs(HFConditionDataset):
+    """Dataset with Condition images for huggingface datasets.
 
-    The difference from DreamBooth is
+    he difference from HFConditionDataset is
         1. pre-compute Text Encoder embeddings to save memory.
 
     Args:
@@ -131,6 +141,7 @@ class HFDreamBoothDatasetPreComputeEmbs(HFDreamBoothDataset):
                  tokenizer: dict,
                  text_encoder: dict,
                  model: str = "runwayml/stable-diffusion-v1-5",
+                 text_hasher: str = "text",
                  device: str = "cuda",
                  proportion_empty_prompts: float = 0.0,
                  **kwargs) -> None:
@@ -145,8 +156,20 @@ class HFDreamBoothDatasetPreComputeEmbs(HFDreamBoothDataset):
             text_encoder,
             default_args={"pretrained_model_name_or_path": model}).to(device)
 
+        new_fingerprint = Hasher.hash(text_hasher)
+        compute_embeddings_fn = functools.partial(
+            encode_prompt,
+            text_encoder=text_encoder,
+            tokenizer=tokenizer,
+            caption_column=self.caption_column,
+        )
+        self.dataset = self.dataset.map(
+            compute_embeddings_fn,
+            batched=True,
+            batch_size=32,
+            new_fingerprint=new_fingerprint)
         self.empty_embed = encode_prompt(
-            {"text": [self.instance_prompt, ""]},
+            {"text": [""]},
             text_encoder=text_encoder,
             tokenizer=tokenizer,
             caption_column="text",
@@ -175,14 +198,20 @@ class HFDreamBoothDatasetPreComputeEmbs(HFDreamBoothDataset):
         data_info = self.dataset[idx]
         image = data_info[self.image_column]
         if isinstance(image, str):
-            if self.csv is not None:
-                image = os.path.join(self.dataset_name, image)
-            image = Image.open(image)
+            image = Image.open(os.path.join(self.dataset_name, image))
         image = image.convert("RGB")
+
+        condition_image = data_info[self.condition_column]
+        if isinstance(condition_image, str):
+            condition_image = Image.open(
+                os.path.join(self.dataset_name, condition_image))
+        condition_image = condition_image.convert("RGB")
+
         result = {
             "img": image,
-            "prompt_embeds": self.empty_embed["prompt_embeds"][0] if (
+            "condition_img": condition_image,
+            "prompt_embeds": data_info["prompt_embeds"] if (
                 random.random() < self.proportion_empty_prompts
-                ) else self.empty_embed["prompt_embeds"][1],
+                ) else self.empty_embed["prompt_embeds"][0],
         }
         return self.pipeline(result)

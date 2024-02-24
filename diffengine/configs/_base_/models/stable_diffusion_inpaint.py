@@ -1,10 +1,10 @@
 from diffusers import AutoencoderKL, DDPMScheduler, UNet2DConditionModel
 from transformers import CLIPTextModel, CLIPTokenizer
 
-from diffengine.models.editors import StableDiffusion
+from diffengine.models.editors import StableDiffusionInpaint
 
 base_model = "runwayml/stable-diffusion-inpainting"
-model = dict(type=StableDiffusion,
+model = dict(type=StableDiffusionInpaint,
              model=base_model,
              tokenizer=dict(type=CLIPTokenizer.from_pretrained,
                             subfolder="tokenizer"),
