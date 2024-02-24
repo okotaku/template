@@ -5,8 +5,9 @@ import argparse
 import shutil
 from pathlib import Path
 
-from diffengine.configs import cfgs_name_path
 from mmengine.utils import mkdir_or_exist
+
+from diffengine.configs import cfgs_name_path  # type: ignore[attr-defined]
 
 
 def parse_args():  # noqa
