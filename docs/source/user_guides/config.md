@@ -148,11 +148,11 @@ Following is the schedule primitive config of the stable_diffusion_v15 config in
 ```python
 from mmengine.hooks import CheckpointHook
 from mmengine.optim import AmpOptimWrapper
-from torch.optim import AdamW
+from torch.optim import FusedAdam
 
 optim_wrapper = dict(
     type=AmpOptimWrapper, dtype="float16",  # fp16 optimization
-    optimizer=dict(type=AdamW, lr=1e-5, weight_decay=1e-2),  # Use AdamW optimizer to optimize parameters.
+    optimizer=dict(type=FusedAdam, lr=1e-5, weight_decay=1e-2),  # Use FusedAdam optimizer to optimize parameters.
     clip_grad=dict(max_norm=1.0))
 
 # Training configuration, iterate 50 epochs.

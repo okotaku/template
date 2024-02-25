@@ -168,7 +168,7 @@ class StableDiffusionControlNet(StableDiffusion):
                 unet=self.unet,
                 controlnet=self.controlnet,
                 safety_checker=None,
-                torch_dtype=torch.float32,
+                torch_dtype=self.weight_dtype,
             )
         else:
             pipeline = StableDiffusionControlNetPipeline.from_pretrained(
@@ -179,7 +179,7 @@ class StableDiffusionControlNet(StableDiffusion):
                 unet=self.unet,
                 controlnet=self.controlnet,
                 safety_checker=None,
-                torch_dtype=torch.float32,
+                torch_dtype=self.weight_dtype,
             )
         if self.prediction_type is not None:
             # set prediction_type of scheduler if defined
@@ -221,7 +221,7 @@ class StableDiffusionControlNet(StableDiffusion):
             noisy_latents,
             timesteps,
             encoder_hidden_states=encoder_hidden_states,
-            controlnet_cond=inputs["condition_img"],
+            controlnet_cond=inputs["condition_img"].to(self.weight_dtype),
             return_dict=False,
         )
 
@@ -254,7 +254,7 @@ class StableDiffusionControlNet(StableDiffusion):
         assert mode == "loss"
         num_batches = len(inputs["img"])
 
-        latents = self._forward_vae(inputs["img"], num_batches)
+        latents = self._forward_vae(inputs["img"].to(self.weight_dtype), num_batches)
 
         noise = self.noise_generator(latents)
 
@@ -272,7 +272,7 @@ class StableDiffusionControlNet(StableDiffusion):
                 return_tensors="pt").input_ids.to(self.device)
             encoder_hidden_states = self.text_encoder(inputs["text"])[0]
         else:
-            encoder_hidden_states = inputs["prompt_embeds"]
+            encoder_hidden_states = inputs["prompt_embeds"].to(self.weight_dtype)
 
         model_pred = self._forward_compile(
             noisy_latents, timesteps, encoder_hidden_states,

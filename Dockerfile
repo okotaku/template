@@ -23,6 +23,10 @@ RUN pip install ninja
 RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=8 && \
     pip install -v -U git+https://github.com/facebookresearch/xformers.git@v0.0.24#egg=xformers
 
+# Install Stable Fast
+RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=8 && \
+    pip install -v -U git+https://github.com/chengzeyi/stable-fast.git@main#egg=stable-fast
+
 # Install modules
 RUN pip install . && \
     pip install pre-commit && \

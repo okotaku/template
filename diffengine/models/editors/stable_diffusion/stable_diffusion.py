@@ -16,6 +16,11 @@ from diffengine.models.editors.stable_diffusion.data_preprocessor import (
 from diffengine.models.losses import L2Loss
 from diffengine.models.utils import TimeSteps, WhiteNoise
 
+weight_dtype_dict = {
+    "fp32": torch.float32,
+    "fp16": torch.float16,
+    "bf16": torch.bfloat16,
+}
 
 class StableDiffusion(BaseModel):
     """Stable Diffusion.
@@ -53,6 +58,8 @@ class StableDiffusion(BaseModel):
             The recommended value is 0.1 for Input Perturbation.
             Defaults to 0.0.
         vae_batch_size (int): The batch size of vae. Defaults to 8.
+        weight_dtype (str): The weight dtype. Choose from "fp32", "fp16" or
+            "bf16".  Defaults to 'fp32'.
         finetune_text_encoder (bool, optional): Whether to fine-tune text
             encoder. Defaults to False.
         gradient_checkpointing (bool): Whether or not to use gradient
@@ -82,6 +89,7 @@ class StableDiffusion(BaseModel):
         timesteps_generator: dict | None = None,
         input_perturbation_gamma: float = 0.0,
         vae_batch_size: int = 8,
+        weight_dtype: str = "fp32",
         *,
         finetune_text_encoder: bool = False,
         gradient_checkpointing: bool = False,
@@ -128,6 +136,7 @@ class StableDiffusion(BaseModel):
         self.input_perturbation_gamma = input_perturbation_gamma
         self.enable_xformers = enable_xformers
         self.vae_batch_size = vae_batch_size
+        self.weight_dtype = weight_dtype_dict[weight_dtype]
 
         if not isinstance(loss, nn.Module):
             loss = MODELS.build(
@@ -165,6 +174,9 @@ class StableDiffusion(BaseModel):
         self.prepare_model()
         self.set_lora()
         self.set_xformers()
+
+        if self.weight_dtype != torch.float32:
+            self.to(self.weight_dtype)
 
     def set_lora(self) -> None:
         """Set LORA for model."""
@@ -255,7 +267,7 @@ class StableDiffusion(BaseModel):
                 vae=self.vae,
                 unet=self.unet,
                 safety_checker=None,
-                torch_dtype=torch.float32,
+                torch_dtype=self.weight_dtype,
             )
         else:
             pipeline = StableDiffusionPipeline.from_pretrained(
@@ -265,7 +277,7 @@ class StableDiffusion(BaseModel):
                 tokenizer=self.tokenizer,
                 unet=self.unet,
                 safety_checker=None,
-                torch_dtype=torch.float32,
+                torch_dtype=self.weight_dtype,
             )
         if self.prediction_type is not None:
             # set prediction_type of scheduler if defined
@@ -353,7 +365,7 @@ class StableDiffusion(BaseModel):
         """Preprocess model input."""
         if self.input_perturbation_gamma > 0:
             input_noise = noise + self.input_perturbation_gamma * torch.randn_like(
-                noise)
+                noise).to(self.weight_dtype)
         else:
             input_noise = noise
         return self.scheduler.add_noise(latents, input_noise, timesteps)
@@ -392,7 +404,7 @@ class StableDiffusion(BaseModel):
         assert mode == "loss"
         num_batches = len(inputs["img"])
 
-        latents = self._forward_vae(inputs["img"], num_batches)
+        latents = self._forward_vae(inputs["img"].to(self.weight_dtype), num_batches)
 
         noise = self.noise_generator(latents)
 
@@ -410,7 +422,7 @@ class StableDiffusion(BaseModel):
                 return_tensors="pt").input_ids.to(self.device)
             encoder_hidden_states = self.text_encoder(inputs["text"])[0]
         else:
-            encoder_hidden_states = inputs["prompt_embeds"]
+            encoder_hidden_states = inputs["prompt_embeds"].to(self.weight_dtype)
 
         model_pred = self.unet(
             noisy_latents,

@@ -115,7 +115,7 @@ class StableDiffusionInpaint(StableDiffusion):
                 vae=self.vae,
                 unet=self.unet,
                 safety_checker=None,
-                torch_dtype=torch.float32,
+                torch_dtype=self.weight_dtype,
             )
         else:
             pipeline = StableDiffusionInpaintPipeline.from_pretrained(
@@ -125,7 +125,7 @@ class StableDiffusionInpaint(StableDiffusion):
                 tokenizer=self.tokenizer,
                 unet=self.unet,
                 safety_checker=None,
-                torch_dtype=torch.float32,
+                torch_dtype=self.weight_dtype,
             )
         if self.prediction_type is not None:
             # set prediction_type of scheduler if defined
@@ -182,10 +182,11 @@ class StableDiffusionInpaint(StableDiffusion):
         assert mode == "loss"
         num_batches = len(inputs["img"])
 
-        latents = self._forward_vae(inputs["img"], num_batches)
-        masked_latents = self._forward_vae(inputs["masked_image"], num_batches)
+        latents = self._forward_vae(inputs["img"].to(self.weight_dtype), num_batches)
+        masked_latents = self._forward_vae(
+            inputs["masked_image"].to(self.weight_dtype), num_batches)
 
-        mask = F.interpolate(inputs["mask"],
+        mask = F.interpolate(inputs["mask"].to(self.weight_dtype),
                              size=(latents.shape[2], latents.shape[3]))
 
         noise = self.noise_generator(latents)
@@ -206,7 +207,8 @@ class StableDiffusionInpaint(StableDiffusion):
                 return_tensors="pt").input_ids.to(self.device)
             encoder_hidden_states = self.text_encoder(inputs["text"])[0]
         else:
-            encoder_hidden_states = inputs["prompt_embeds"]
+            encoder_hidden_states = inputs["prompt_embeds"].to(self.weight_dtype)
+
 
         model_pred = self.unet(
             latent_model_input,
