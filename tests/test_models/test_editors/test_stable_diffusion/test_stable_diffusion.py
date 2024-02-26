@@ -10,10 +10,7 @@ from torch.optim import SGD
 from transformers import CLIPTextModel, CLIPTokenizer
 
 from diffengine.models.editors import StableDiffusion
-from diffengine.models.editors.stable_diffusion.data_preprocessor import (
-    DataPreprocessor,
-)
-from diffengine.models.losses import DeBiasEstimationLoss, L2Loss, SNRL2Loss
+from diffengine.models.losses import DeBiasEstimationLoss, SNRL2Loss
 
 
 class TestStableDiffusion(TestCase):
@@ -38,9 +35,7 @@ class TestStableDiffusion(TestCase):
                 subfolder="vae"),
              unet=dict(type=UNet2DConditionModel.from_pretrained,
                              pretrained_model_name_or_path=base_model,
-                             subfolder="unet"),
-            data_preprocessor=dict(type=DataPreprocessor),
-            loss=dict(type=L2Loss))
+                             subfolder="unet"))
 
     def test_init(self):
         cfg = self._get_config()

@@ -64,7 +64,7 @@ class TestVisualizationHook(RunnerTestCase):
         cfg.model = Config.fromfile("tests/configs/sd.py").model
         runner = self.build_runner(cfg)
         hook = VisualizationHook(prompt=["a dog"], by_epoch=False)
-        for i in range(10):
+        for i in range(3):
             hook.after_train_iter(runner, i)
             runner.train_loop._iter += 1
 
@@ -79,6 +79,6 @@ class TestVisualizationHook(RunnerTestCase):
             height=64,
             width=64,
             by_epoch=False)
-        for i in range(10):
+        for i in range(3):
             hook.after_train_iter(runner, i)
             runner.train_loop._iter += 1

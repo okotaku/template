@@ -4,10 +4,6 @@ from transformers import CLIPTextModel, CLIPTokenizer
 from diffengine.models.editors import (
     StableDiffusionControlNet,
 )
-from diffengine.models.editors.controlnet.data_preprocessor import (
-    ControlNetDataPreprocessor,
-)
-from diffengine.models.losses import L2Loss
 
 base_model = "diffusers/tiny-stable-diffusion-torch"
 model = dict(
@@ -24,6 +20,4 @@ model = dict(
                 type=AutoencoderKL.from_pretrained,
                 subfolder="vae"),
              unet=dict(type=UNet2DConditionModel.from_pretrained,
-                             subfolder="unet"),
-            data_preprocessor=dict(type=ControlNetDataPreprocessor),
-            loss=dict(type=L2Loss))
+                             subfolder="unet"))

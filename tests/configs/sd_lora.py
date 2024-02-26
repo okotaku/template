@@ -3,10 +3,6 @@ from peft import LoraConfig
 from transformers import CLIPTextModel, CLIPTokenizer
 
 from diffengine.models.editors import StableDiffusion
-from diffengine.models.editors.stable_diffusion.data_preprocessor import (
-    DataPreprocessor,
-)
-from diffengine.models.losses import L2Loss
 
 base_model = "diffusers/tiny-stable-diffusion-torch"
 model = dict(
@@ -23,8 +19,6 @@ model = dict(
                 subfolder="vae"),
              unet=dict(type=UNet2DConditionModel.from_pretrained,
                              subfolder="unet"),
-            data_preprocessor=dict(type=DataPreprocessor),
-            loss=dict(type=L2Loss),
             unet_lora_config = dict(
                     type=LoraConfig, r=4,
                     target_modules=["to_q", "to_v", "to_k", "to_out.0"]),

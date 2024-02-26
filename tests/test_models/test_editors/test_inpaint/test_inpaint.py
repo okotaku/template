@@ -10,10 +10,6 @@ from torch.optim import SGD
 from transformers import CLIPTextModel, CLIPTokenizer
 
 from diffengine.models.editors import StableDiffusionInpaint
-from diffengine.models.editors.inpaint.data_preprocessor import (
-    InpaintDataPreprocessor,
-)
-from diffengine.models.losses import L2Loss
 
 
 class TestStableDiffusionInpaint(TestCase):
@@ -38,9 +34,7 @@ class TestStableDiffusionInpaint(TestCase):
                 subfolder="vae"),
              unet=dict(type=UNet2DConditionModel.from_pretrained,
                              pretrained_model_name_or_path=base_model,
-                             subfolder="unet"),
-            data_preprocessor=dict(type=InpaintDataPreprocessor),
-            loss=dict(type=L2Loss))
+                             subfolder="unet"))
 
     def test_init(self):
         cfg = self._get_config()
