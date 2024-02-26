@@ -3,7 +3,6 @@
 
 import bisect
 from unittest import TestCase
-from unittest.mock import patch
 
 import numpy as np
 from torch.utils.data import ConcatDataset, Dataset
@@ -46,7 +45,6 @@ class DummyConcatDataset(ConcatDataset):
 
 class TestMultiSourceSampler(TestCase):
 
-    @patch("mmengine.dist.get_dist_info", return_value=(7, 8))
     def setUp(self):
         self.length_a = 100
         self.dataset_a = DummyDataset(self.length_a, flag="a")
