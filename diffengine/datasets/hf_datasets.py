@@ -111,10 +111,9 @@ class HFDatasetPreComputeEmbs(HFDataset):
     Args:
     ----
         tokenizer (dict): Config of tokenizer.
-        scheduler (dict): Config of scheduler.
         text_encoder (dict): Config of text encoder.
         model (str): pretrained model name of stable diffusion.
-            Defaults to 'runwayml/stable-diffusion-v1-5'.xt'.
+            Defaults to 'runwayml/stable-diffusion-v1-5'.
         device (str): Device used to compute embeddings. Defaults to 'cuda'.
         proportion_empty_prompts (float): The probabilities to replace empty
             text. Defaults to 0.0.
