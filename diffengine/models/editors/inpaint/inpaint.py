@@ -83,6 +83,7 @@ class StableDiffusionInpaint(StableDiffusion):
               width: int = 512,
               num_inference_steps: int = 50,
               output_type: str = "pil",
+              seed: int = 0,
               **kwargs) -> list[np.ndarray]:
         """Inference function.
 
@@ -105,6 +106,8 @@ class StableDiffusionInpaint(StableDiffusion):
                 Defaults to 50.
             output_type (str): The output format of the generate image.
                 Choose between 'pil' and 'latent'. Defaults to 'pil'.
+            seed (int): The seed for random number generator.
+                Defaults to 0.
             **kwargs: Other arguments.
 
         """
@@ -135,7 +138,8 @@ class StableDiffusionInpaint(StableDiffusion):
         pipeline.to(self.device)
         pipeline.set_progress_bar_config(disable=True)
         images = []
-        for p, img, m in zip(prompt, image, mask, strict=True):
+        for i, (p, img, m) in enumerate(zip(prompt, image, mask, strict=True)):
+            generator = torch.Generator(device=self.device).manual_seed(i + seed)
             pil_img = load_image(img) if isinstance(img, str) else img
             pil_img = pil_img.convert("RGB")
             mask_image = load_image(m) if isinstance(m, str) else m
@@ -149,6 +153,7 @@ class StableDiffusionInpaint(StableDiffusion):
                 height=height,
                 width=width,
                 output_type=output_type,
+                generator=generator,
                 **kwargs).images[0]
             if output_type == "latent":
                 images.append(image)
