@@ -1,3 +1,4 @@
+from .dataset_wrapper import ConcatDataset
 from .hf_condition_datasets import (
     HFConditionDataset,
     HFConditionDatasetPreComputeEmbs,
@@ -17,4 +18,5 @@ __all__ = [
     "HFDreamBoothDatasetPreComputeEmbs",
     "HFConditionDataset",
     "HFConditionDatasetPreComputeEmbs",
+    "ConcatDataset",
 ]
