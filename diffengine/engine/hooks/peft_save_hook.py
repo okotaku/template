@@ -1,3 +1,4 @@
+# flake8: noqa: C901
 import os.path as osp
 import shutil
 from collections import OrderedDict
@@ -48,9 +49,18 @@ class PeftSaveHook(Hook):
 
         if hasattr(model,
                    "finetune_text_encoder") and model.finetune_text_encoder:
-            model.text_encoder.save_pretrained(
-                osp.join(ckpt_path, "text_encoder"))
-            model_keys.append("text_encoder")
+            if hasattr(model, "text_encoder"):
+                model.text_encoder.save_pretrained(
+                    osp.join(ckpt_path, "text_encoder"))
+                model_keys.append("text_encoder")
+            if hasattr(model, "text_encoder_one"):
+                model.text_encoder_one.save_pretrained(
+                    osp.join(ckpt_path, "text_encoder_one"))
+                model_keys.append("text_encoder_one")
+            if hasattr(model, "text_encoder_two"):
+                model.text_encoder_two.save_pretrained(
+                    osp.join(ckpt_path, "text_encoder_two"))
+                model_keys.append("text_encoder_two")
 
         # remove previous weights
         if self.last_step >= 0:
