@@ -51,7 +51,7 @@ class SFastHook(Hook):
         self.enable_triton = enable_triton
         self.enable_cuda_graph = enable_cuda_graph
 
-    def before_train(self, runner: Runner) -> None:
+    def before_train(self, runner: Runner) -> None:  # noqa: C901
         """Compile the model.
 
         Args:
@@ -68,9 +68,14 @@ class SFastHook(Hook):
         config.enable_cuda_graph = self.enable_cuda_graph
         if config.memory_format is not None:
             model.unet = model.unet.to(memory_format=config.memory_format)
+        is_training = model.unet.training
+        if not is_training:
+            model.train()
         model.unet = torch.compile(model.unet, backend=functools.partial(
             sfast_jit_trace,
             ts_compiler=_build_ts_compiler(config)))
+        if not is_training:
+            model.eval()
 
         if hasattr(model, "text_encoder"):
             model.text_encoder = torch.compile(
@@ -87,3 +92,6 @@ class SFastHook(Hook):
         if hasattr(model, "image_encoder"):
             model.image_encoder = torch.compile(
                 model.image_encoder, backend=self.backend, mode=self.mode)
+        if hasattr(model, "controlnet"):
+            model.controlnet = torch.compile(
+                model.controlnet, backend=self.backend, mode=self.mode)
