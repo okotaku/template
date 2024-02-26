@@ -144,7 +144,7 @@ class HFDreamBoothDatasetPreComputeEmbs(HFDreamBoothDataset):
             text_encoder,
             default_args={"pretrained_model_name_or_path": model}).to(device)
 
-        self.empty_embed = encode_prompt(
+        self.embed = encode_prompt(
             {"text": [self.instance_prompt, ""]},
             text_encoder=text_encoder,
             tokenizer=tokenizer,
@@ -180,8 +180,8 @@ class HFDreamBoothDatasetPreComputeEmbs(HFDreamBoothDataset):
         image = image.convert("RGB")
         result = {
             "img": image,
-            "prompt_embeds": self.empty_embed["prompt_embeds"][0] if (
+            "prompt_embeds": self.embed["prompt_embeds"][0] if (
                 random.random() < self.proportion_empty_prompts
-                ) else self.empty_embed["prompt_embeds"][1],
+                ) else self.embed["prompt_embeds"][1],
         }
         return self.pipeline(result)
