@@ -39,7 +39,7 @@ Before installing DiffEngine, please ensure that PyTorch >= v2.0 has been succes
 Install DiffEngine
 
 ```
-pip install git+https://github.com/okotaku/diffengine.git
+pip install git+https://github.com/okotaku/template.git
 ```
 
 ## 👨‍🏫 Get Started [🔝](#-table-of-contents)
@@ -74,7 +74,7 @@ work_dirs/stable_diffusion_v15_dreambooth_lora_dog
 
 An illustrative output example is provided below:
 
-![img](https://github.com/okotaku/diffengine/assets/24734142/e4576779-e05f-42d0-a709-d6481eea87a9)
+![img](https://github.com/okotaku/template/assets/24734142/e4576779-e05f-42d0-a709-d6481eea87a9)
 
 4. **Inference with diffusers.pipeline**: Once you have trained a model, simply specify the path to the saved model and inference by the `diffusers.pipeline` module.
 
@@ -106,26 +106,26 @@ image.save('demo.png')
 
 ## 📘 Documentation [🔝](#-table-of-contents)
 
-For detailed user guides and advanced guides, please refer to our [Documentation](https://diffengine.readthedocs.io/en/latest/):
+For detailed user guides and advanced guides, please refer to our [Documentation](https://template.readthedocs.io/en/latest/):
 
-- [Get Started](https://diffengine.readthedocs.io/en/latest/get_started.html) for get started.
+- [Get Started](https://template.readthedocs.io/en/latest/get_started.html) for get started.
 
 <details>
 <summary>Run Guides</summary>
 
-- [Run Stable Diffusion](https://diffengine.readthedocs.io/en/latest/run_guides/run.html)
-- [Run DreamBooth](https://diffengine.readthedocs.io/en/latest/run_guides/run_dreambooth.html)
-- [Run LoRA](https://diffengine.readthedocs.io/en/latest/run_guides/run_lora.html)
-- [Run ControlNet](https://diffengine.readthedocs.io/en/latest/run_guides/run_controlnet.html)
-- [Run Inpaint](https://diffengine.readthedocs.io/en/latest/run_guides/run_inpaint.html)
+- [Run Stable Diffusion](https://template.readthedocs.io/en/latest/run_guides/run.html)
+- [Run DreamBooth](https://template.readthedocs.io/en/latest/run_guides/run_dreambooth.html)
+- [Run LoRA](https://template.readthedocs.io/en/latest/run_guides/run_lora.html)
+- [Run ControlNet](https://template.readthedocs.io/en/latest/run_guides/run_controlnet.html)
+- [Run Inpaint](https://template.readthedocs.io/en/latest/run_guides/run_inpaint.html)
 
 </details>
 
 <details>
 <summary>User Guides</summary>
 
-- [Learn About Config](https://diffengine.readthedocs.io/en/latest/user_guides/config.html)
-- [Prepare Dataset](https://diffengine.readthedocs.io/en/latest/user_guides/dataset_prepare.html)
+- [Learn About Config](https://template.readthedocs.io/en/latest/user_guides/config.html)
+- [Prepare Dataset](https://template.readthedocs.io/en/latest/user_guides/dataset_prepare.html)
 
 </details>
 

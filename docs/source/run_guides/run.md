@@ -1,4 +1,4 @@
-# Training
+# Stable Diffusion Training
 
 You can also check [`configs/stable_diffusion/README.md`](https://github.com/okotaku/diffengine/tree/main/diffengine/configs/stable_diffusion/README.md) file.
 

@@ -26,6 +26,7 @@ Welcome to diffengine's documentation!
    run_guides/run_dreambooth.md
    run_guides/run_lora.md
    run_guides/run_controlnet.md
+   run_guides/run_inpaint.md
 
 .. toctree::
    :maxdepth: 2
