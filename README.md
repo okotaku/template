@@ -26,21 +26,24 @@
 
 ## 📖 Introduction [🔝](#-table-of-contents)
 
-DiffEngine is the open-source toolbox for training state-of-the-art Diffusion Models. Packed with advanced features including diffusers and MMEngine, DiffEngine empowers both seasoned experts and newcomers in the field to efficiently create and enhance diffusion models. Stay at the forefront of innovation with our cutting-edge platform, accelerating your journey in Diffusion Models training.
+DiffEngine is an open-source toolbox designed for training state-of-the-art Diffusion Models. Packed with advanced features including diffusers and MMEngine, DiffEngine empowers both seasoned experts and newcomers in the field to efficiently create and enhance diffusion models. Stay at the forefront of innovation with our cutting-edge platform, accelerating your journey in Diffusion Models training.
 
-1. **Training state-of-the-art Diffusion Models**: Empower your projects with state-of-the-art Diffusion Models. We can use Stable Diffusion, Stable Diffusion XL, DreamBooth, LoRA etc.
-2. **Unified Config System and Module Designs**: Thanks to MMEngine, our platform boasts a unified configuration system and modular designs that streamline your workflow. Easily customize hyperparameters, loss functions, and other crucial settings while maintaining a structured and organized project environment.
-3. **Inference with diffusers.pipeline**: Seamlessly transition from training to real-world application using the diffusers.pipeline module. Effortlessly deploy your trained Diffusion Models for inference tasks, enabling quick and efficient decision-making based on the insights derived from your models.
+1. **Training state-of-the-art Diffusion Models**: Empower your projects with state-of-the-art Diffusion Models. Explore options like Stable Diffusion, DreamBooth, and LoRA.
+2. **Unified Config System and Module Designs**: Thanks to MMEngine, our platform boasts a unified configuration system and modular designs. Easily customize hyperparameters, loss functions, and other crucial settings while maintaining a structured and organized project environment.
+3. **Inference with diffusers.pipeline**: Seamlessly transition from training to real-world application. Effortlessly deploy your trained Diffusion Models for inference tasks. Enhance your productivity and project timeline.
+4. **Optimized training speed with Stable-Fast**: Our platform is designed to accelerate training speed. You can achieve high-quality results in less time, accelerating your project timeline and enhancing your productivity.
 
 ## 🛠️ Installation [🔝](#-table-of-contents)
 
-Before installing DiffEngine, please ensure that PyTorch >= v2.0 has been successfully installed following the [official guide](https://pytorch.org/get-started/locally/).
+Before installing DiffEngine, please ensure that you have successfully installed PyTorch >= v2.0 and stable-fast. You can follow the [PyTorch official guide](https://pytorch.org/get-started/locally/) and refer to the [Stable-Fast README](https://github.com/chengzeyi/stable-fast) for installation instructions.
 
 Install DiffEngine
 
 ```
 pip install git+https://github.com/okotaku/template.git
 ```
+
+For a more convenient development experience, consider using either docker-compose or devcontainer. Refer to the [Get Started](https://sdxlengine.readthedocs.io/en/latest/get_started.html) section for additional details.
 
 ## 👨‍🏫 Get Started [🔝](#-table-of-contents)
 
@@ -92,10 +95,6 @@ pipe = DiffusionPipeline.from_pretrained(
     'runwayml/stable-diffusion-v1-5', torch_dtype=torch.float16)
 pipe.to('cuda')
 pipe.unet = PeftModel.from_pretrained(pipe.unet, checkpoint / "unet", adapter_name="default")
-if (checkpoint / "text_encoder").exists():
-    pipe.text_encoder = PeftModel.from_pretrained(
-        pipe.text_encoder, checkpoint / "text_encoder", adapter_name="default"
-    )
 
 image = pipe(
     prompt,
