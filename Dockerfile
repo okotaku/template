@@ -34,6 +34,11 @@ RUN pip install . && \
     rm -rf /usr/local/lib/python3.10/dist-packages/cv2/ && \
     pip install opencv-python-headless
 
+# patches
+RUN cp diffengine/patches/attention.py /usr/local/lib/python3.10/dist-packages/diffusers/models/attention.py && \
+    cp diffengine/patches/transformer_2d.py /usr/local/lib/python3.10/dist-packages/diffusers/models/transformers/transformer_2d.py && \
+    cp diffengine/patches/resnet.py /usr/local/lib/python3.10/dist-packages/diffusers/models/resnet.py
+
 # Language settings
 ENV LANG C.UTF-8
 ENV LANGUAGE en_US

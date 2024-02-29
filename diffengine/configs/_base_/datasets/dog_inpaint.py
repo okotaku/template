@@ -12,7 +12,11 @@ from diffengine.datasets.transforms import (
     RandomHorizontalFlip,
     TorchVisonTransformWrapper,
 )
-from diffengine.engine.hooks import CheckpointHook, VisualizationHook
+from diffengine.engine.hooks import (
+    CheckpointHook,
+    CompileHook,
+    VisualizationHook,
+)
 
 train_pipeline = [
     dict(type=TorchVisonTransformWrapper,
@@ -64,4 +68,5 @@ custom_hooks = [
         height=512,
         interval=100),
     dict(type=CheckpointHook),
+    dict(type=CompileHook),
 ]

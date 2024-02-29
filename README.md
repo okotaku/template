@@ -16,6 +16,8 @@
   - [📄 Table of Contents](#-table-of-contents)
   - [📖 Introduction 🔝](#-introduction-)
   - [🛠️ Installation 🔝](#️-installation-)
+    - [🐳 Docker](#-docker)
+    - [📦 Devcontainer](#-devcontainer)
   - [👨‍🏫 Get Started 🔝](#-get-started-)
   - [📘 Documentation 🔝](#-documentation-)
   - [📊 Model Zoo 🔝](#-model-zoo-)
@@ -31,19 +33,40 @@ DiffEngine is an open-source toolbox designed for training state-of-the-art Diff
 1. **Training state-of-the-art Diffusion Models**: Empower your projects with state-of-the-art Diffusion Models. Explore options like Stable Diffusion, DreamBooth, and LoRA.
 2. **Unified Config System and Module Designs**: Thanks to MMEngine, our platform boasts a unified configuration system and modular designs. Easily customize hyperparameters, loss functions, and other crucial settings while maintaining a structured and organized project environment.
 3. **Inference with diffusers.pipeline**: Seamlessly transition from training to real-world application. Effortlessly deploy your trained Diffusion Models for inference tasks. Enhance your productivity and project timeline.
-4. **Optimized training speed with Stable-Fast**: Our platform is designed to accelerate training speed. You can achieve high-quality results in less time, accelerating your project timeline and enhancing your productivity.
+4. **Optimized training speed**: Our platform is designed to accelerate training speed. We utilize the Apex, Nvidia NGC Container, `torch.compile`. You can achieve high-quality results in less time, accelerating your project timeline and enhancing your productivity.
 
 ## 🛠️ Installation [🔝](#-table-of-contents)
 
-Before installing DiffEngine, please ensure that you have successfully installed PyTorch >= v2.0 and stable-fast. You can follow the [PyTorch official guide](https://pytorch.org/get-started/locally/) and refer to the [Stable-Fast README](https://github.com/chengzeyi/stable-fast) for installation instructions.
+#### 🐳 Docker
 
-Install DiffEngine
+Below are the quick steps for installing and running dreambooth training using Docker:
+
+```bash
+git clone https://github.com/okotaku/template
+cd sdxlengine
+docker compose up -d
+docker compose exec template diffengine train stable_diffusion_xl_dreambooth_lora_dog
+```
+
+#### 📦 Devcontainer
+
+You can also utilize the devcontainer to develop the DiffEngine. The devcontainer is a pre-configured development environment that runs in a Docker container. It includes all the necessary tools and dependencies for developing, building, and testing the DiffEngine.
+
+1. Clone repository:
 
 ```
-pip install git+https://github.com/okotaku/template.git
+git clone https://github.com/okotaku/template
 ```
 
-For a more convenient development experience, consider using either docker-compose or devcontainer. Refer to the [Get Started](https://sdxlengine.readthedocs.io/en/latest/get_started.html) section for additional details.
+2. Open the cloned repository in Visual Studio Code.
+
+3. Click on the "Reopen in Container" button located in the bottom right corner of the window. This action will open the repository within a devcontainer.
+
+4. Run the following command to start training with the selected config:
+
+```bash
+diffengine train stable_diffusion_xl_dreambooth_lora_dog
+```
 
 ## 👨‍🏫 Get Started [🔝](#-table-of-contents)
 

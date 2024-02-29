@@ -9,7 +9,11 @@ from diffengine.datasets.transforms import (
     RandomHorizontalFlip,
     TorchVisonTransformWrapper,
 )
-from diffengine.engine.hooks import PeftSaveHook, VisualizationHook
+from diffengine.engine.hooks import (
+    CompileHook,
+    PeftSaveHook,
+    VisualizationHook,
+)
 
 train_pipeline = [
     dict(type=TorchVisonTransformWrapper,
@@ -51,4 +55,5 @@ custom_hooks = [
         by_epoch=False,
         interval=100),
     dict(type=PeftSaveHook),
+    dict(type=CompileHook),
 ]

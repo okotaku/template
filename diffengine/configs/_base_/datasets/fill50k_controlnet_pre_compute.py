@@ -10,7 +10,11 @@ from diffengine.datasets.transforms import (
     RandomHorizontalFlip,
     TorchVisonTransformWrapper,
 )
-from diffengine.engine.hooks import ControlNetSaveHook, VisualizationHook
+from diffengine.engine.hooks import (
+    CompileHook,
+    ControlNetSaveHook,
+    VisualizationHook,
+)
 
 train_pipeline = [
     dict(
@@ -60,4 +64,5 @@ custom_hooks = [
             'https://github.com/okotaku/diffengine/assets/24734142/1af9dbb0-b056-435c-bc4b-62a823889191'  # noqa
         ] * 4),
     dict(type=ControlNetSaveHook),
+    dict(type=CompileHook),
 ]

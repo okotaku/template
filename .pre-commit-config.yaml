@@ -51,4 +51,5 @@ repos:
               ^docs
               | ^diffengine/configs
               | ^projects
+              | ^diffengine/patches
           )

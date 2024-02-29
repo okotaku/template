@@ -29,8 +29,6 @@ class SFastHook(Hook):
             Defaults to "inductor".
         mode (str): The mode to use for compilation. Defaults to None.
         enable_triton (bool): Whether to enable Triton. Defaults to True.
-        enable_cuda_graph (bool): Whether to enable CUDA graph.
-            Defaults to True.
 
     """
 
@@ -39,7 +37,6 @@ class SFastHook(Hook):
     def __init__(self, backend: str = "inductor", mode: str | None = None,
                  *,
                  enable_triton: bool = True,
-                 enable_cuda_graph: bool = True,
                  ) -> None:
         super().__init__()
         if sfast_jit_trace is None:
@@ -49,7 +46,6 @@ class SFastHook(Hook):
         self.backend = backend
         self.mode = mode
         self.enable_triton = enable_triton
-        self.enable_cuda_graph = enable_cuda_graph
 
     def before_train(self, runner: Runner) -> None:  # noqa: C901
         """Compile the model.
@@ -65,7 +61,6 @@ class SFastHook(Hook):
 
         config = CompilationConfig.Default()
         config.enable_triton = self.enable_triton
-        config.enable_cuda_graph = self.enable_cuda_graph
         if config.memory_format is not None:
             model.unet = model.unet.to(memory_format=config.memory_format)
         is_training = model.unet.training
@@ -73,7 +68,12 @@ class SFastHook(Hook):
             model.train()
         model.unet = torch.compile(model.unet, backend=functools.partial(
             sfast_jit_trace,
-            ts_compiler=_build_ts_compiler(config)))
+            ts_compiler=_build_ts_compiler(
+                config,
+                enable_triton_layer_norm=self.enable_triton,
+                enable_triton_reshape=self.enable_triton,
+                )))
+
         if not is_training:
             model.eval()
 

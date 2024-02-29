@@ -6,4 +6,5 @@ with read_base():
     from .._base_.models.stable_diffusion_v15 import *
     from .._base_.schedules.stable_diffusion_50e import *
 
-model.update(pre_compute_text_embeddings=True)
+model.update(pre_compute_text_embeddings=True,
+             weight_dtype="bf16")

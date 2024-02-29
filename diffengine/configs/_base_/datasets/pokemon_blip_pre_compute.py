@@ -9,7 +9,11 @@ from diffengine.datasets.transforms import (
     RandomHorizontalFlip,
     TorchVisonTransformWrapper,
 )
-from diffengine.engine.hooks import CheckpointHook, VisualizationHook
+from diffengine.engine.hooks import (
+    CheckpointHook,
+    CompileHook,
+    VisualizationHook,
+)
 
 train_pipeline = [
     dict(type=TorchVisonTransformWrapper,
@@ -48,4 +52,5 @@ test_evaluator = val_evaluator
 custom_hooks = [
     dict(type=VisualizationHook, prompt=["yoda pokemon"] * 4),
     dict(type=CheckpointHook),
+    dict(type=CompileHook),
 ]

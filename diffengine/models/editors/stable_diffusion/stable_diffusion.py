@@ -370,7 +370,7 @@ class StableDiffusion(BaseModel):
         """Preprocess model input."""
         if self.input_perturbation_gamma > 0:
             input_noise = noise + self.input_perturbation_gamma * torch.randn_like(
-                noise).to(self.weight_dtype)
+                noise)
         else:
             input_noise = noise
         return self.scheduler.add_noise(latents, input_noise, timesteps)

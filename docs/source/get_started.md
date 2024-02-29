@@ -1,15 +1,3 @@
-# Prerequisites
-
-Before installing DiffEngine, please ensure that you have successfully installed PyTorch >= v2.0 and stable-fast. You can follow the [PyTorch official guide](https://pytorch.org/get-started/locally/) and refer to the [Stable-Fast README](https://github.com/chengzeyi/stable-fast) for installation instructions.
-
-# Installation
-
-Below are quick steps for installation:
-
-```
-pip install git+https://github.com/okotaku/template.git
-```
-
 # Development Environment Options
 
 ## Docker
