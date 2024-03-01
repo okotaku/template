@@ -3,7 +3,7 @@
 # Copied from xtuner.tools.list_cfg
 import argparse
 
-from diffengine.configs import cfgs_name_path  # type: ignore[attr-defined]
+from modules.configs import cfgs_name_path
 
 
 def parse_args():
