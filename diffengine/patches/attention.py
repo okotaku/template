@@ -11,36 +11,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any
+from typing import Any, Dict, Optional
 
 import torch
 import torch.nn.functional as F
 from torch import nn
-
 from diffengine.models.layers import FusedLayerNorm
 
-#from apex.normalization.fused_layer_norm import FusedLayerNorm
 from ..utils import USE_PEFT_BACKEND
 from ..utils.torch_utils import maybe_allow_in_graph
 from .activations import GEGLU, GELU, ApproximateGELU
 from .attention_processor import Attention
 from .embeddings import SinusoidalPositionalEmbedding
 from .lora import LoRACompatibleLinear
-from .normalization import (
-    AdaLayerNorm,
-    AdaLayerNormContinuous,
-    AdaLayerNormZero,
-    RMSNorm,
-)
+from .normalization import AdaLayerNorm, AdaLayerNormContinuous, AdaLayerNormZero, RMSNorm
 
 
 def _chunked_feed_forward(
-    ff: nn.Module, hidden_states: torch.Tensor, chunk_dim: int, chunk_size: int, lora_scale: float | None = None,
+    ff: nn.Module, hidden_states: torch.Tensor, chunk_dim: int, chunk_size: int, lora_scale: Optional[float] = None
 ):
     # "feed_forward_chunk_size" can be used to save memory
     if hidden_states.shape[chunk_dim] % chunk_size != 0:
         raise ValueError(
-            f"`hidden_states` dimension to be chunked: {hidden_states.shape[chunk_dim]} has to be divisible by chunk size: {chunk_size}. Make sure to set an appropriate `chunk_size` when calling `unet.enable_forward_chunking`.",
+            f"`hidden_states` dimension to be chunked: {hidden_states.shape[chunk_dim]} has to be divisible by chunk size: {chunk_size}. Make sure to set an appropriate `chunk_size` when calling `unet.enable_forward_chunking`."
         )
 
     num_chunks = hidden_states.shape[chunk_dim] // chunk_size
@@ -61,15 +54,14 @@ def _chunked_feed_forward(
 
 @maybe_allow_in_graph
 class GatedSelfAttentionDense(nn.Module):
-    r"""A gated self-attention dense layer that combines visual features and object features.
+    r"""
+    A gated self-attention dense layer that combines visual features and object features.
 
-    Parameters
-    ----------
+    Parameters:
         query_dim (`int`): The number of channels in the query.
         context_dim (`int`): The number of channels in the context.
         n_heads (`int`): The number of heads to use for attention.
         d_head (`int`): The number of channels in each head.
-
     """
 
     def __init__(self, query_dim: int, context_dim: int, n_heads: int, d_head: int):
@@ -104,10 +96,10 @@ class GatedSelfAttentionDense(nn.Module):
 
 @maybe_allow_in_graph
 class BasicTransformerBlock(nn.Module):
-    r"""A basic Transformer block.
+    r"""
+    A basic Transformer block.
 
-    Parameters
-    ----------
+    Parameters:
         dim (`int`): The number of channels in the input and output.
         num_attention_heads (`int`): The number of heads to use for multi-head attention.
         attention_head_dim (`int`): The number of channels in each head.
@@ -136,7 +128,6 @@ class BasicTransformerBlock(nn.Module):
             The type of positional embeddings to apply to.
         num_positional_embeddings (`int`, *optional*, defaults to `None`):
             The maximum number of positional embeddings to apply.
-
     """
 
     def __init__(
@@ -145,9 +136,9 @@ class BasicTransformerBlock(nn.Module):
         num_attention_heads: int,
         attention_head_dim: int,
         dropout=0.0,
-        cross_attention_dim: int | None = None,
+        cross_attention_dim: Optional[int] = None,
         activation_fn: str = "geglu",
-        num_embeds_ada_norm: int | None = None,
+        num_embeds_ada_norm: Optional[int] = None,
         attention_bias: bool = False,
         only_cross_attention: bool = False,
         double_self_attention: bool = False,
@@ -157,11 +148,11 @@ class BasicTransformerBlock(nn.Module):
         norm_eps: float = 1e-5,
         final_dropout: bool = False,
         attention_type: str = "default",
-        positional_embeddings: str | None = None,
-        num_positional_embeddings: int | None = None,
-        ada_norm_continous_conditioning_embedding_dim: int | None = None,
-        ada_norm_bias: int | None = None,
-        ff_inner_dim: int | None = None,
+        positional_embeddings: Optional[str] = None,
+        num_positional_embeddings: Optional[int] = None,
+        ada_norm_continous_conditioning_embedding_dim: Optional[int] = None,
+        ada_norm_bias: Optional[int] = None,
+        ff_inner_dim: Optional[int] = None,
         ff_bias: bool = True,
         attention_out_bias: bool = True,
     ):
@@ -178,7 +169,7 @@ class BasicTransformerBlock(nn.Module):
         if norm_type in ("ada_norm", "ada_norm_zero") and num_embeds_ada_norm is None:
             raise ValueError(
                 f"`norm_type` is set to {norm_type}, but `num_embeds_ada_norm` is not defined. Please make sure to"
-                f" define `num_embeds_ada_norm` if setting `norm_type` to {norm_type}.",
+                f" define `num_embeds_ada_norm` if setting `norm_type` to {norm_type}."
             )
 
         self.norm_type = norm_type
@@ -186,7 +177,7 @@ class BasicTransformerBlock(nn.Module):
 
         if positional_embeddings and (num_positional_embeddings is None):
             raise ValueError(
-                "If `positional_embedding` type is defined, `num_positition_embeddings` must also be defined.",
+                "If `positional_embedding` type is defined, `num_positition_embeddings` must also be defined."
             )
 
         if positional_embeddings == "sinusoidal":
@@ -240,7 +231,7 @@ class BasicTransformerBlock(nn.Module):
                     "rms_norm",
                 )
             else:
-                self.norm2 = FusedLayerNorm(dim, norm_eps, norm_elementwise_affine)
+                self.norm2 = FusedLayerNorm(dim, eps=norm_eps, elementwise_affine=norm_elementwise_affine)
 
             self.attn2 = Attention(
                 query_dim=dim,
@@ -268,7 +259,7 @@ class BasicTransformerBlock(nn.Module):
             )
 
         elif norm_type in ["ada_norm_zero", "ada_norm", "layer_norm", "ada_norm_continuous"]:
-            self.norm3 = FusedLayerNorm(dim, norm_eps, norm_elementwise_affine)
+            self.norm3 = FusedLayerNorm(dim, eps=norm_eps, elementwise_affine=norm_elementwise_affine)
         elif norm_type == "layer_norm_i2vgen":
             self.norm3 = None
 
@@ -293,7 +284,7 @@ class BasicTransformerBlock(nn.Module):
         self._chunk_size = None
         self._chunk_dim = 0
 
-    def set_chunk_feed_forward(self, chunk_size: int | None, dim: int = 0):
+    def set_chunk_feed_forward(self, chunk_size: Optional[int], dim: int = 0):
         # Sets chunk feed-forward
         self._chunk_size = chunk_size
         self._chunk_dim = dim
@@ -301,13 +292,13 @@ class BasicTransformerBlock(nn.Module):
     def forward(
         self,
         hidden_states: torch.FloatTensor,
-        attention_mask: torch.FloatTensor | None = None,
-        encoder_hidden_states: torch.FloatTensor | None = None,
-        encoder_attention_mask: torch.FloatTensor | None = None,
-        timestep: torch.LongTensor | None = None,
-        cross_attention_kwargs: dict[str, Any] = None,
-        class_labels: torch.LongTensor | None = None,
-        added_cond_kwargs: dict[str, torch.Tensor] | None = None,
+        attention_mask: Optional[torch.FloatTensor] = None,
+        encoder_hidden_states: Optional[torch.FloatTensor] = None,
+        encoder_attention_mask: Optional[torch.FloatTensor] = None,
+        timestep: Optional[torch.LongTensor] = None,
+        cross_attention_kwargs: Dict[str, Any] = None,
+        class_labels: Optional[torch.LongTensor] = None,
+        added_cond_kwargs: Optional[Dict[str, torch.Tensor]] = None,
     ) -> torch.FloatTensor:
         # Notice that normalization is always applied before the real computation in the following blocks.
         # 0. Self-Attention
@@ -317,7 +308,7 @@ class BasicTransformerBlock(nn.Module):
             norm_hidden_states = self.norm1(hidden_states, timestep)
         elif self.norm_type == "ada_norm_zero":
             norm_hidden_states, gate_msa, shift_mlp, scale_mlp, gate_mlp = self.norm1(
-                hidden_states, timestep, class_labels, hidden_dtype=hidden_states.dtype,
+                hidden_states, timestep, class_labels, hidden_dtype=hidden_states.dtype
             )
         elif self.norm_type in ["layer_norm", "layer_norm_i2vgen"]:
             norm_hidden_states = self.norm1(hidden_states)
@@ -392,7 +383,7 @@ class BasicTransformerBlock(nn.Module):
         # i2vgen doesn't have this norm 🤷‍♂️
         if self.norm_type == "ada_norm_continuous":
             norm_hidden_states = self.norm3(hidden_states, added_cond_kwargs["pooled_text_emb"])
-        elif self.norm_type != "ada_norm_single":
+        elif not self.norm_type == "ada_norm_single":
             norm_hidden_states = self.norm3(hidden_states)
 
         if self.norm_type == "ada_norm_zero":
@@ -405,7 +396,7 @@ class BasicTransformerBlock(nn.Module):
         if self._chunk_size is not None:
             # "feed_forward_chunk_size" can be used to save memory
             ff_output = _chunked_feed_forward(
-                self.ff, norm_hidden_states, self._chunk_dim, self._chunk_size, lora_scale=lora_scale,
+                self.ff, norm_hidden_states, self._chunk_dim, self._chunk_size, lora_scale=lora_scale
             )
         else:
             ff_output = self.ff(norm_hidden_states, scale=lora_scale)
@@ -424,16 +415,15 @@ class BasicTransformerBlock(nn.Module):
 
 @maybe_allow_in_graph
 class TemporalBasicTransformerBlock(nn.Module):
-    r"""A basic Transformer block for video like data.
+    r"""
+    A basic Transformer block for video like data.
 
-    Parameters
-    ----------
+    Parameters:
         dim (`int`): The number of channels in the input and output.
         time_mix_inner_dim (`int`): The number of channels for temporal attention.
         num_attention_heads (`int`): The number of heads to use for multi-head attention.
         attention_head_dim (`int`): The number of channels in each head.
         cross_attention_dim (`int`, *optional*): The size of the encoder_hidden_states vector for cross attention.
-
     """
 
     def __init__(
@@ -442,7 +432,7 @@ class TemporalBasicTransformerBlock(nn.Module):
         time_mix_inner_dim: int,
         num_attention_heads: int,
         attention_head_dim: int,
-        cross_attention_dim: int | None = None,
+        cross_attention_dim: Optional[int] = None,
     ):
         super().__init__()
         self.is_res = dim == time_mix_inner_dim
@@ -490,7 +480,7 @@ class TemporalBasicTransformerBlock(nn.Module):
         self._chunk_size = None
         self._chunk_dim = None
 
-    def set_chunk_feed_forward(self, chunk_size: int | None, **kwargs):
+    def set_chunk_feed_forward(self, chunk_size: Optional[int], **kwargs):
         # Sets chunk feed-forward
         self._chunk_size = chunk_size
         # chunk dim should be hardcoded to 1 to have better speed vs. memory trade-off
@@ -500,7 +490,7 @@ class TemporalBasicTransformerBlock(nn.Module):
         self,
         hidden_states: torch.FloatTensor,
         num_frames: int,
-        encoder_hidden_states: torch.FloatTensor | None = None,
+        encoder_hidden_states: Optional[torch.FloatTensor] = None,
     ) -> torch.FloatTensor:
         # Notice that normalization is always applied before the real computation in the following blocks.
         # 0. Self-Attention
@@ -563,7 +553,7 @@ class SkipFFTransformerBlock(nn.Module):
         kv_input_dim: int,
         kv_input_dim_proj_use_bias: bool,
         dropout=0.0,
-        cross_attention_dim: int | None = None,
+        cross_attention_dim: Optional[int] = None,
         attention_bias: bool = False,
         attention_out_bias: bool = True,
     ):
@@ -627,10 +617,10 @@ class SkipFFTransformerBlock(nn.Module):
 
 
 class FeedForward(nn.Module):
-    r"""A feed-forward layer.
+    r"""
+    A feed-forward layer.
 
-    Parameters
-    ----------
+    Parameters:
         dim (`int`): The number of channels in the input.
         dim_out (`int`, *optional*): The number of channels in the output. If not given, defaults to `dim`.
         mult (`int`, *optional*, defaults to 4): The multiplier to use for the hidden dimension.
@@ -638,13 +628,12 @@ class FeedForward(nn.Module):
         activation_fn (`str`, *optional*, defaults to `"geglu"`): Activation function to be used in feed-forward.
         final_dropout (`bool` *optional*, defaults to False): Apply a final dropout.
         bias (`bool`, defaults to True): Whether to use a bias in the linear layer.
-
     """
 
     def __init__(
         self,
         dim: int,
-        dim_out: int | None = None,
+        dim_out: Optional[int] = None,
         mult: int = 4,
         dropout: float = 0.0,
         activation_fn: str = "geglu",

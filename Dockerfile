@@ -20,7 +20,7 @@ RUN pip install --upgrade pip
 
 # Install xformers
 RUN pip install ninja
-RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=8 && \
+RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=4 && \
     pip install -v -U git+https://github.com/facebookresearch/xformers.git@v0.0.24#egg=xformers
 
 # Install Stable Fast
@@ -37,7 +37,8 @@ RUN pip install . && \
 # patches
 RUN cp diffengine/patches/attention.py /usr/local/lib/python3.10/dist-packages/diffusers/models/attention.py && \
     cp diffengine/patches/transformer_2d.py /usr/local/lib/python3.10/dist-packages/diffusers/models/transformers/transformer_2d.py && \
-    cp diffengine/patches/resnet.py /usr/local/lib/python3.10/dist-packages/diffusers/models/resnet.py
+    cp diffengine/patches/resnet.py /usr/local/lib/python3.10/dist-packages/diffusers/models/resnet.py && \
+    cp diffengine/patches/unet_2d_condition.py /usr/local/lib/python3.10/dist-packages/diffusers/models/unets/unet_2d_condition.py
 
 # Language settings
 ENV LANG C.UTF-8
