@@ -14,14 +14,12 @@
 # limitations under the License.
 
 from functools import partial
+from typing import Optional, Tuple, Union
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
-from torch import nn
 
-from diffengine.models.layers import GroupNorm
-
-#from apex.contrib.group_norm import GroupNorm
 from ..utils import USE_PEFT_BACKEND
 from .activations import get_activation
 from .attention_processor import SpatialNorm
@@ -44,11 +42,40 @@ from .upsampling import (  # noqa
 )
 
 
-class ResnetBlockCondNorm2D(nn.Module):
-    r"""A Resnet block that use normalization layer that incorporate conditioning information.
+import torch
+from apex.contrib.group_norm import GroupNorm as BaseGN
+from apex.normalization.fused_layer_norm import FusedLayerNorm as BaseLN
+from torch._guards import detect_fake_mode
+from torch.nn import functional as F  # noqa: N812
 
-    Parameters
-    ----------
+
+class FusedLayerNorm(BaseLN):
+    """FusedLayerNorm layer with the apex implementation."""
+
+    @torch.compiler.disable
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        """Forward method of the FusedLayerNorm layer."""
+        fake_mode = detect_fake_mode(input)
+        if fake_mode:
+            return F.layer_norm(
+                input, self.normalized_shape, self.weight, self.bias, self.eps)
+        return super().forward(input)
+
+
+class GroupNorm(BaseGN):
+    """GroupNorm layer with the apex implementation."""
+
+    @torch.compiler.disable
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        """Forward method of the GroupNorm layer."""
+        return super().forward(input)
+
+
+class ResnetBlockCondNorm2D(nn.Module):
+    r"""
+    A Resnet block that use normalization layer that incorporate conditioning information.
+
+    Parameters:
         in_channels (`int`): The number of channels in the input.
         out_channels (`int`, *optional*, default to be `None`):
             The number of output channels for the first conv2d layer. If None, same as `in_channels`.
@@ -72,28 +99,27 @@ class ResnetBlockCondNorm2D(nn.Module):
             `conv_shortcut` output.
         conv_2d_out_channels (`int`, *optional*, default to `None`): the number of channels in the output.
             If None, same as `out_channels`.
-
     """
 
     def __init__(
         self,
         *,
         in_channels: int,
-        out_channels: int | None = None,
+        out_channels: Optional[int] = None,
         conv_shortcut: bool = False,
         dropout: float = 0.0,
         temb_channels: int = 512,
         groups: int = 32,
-        groups_out: int | None = None,
+        groups_out: Optional[int] = None,
         eps: float = 1e-6,
         non_linearity: str = "swish",
         time_embedding_norm: str = "ada_group",  # ada_group, spatial
         output_scale_factor: float = 1.0,
-        use_in_shortcut: bool | None = None,
+        use_in_shortcut: Optional[bool] = None,
         up: bool = False,
         down: bool = False,
         conv_shortcut_bias: bool = True,
-        conv_2d_out_channels: int | None = None,
+        conv_2d_out_channels: Optional[int] = None,
     ):
         super().__init__()
         self.in_channels = in_channels
@@ -196,10 +222,10 @@ class ResnetBlockCondNorm2D(nn.Module):
 
 
 class ResnetBlock2D(nn.Module):
-    r"""A Resnet block.
+    r"""
+    A Resnet block.
 
-    Parameters
-    ----------
+    Parameters:
         in_channels (`int`): The number of channels in the input.
         out_channels (`int`, *optional*, default to be `None`):
             The number of output channels for the first conv2d layer. If None, same as `in_channels`.
@@ -224,31 +250,30 @@ class ResnetBlock2D(nn.Module):
             `conv_shortcut` output.
         conv_2d_out_channels (`int`, *optional*, default to `None`): the number of channels in the output.
             If None, same as `out_channels`.
-
     """
 
     def __init__(
         self,
         *,
         in_channels: int,
-        out_channels: int | None = None,
+        out_channels: Optional[int] = None,
         conv_shortcut: bool = False,
         dropout: float = 0.0,
         temb_channels: int = 512,
         groups: int = 32,
-        groups_out: int | None = None,
+        groups_out: Optional[int] = None,
         pre_norm: bool = True,
         eps: float = 1e-6,
         non_linearity: str = "swish",
         skip_time_act: bool = False,
         time_embedding_norm: str = "default",  # default, scale_shift,
-        kernel: torch.FloatTensor | None = None,
+        kernel: Optional[torch.FloatTensor] = None,
         output_scale_factor: float = 1.0,
-        use_in_shortcut: bool | None = None,
+        use_in_shortcut: Optional[bool] = None,
         up: bool = False,
         down: bool = False,
         conv_shortcut_bias: bool = True,
-        conv_2d_out_channels: int | None = None,
+        conv_2d_out_channels: Optional[int] = None,
     ):
         super().__init__()
         if time_embedding_norm == "ada_group":
@@ -386,7 +411,7 @@ class ResnetBlock2D(nn.Module):
         elif self.time_embedding_norm == "scale_shift":
             if temb is None:
                 raise ValueError(
-                    f" `temb` should not be None when `time_embedding_norm` is {self.time_embedding_norm}",
+                    f" `temb` should not be None when `time_embedding_norm` is {self.time_embedding_norm}"
                 )
             time_scale, time_shift = torch.chunk(temb, 2, dim=1)
             hidden_states = self.norm2(hidden_states)
@@ -423,23 +448,22 @@ def rearrange_dims(tensor: torch.Tensor) -> torch.Tensor:
 
 
 class Conv1dBlock(nn.Module):
-    """Conv1d --> GroupNorm --> Mish
+    """
+    Conv1d --> GroupNorm --> Mish
 
-    Parameters
-    ----------
+    Parameters:
         inp_channels (`int`): Number of input channels.
         out_channels (`int`): Number of output channels.
         kernel_size (`int` or `tuple`): Size of the convolving kernel.
         n_groups (`int`, default `8`): Number of groups to separate the channels into.
         activation (`str`, defaults to `mish`): Name of the activation function.
-
     """
 
     def __init__(
         self,
         inp_channels: int,
         out_channels: int,
-        kernel_size: int | tuple[int, int],
+        kernel_size: Union[int, Tuple[int, int]],
         n_groups: int = 8,
         activation: str = "mish",
     ):
@@ -460,16 +484,15 @@ class Conv1dBlock(nn.Module):
 
 # unet_rl.py
 class ResidualTemporalBlock1D(nn.Module):
-    """Residual 1D block with temporal convolutions.
+    """
+    Residual 1D block with temporal convolutions.
 
-    Parameters
-    ----------
+    Parameters:
         inp_channels (`int`): Number of input channels.
         out_channels (`int`): Number of output channels.
         embed_dim (`int`): Embedding dimension.
         kernel_size (`int` or `tuple`): Size of the convolving kernel.
         activation (`str`, defaults `mish`): It is possible to choose the right activation function.
-
     """
 
     def __init__(
@@ -477,7 +500,7 @@ class ResidualTemporalBlock1D(nn.Module):
         inp_channels: int,
         out_channels: int,
         embed_dim: int,
-        kernel_size: int | tuple[int, int] = 5,
+        kernel_size: Union[int, Tuple[int, int]] = 5,
         activation: str = "mish",
     ):
         super().__init__()
@@ -492,15 +515,13 @@ class ResidualTemporalBlock1D(nn.Module):
         )
 
     def forward(self, inputs: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
-        """Args:
-        ----
+        """
+        Args:
             inputs : [ batch_size x inp_channels x horizon ]
             t : [ batch_size x embed_dim ]
 
-        Returns
-        -------
+        returns:
             out : [ batch_size x out_channels x horizon ]
-
         """
         t = self.time_emb_act(t)
         t = self.time_emb(t)
@@ -510,21 +531,20 @@ class ResidualTemporalBlock1D(nn.Module):
 
 
 class TemporalConvLayer(nn.Module):
-    """Temporal convolutional layer that can be used for video (sequence of images) input Code mostly copied from:
+    """
+    Temporal convolutional layer that can be used for video (sequence of images) input Code mostly copied from:
     https://github.com/modelscope/modelscope/blob/1509fdb973e5871f37148a4b5e5964cafd43e64d/modelscope/models/multi_modal/video_synthesis/unet_sd.py#L1016
 
-    Parameters
-    ----------
+    Parameters:
         in_dim (`int`): Number of input channels.
         out_dim (`int`): Number of output channels.
         dropout (`float`, *optional*, defaults to `0.0`): The dropout probability to use.
-
     """
 
     def __init__(
         self,
         in_dim: int,
-        out_dim: int | None = None,
+        out_dim: Optional[int] = None,
         dropout: float = 0.0,
         norm_num_groups: int = 32,
     ):
@@ -576,28 +596,27 @@ class TemporalConvLayer(nn.Module):
         hidden_states = identity + hidden_states
 
         hidden_states = hidden_states.permute(0, 2, 1, 3, 4).reshape(
-            (hidden_states.shape[0] * hidden_states.shape[2], -1) + hidden_states.shape[3:],
+            (hidden_states.shape[0] * hidden_states.shape[2], -1) + hidden_states.shape[3:]
         )
         return hidden_states
 
 
 class TemporalResnetBlock(nn.Module):
-    r"""A Resnet block.
+    r"""
+    A Resnet block.
 
-    Parameters
-    ----------
+    Parameters:
         in_channels (`int`): The number of channels in the input.
         out_channels (`int`, *optional*, default to be `None`):
             The number of output channels for the first conv2d layer. If None, same as `in_channels`.
         temb_channels (`int`, *optional*, default to `512`): the number of channels in timestep embedding.
         eps (`float`, *optional*, defaults to `1e-6`): The epsilon to use for the normalization.
-
     """
 
     def __init__(
         self,
         in_channels: int,
-        out_channels: int | None = None,
+        out_channels: Optional[int] = None,
         temb_channels: int = 512,
         eps: float = 1e-6,
     ):
@@ -676,10 +695,10 @@ class TemporalResnetBlock(nn.Module):
 
 # VideoResBlock
 class SpatioTemporalResBlock(nn.Module):
-    r"""A SpatioTemporal Resnet block.
+    r"""
+    A SpatioTemporal Resnet block.
 
-    Parameters
-    ----------
+    Parameters:
         in_channels (`int`): The number of channels in the input.
         out_channels (`int`, *optional*, default to be `None`):
             The number of output channels for the first conv2d layer. If None, same as `in_channels`.
@@ -691,16 +710,15 @@ class SpatioTemporalResBlock(nn.Module):
             The merge strategy to use for the temporal mixing.
         switch_spatial_to_temporal_mix (`bool`, *optional*, defaults to `False`):
             If `True`, switch the spatial and temporal mixing.
-
     """
 
     def __init__(
         self,
         in_channels: int,
-        out_channels: int | None = None,
+        out_channels: Optional[int] = None,
         temb_channels: int = 512,
         eps: float = 1e-6,
-        temporal_eps: float | None = None,
+        temporal_eps: Optional[float] = None,
         merge_factor: float = 0.5,
         merge_strategy="learned_with_images",
         switch_spatial_to_temporal_mix: bool = False,
@@ -730,8 +748,8 @@ class SpatioTemporalResBlock(nn.Module):
     def forward(
         self,
         hidden_states: torch.FloatTensor,
-        temb: torch.FloatTensor | None = None,
-        image_only_indicator: torch.Tensor | None = None,
+        temb: Optional[torch.FloatTensor] = None,
+        image_only_indicator: Optional[torch.Tensor] = None,
     ):
         num_frames = image_only_indicator.shape[-1]
         hidden_states = self.spatial_res_block(hidden_states, temb)
@@ -761,16 +779,15 @@ class SpatioTemporalResBlock(nn.Module):
 
 
 class AlphaBlender(nn.Module):
-    r"""A module to blend spatial and temporal features.
+    r"""
+    A module to blend spatial and temporal features.
 
-    Parameters
-    ----------
+    Parameters:
         alpha (`float`): The initial value of the blending factor.
         merge_strategy (`str`, *optional*, defaults to `learned_with_images`):
             The merge strategy to use for the temporal mixing.
         switch_spatial_to_temporal_mix (`bool`, *optional*, defaults to `False`):
             If `True`, switch the spatial and temporal mixing.
-
     """
 
     strategies = ["learned", "fixed", "learned_with_images"]
@@ -830,7 +847,7 @@ class AlphaBlender(nn.Module):
         self,
         x_spatial: torch.Tensor,
         x_temporal: torch.Tensor,
-        image_only_indicator: torch.Tensor | None = None,
+        image_only_indicator: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         alpha = self.get_alpha(image_only_indicator, x_spatial.ndim)
         alpha = alpha.to(x_spatial.dtype)
