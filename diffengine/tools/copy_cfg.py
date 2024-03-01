@@ -7,7 +7,7 @@ from pathlib import Path
 
 from mmengine.utils import mkdir_or_exist
 
-from modules.configs import cfgs_name_path
+from diffengine.configs import cfgs_name_path
 
 
 def parse_args():
