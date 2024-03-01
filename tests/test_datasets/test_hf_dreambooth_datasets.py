@@ -57,7 +57,8 @@ class TestHFDreamBoothDatasetPreComputeEmbs(RunnerTestCase):
             tokenizer=dict(type=CLIPTokenizer.from_pretrained,
                         subfolder="tokenizer"),
             text_encoder=dict(type=CLIPTextModel.from_pretrained,
-                        subfolder="text_encoder"))
+                        subfolder="text_encoder"),
+            device="cpu")
         assert len(dataset) == 5
 
         data = dataset[0]

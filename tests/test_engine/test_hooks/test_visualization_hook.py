@@ -63,7 +63,11 @@ class TestVisualizationHook(RunnerTestCase):
         cfg.train_cfg.max_iters = 100
         cfg.model = Config.fromfile("tests/configs/sd.py").model
         runner = self.build_runner(cfg)
-        hook = VisualizationHook(prompt=["a dog"], by_epoch=False)
+        hook = VisualizationHook(
+            prompt=["a dog"],
+            by_epoch=False,
+            height=64,
+            width=64)
         for i in range(3):
             hook.after_train_iter(runner, i)
             runner.train_loop._iter += 1
