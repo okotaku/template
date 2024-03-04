@@ -1,6 +1,7 @@
 import os.path as osp
 from collections import OrderedDict
 
+import torch
 from mmengine.hooks import Hook
 from mmengine.model import is_model_wrapper
 from mmengine.runner import Runner
@@ -38,7 +39,7 @@ class CheckpointHook(Hook):
                 new_ckpt[k] = checkpoint["state_dict"][k]
         checkpoint["state_dict"] = new_ckpt
 
-    def after_run(self, runner: Runner) -> None:
+    def after_run(self, runner: Runner) -> None:  # noqa: C901
         """After run hook."""
         model = runner.model
         if is_model_wrapper(model):
@@ -49,9 +50,16 @@ class CheckpointHook(Hook):
         if hasattr(model, "decoder"):
             model.decoder.save_pretrained(osp.join(ckpt_path, "prior"))
         if hasattr(model, "unet"):
+            for p in model.unet.parameters():
+                is_contiguous = p.is_contiguous()
+                break
+            if not is_contiguous:
+                model.unet = model.unet.to(
+                    memory_format=torch.contiguous_format)
             model.unet.save_pretrained(osp.join(ckpt_path, "unet"))
         if hasattr(model, "transformer"):
-            model.unet.save_pretrained(osp.join(ckpt_path, "transformer"))
+            model.transformer.save_pretrained(
+                osp.join(ckpt_path, "transformer"))
         if hasattr(
                     model,
                     "finetune_text_encoder",

@@ -266,7 +266,8 @@ class StableDiffusionControlNet(StableDiffusion):
         timesteps = self.timesteps_generator(self.scheduler, num_batches,
                                             self.device)
 
-        noisy_latents = self._preprocess_model_input(latents, noise, timesteps)
+        noisy_model_input, inp_noisy_latents, sigmas = self._preprocess_model_input(
+            latents, noise, timesteps)
 
         if not self.pre_compute_text_embeddings:
             inputs["text"] = self.tokenizer(
@@ -280,7 +281,8 @@ class StableDiffusionControlNet(StableDiffusion):
             encoder_hidden_states = inputs["prompt_embeds"].to(self.weight_dtype)
 
         model_pred = self._forward_compile(
-            noisy_latents, timesteps, encoder_hidden_states,
+            inp_noisy_latents, timesteps, encoder_hidden_states,
             inputs)
 
-        return self.loss(model_pred, noise, latents, timesteps)
+        return self.loss(model_pred, noise, latents, timesteps,
+                         noisy_model_input, sigmas)

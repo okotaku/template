@@ -1,6 +1,7 @@
 import os.path as osp
 from collections import OrderedDict
 
+import torch
 from mmengine.hooks import Hook
 from mmengine.model import is_model_wrapper
 from mmengine.runner import Runner
@@ -43,4 +44,10 @@ class ControlNetSaveHook(Hook):
         if is_model_wrapper(model):
             model = model.module
         ckpt_path = osp.join(runner.work_dir, f"step{runner.iter}")
+        for p in model.controlnet.parameters():
+            is_contiguous = p.is_contiguous()
+            break
+        if not is_contiguous:
+            model.controlnet = model.controlnet.to(
+                memory_format=torch.contiguous_format)
         model.controlnet.save_pretrained(osp.join(ckpt_path, "controlnet"))

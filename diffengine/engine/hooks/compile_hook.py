@@ -35,7 +35,7 @@ class CompileHook(Hook):
             torch.channels_last if device_has_tensor_core() else
             torch.contiguous_format)
 
-    def before_train(self, runner: Runner) -> None:
+    def before_train(self, runner: Runner) -> None:  # noqa: C901
         """Compile the model.
 
         Args:
@@ -48,6 +48,8 @@ class CompileHook(Hook):
             model = model.module
 
         model.unet = model.unet.to(memory_format=self.memory_format)
+        if hasattr(model, "controlnet"):
+            model.controlnet = model.controlnet.to(memory_format=self.memory_format)
 
         if hasattr(model, "_forward_compile"):
             target = "_forward_compile"

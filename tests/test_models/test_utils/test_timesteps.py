@@ -1,10 +1,11 @@
 from unittest import TestCase
 
 import pytest
-from diffusers import DDPMScheduler
+from diffusers import DDPMScheduler, EDMEulerScheduler
 
 from diffengine.models.utils import (
     EarlierTimeSteps,
+    EDMTimeSteps,
     LaterTimeSteps,
     RangeTimeSteps,
     TimeSteps,
@@ -18,11 +19,25 @@ class TestTimeSteps(TestCase):
 
     def test_forward(self):
         module = TimeSteps()
-        scheduler = DDPMScheduler.from_pretrained(
+        scheduler = EDMEulerScheduler.from_pretrained(
             "runwayml/stable-diffusion-v1-5", subfolder="scheduler")
         batch_size = 2
         timesteps = module(scheduler, batch_size, "cpu")
         assert timesteps.shape == (2,)
+
+
+class TestEDMTimeSteps(TestCase):
+
+        def test_init(self):
+            _ = EDMTimeSteps()
+
+        def test_forward(self):
+            module = EDMTimeSteps()
+            scheduler = DDPMScheduler.from_pretrained(
+                "runwayml/stable-diffusion-v1-5", subfolder="scheduler")
+            batch_size = 2
+            timesteps = module(scheduler, batch_size, "cpu")
+            assert timesteps.shape == (2,)
 
 
 class TestLaterTimeSteps(TestCase):

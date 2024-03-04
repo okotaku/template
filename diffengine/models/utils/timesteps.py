@@ -26,6 +26,27 @@ class TimeSteps(nn.Module):
         return timesteps.long()
 
 
+class EDMTimeSteps(nn.Module):
+    """EDM Time Steps module."""
+
+    def forward(self, scheduler: DDPMScheduler, num_batches: int, device: str,
+                ) -> torch.Tensor:
+        """Forward pass.
+
+        Generates time steps for the given batches.
+
+        Args:
+        ----
+            scheduler (DDPMScheduler): Scheduler for training diffusion model.
+            num_batches (int): Batch size.
+            device (str): Device.
+
+        """
+        timesteps = torch.randint(
+            0,
+            scheduler.config.num_train_timesteps, (num_batches, ))
+        return scheduler.timesteps[timesteps.long()].to(device)
+
 
 class LaterTimeSteps(nn.Module):
     """Later biased Time Steps module.

@@ -199,9 +199,10 @@ class StableDiffusionInpaint(StableDiffusion):
         timesteps = self.timesteps_generator(self.scheduler, num_batches,
                                             self.device)
 
-        noisy_latents = self._preprocess_model_input(latents, noise, timesteps)
+        noisy_model_input, inp_noisy_latents, sigmas = self._preprocess_model_input(
+            latents, noise, timesteps)
 
-        latent_model_input = torch.cat([noisy_latents, mask, masked_latents], dim=1)
+        latent_model_input = torch.cat([inp_noisy_latents, mask, masked_latents], dim=1)
 
         if not self.pre_compute_text_embeddings:
             inputs["text"] = self.tokenizer(
@@ -220,4 +221,5 @@ class StableDiffusionInpaint(StableDiffusion):
             timesteps,
             encoder_hidden_states=encoder_hidden_states).sample
 
-        return self.loss(model_pred, noise, latents, timesteps)
+        return self.loss(model_pred, noise, latents, timesteps,
+                         noisy_model_input, sigmas)

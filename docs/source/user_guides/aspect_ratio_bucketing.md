@@ -33,6 +33,7 @@ train_dataloader = dict(
         pipeline=train_pipeline),
     sampler=dict(type=DefaultSampler, shuffle=True),
     batch_sampler=dict(type=AspectRatioBatchSampler),
+    persistent_workers=True,
 )
 ```
 
