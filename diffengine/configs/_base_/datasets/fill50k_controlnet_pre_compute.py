@@ -13,6 +13,7 @@ from diffengine.datasets.transforms import (
 from diffengine.engine.hooks import (
     CompileHook,
     ControlNetSaveHook,
+    MemoryFormatHook,
     VisualizationHook,
 )
 
@@ -64,5 +65,6 @@ custom_hooks = [
             'https://github.com/okotaku/diffengine/assets/24734142/1af9dbb0-b056-435c-bc4b-62a823889191'  # noqa
         ] * 4),
     dict(type=ControlNetSaveHook),
+    dict(type=MemoryFormatHook),
     dict(type=CompileHook),
 ]

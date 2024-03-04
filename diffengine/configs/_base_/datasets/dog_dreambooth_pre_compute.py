@@ -11,6 +11,7 @@ from diffengine.datasets.transforms import (
 )
 from diffengine.engine.hooks import (
     CompileHook,
+    MemoryFormatHook,
     PeftSaveHook,
     VisualizationHook,
 )
@@ -55,5 +56,6 @@ custom_hooks = [
         by_epoch=False,
         interval=100),
     dict(type=PeftSaveHook),
+    dict(type=MemoryFormatHook),
     dict(type=CompileHook),
 ]

@@ -13,5 +13,6 @@ model.update(weight_dtype="bf16")
 custom_hooks = [
     dict(type=VisualizationHook, prompt=["yoda pokemon"] * 4),
     dict(type=PeftSaveHook),
+    dict(type=MemoryFormatHook),
     dict(type=CompileHook),
 ]

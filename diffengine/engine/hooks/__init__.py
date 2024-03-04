@@ -3,6 +3,7 @@ from .compile_hook import CompileHook
 from .controlnet_save_hook import ControlNetSaveHook
 from .ema_hook import EMAHook
 from .fast_norm_hook import FastNormHook
+from .memory_format_hook import MemoryFormatHook
 from .peft_save_hook import PeftSaveHook
 from .sfast_hook import SFastHook
 from .visualization_hook import VisualizationHook
@@ -16,4 +17,5 @@ __all__ = [
     "CompileHook",
     "FastNormHook",
     "SFastHook",
+    "MemoryFormatHook",
 ]

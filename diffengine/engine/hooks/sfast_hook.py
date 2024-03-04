@@ -47,7 +47,7 @@ class SFastHook(Hook):
         self.mode = mode
         self.enable_triton = enable_triton
 
-    def before_train(self, runner: Runner) -> None:  # noqa: C901
+    def before_train(self, runner: Runner) -> None:
         """Compile the model.
 
         Args:
@@ -61,8 +61,6 @@ class SFastHook(Hook):
 
         config = CompilationConfig.Default()
         config.enable_triton = self.enable_triton
-        if config.memory_format is not None:
-            model.unet = model.unet.to(memory_format=config.memory_format)
         is_training = model.unet.training
         if not is_training:
             model.train()
