@@ -47,7 +47,8 @@ class OffsetNoise(nn.Module):
         """
         noise = torch.randn_like(latents)
         return noise + self.offset_weight * torch.randn(
-                latents.shape[0], latents.shape[1], 1, 1, device=noise.device)
+                latents.shape[0], latents.shape[1], 1, 1,
+                device=latents.device, dtype=latents.dtype)
 
 
 class PyramidNoise(nn.Module):
@@ -90,7 +91,8 @@ class PyramidNoise(nn.Module):
 
             w, h = max(1, int(w/(r**i))), max(1, int(h/(r**i)))
             noise += u(
-                torch.randn(b, c, w, h).to(latents)) * self.discount ** i
+                torch.randn(b, c, w, h,
+                device=latents.device, dtype=latents.dtype)) * self.discount ** i
             if w==1 or h==1:
                 break
 
