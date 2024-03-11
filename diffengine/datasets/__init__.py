@@ -8,6 +8,7 @@ from .hf_dreambooth_datasets import (
     HFDreamBoothDataset,
     HFDreamBoothDatasetPreComputeEmbs,
 )
+from .imagehub_dreambooth_datasets import ImageHubDreamBoothDataset
 from .samplers import *  # noqa: F403
 from .transforms import *  # noqa: F403
 
@@ -19,4 +20,5 @@ __all__ = [
     "HFConditionDataset",
     "HFConditionDatasetPreComputeEmbs",
     "ConcatDataset",
+    "ImageHubDreamBoothDataset",
 ]

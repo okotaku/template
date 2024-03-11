@@ -1,0 +1,9 @@
+CONFIG=$1
+filename=$(basename "$CONFIG")
+filename_noextension="${filename%.*}"
+
+for sub in backpack backpack_dog bear_plushie berry_bowl can candle cat cat2 clock colorful_sneaker dog dog2 dog3 dog4 dog5 dog6 dog7 dog8 duck_toy fancy_boot grey_sloth_plushie; do
+    diffengine train stable_diffusion_v15_dreambooth_lora_imagehub \
+        --cfg-options train_dataloader.dataset.subject=$sub \
+        --work-dir work_dirs/$filename_noextension/$sub
+done
