@@ -16,7 +16,9 @@ class TestVisualizationHook(RunnerTestCase):
         # test epoch-based
         runner.train_loop = MagicMock(spec=EpochBasedTrainLoop)
         runner.epoch = 5
-        hook = VisualizationHook(prompt=["a dog"])
+        hook = VisualizationHook(prompt=["a dog"],
+            height=64,
+            width=64)
         hook.before_train(runner)
 
     def test_before_train_with_condition(self):
@@ -26,7 +28,9 @@ class TestVisualizationHook(RunnerTestCase):
         runner.train_loop = MagicMock(spec=EpochBasedTrainLoop)
         runner.epoch = 5
         hook = VisualizationHook(
-            prompt=["a dog"], condition_image=["testdata/color.jpg"])
+            prompt=["a dog"], condition_image=["testdata/color.jpg"],
+            height=64,
+            width=64)
         hook.before_train(runner)
 
     def test_after_train_epoch(self):
@@ -35,7 +39,9 @@ class TestVisualizationHook(RunnerTestCase):
         # test epoch-based
         runner.train_loop = MagicMock(spec=EpochBasedTrainLoop)
         runner.epoch = 5
-        hook = VisualizationHook(prompt=["a dog"])
+        hook = VisualizationHook(prompt=["a dog"],
+            height=64,
+            width=64)
         hook.after_train_epoch(runner)
 
     def test_after_train_epoch_with_condition(self):
@@ -45,7 +51,9 @@ class TestVisualizationHook(RunnerTestCase):
         runner.train_loop = MagicMock(spec=EpochBasedTrainLoop)
         runner.epoch = 5
         hook = VisualizationHook(
-            prompt=["a dog"], condition_image=["testdata/color.jpg"])
+            prompt=["a dog"], condition_image=["testdata/color.jpg"],
+            height=64,
+            width=64)
         hook.after_train_epoch(runner)
 
     def test_after_train_epoch_with_example_iamge(self):
@@ -55,7 +63,9 @@ class TestVisualizationHook(RunnerTestCase):
         runner.train_loop = MagicMock(spec=EpochBasedTrainLoop)
         runner.epoch = 5
         hook = VisualizationHook(
-            prompt=["a dog"], example_image=["testdata/color.jpg"])
+            prompt=["a dog"], example_image=["testdata/color.jpg"],
+            height=64,
+            width=64)
         hook.after_train_epoch(runner)
 
     def test_after_train_iter(self):
