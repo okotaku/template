@@ -6,4 +6,5 @@ for sub in backpack backpack_dog bear_plushie berry_bowl can candle cat cat2 clo
     diffengine train $CONFIG \
         --cfg-options train_dataloader.dataset.subject=$sub \
         --work-dir work_dirs/$filename_noextension/$sub
+diffengine analyze mean_score work_dirs/$filename_noextension/
 done

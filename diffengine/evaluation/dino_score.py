@@ -39,7 +39,7 @@ class DINOScore:
             self.preprocess(img).unsqueeze(0).to(self.device) for img in imgs]
         imgs_all = torch.cat(imgs_all, dim=0)
         self.image_features = self.model(imgs_all)
-        self.image_features /= self.image_features.norm(p=2)
+        self.image_features /= self.image_features.norm(dim=-1, keepdim=True)
 
         del imgs_all
         torch.cuda.empty_cache()
@@ -56,6 +56,6 @@ class DINOScore:
         pred = self.preprocess(pred).unsqueeze(0).to(self.device)
         with torch.no_grad():
             pred_features = self.model(pred)
-            pred_features /= pred_features.norm(p=2)
+            pred_features /= pred_features.norm(dim=-1, keepdim=True)
             return torch.mm(
                 self.image_features, pred_features.permute(1, 0)).max().item()
