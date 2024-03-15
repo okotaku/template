@@ -48,7 +48,8 @@ class ImageHubVisualizationHook(Hook):
 
         self.clipt = CLIPT()
 
-    def _visualize_and_eval(self, runner: Runner, step: int) -> None:
+    def _visualize_and_eval(self, runner: Runner, step: int,
+                            suffix: str = "step") -> None:
         """Visualize and evaluate."""
         model = runner.model
         if is_model_wrapper(model):
@@ -60,7 +61,7 @@ class ImageHubVisualizationHook(Hook):
             **self.kwargs)
         for i, image in enumerate(images):
             runner.visualizer.add_image(
-                f"image{i}_beforetrain", image, step=step)
+                f"image{i}_{suffix}", image, step=step)
 
         # Evaluate
         clipt_scores = []
@@ -96,7 +97,7 @@ class ImageHubVisualizationHook(Hook):
         imgs = [d[image_column] for d in runner.train_dataloader.dataset.dataset]
         self.dino_score = DINOScore(imgs)
 
-        self._visualize_and_eval(runner, runner.iter)
+        self._visualize_and_eval(runner, runner.iter, suffix="before_train")
 
     def after_train_iter(
             self,

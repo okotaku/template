@@ -10,7 +10,7 @@ from mmengine.logging import print_log
 
 import diffengine
 from diffengine.tools import copy_cfg, list_cfg, train
-from diffengine.tools.analysis_tools import mean_score
+from diffengine.tools.analysis_tools import eval_ip_adapter, mean_score
 from diffengine.tools.model_converters import publish_model2diffusers
 from diffengine.tools.preprocess import bucket_ids
 
@@ -44,6 +44,8 @@ CLI_HELP_MSG = \
             diffengine preprocess bucket_ids
         6-1. Analyze mean score for all scores.json files in a work-dir:
             diffengine analyze mean_score $WORK_DIR
+        6-2. Eval IP adapter on a set of images:
+            diffengine analyze eval_ip_adapter --model $MODEL_NAME
 
     Run special commands:
 
@@ -86,6 +88,8 @@ ANALYZE_HELP_MSG = \
 
         1. Analyze mean score for all scores.json files in a work-dir:
             diffengine analyze mean_score $WORK_DIR
+        2. Eval IP adapter on a set of images:
+            diffengine analyze eval_ip_adapter --model $MODEL_NAME
 
     GitHub: https://github.com/okotaku/diffengine
     """  # noqa: E501
@@ -114,6 +118,7 @@ modes: dict = {
     },
     "analyze": {
         "mean_score": mean_score.__file__,
+        "eval_ip_adapter": eval_ip_adapter.__file__,
         "--help": lambda: print_log(ANALYZE_HELP_MSG, "current"),
         "-h": lambda: print_log(ANALYZE_HELP_MSG, "current"),
     },

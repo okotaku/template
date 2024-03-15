@@ -7,7 +7,7 @@ from mmengine.logging import print_log
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Process a checkpoint to be published")
+        description="Mean score for a list of dictionaries.")
     parser.add_argument("work_dir", help="Path to work_dirs")
     return parser.parse_args()
 
