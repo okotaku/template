@@ -36,7 +36,9 @@
 				"oderwat.indent-rainbow",
 				"yzhang.markdown-all-in-one",
 				"ionutvmi.path-autocomplete",
-				"ms-vscode.vscode-speech"
+				"ms-vscode.vscode-speech",
+				"eamodio.gitlens",
+				"PKief.material-icon-theme"
 			]
 		}
 	}
