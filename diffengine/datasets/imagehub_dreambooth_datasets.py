@@ -67,7 +67,8 @@ class ImageHubDreamBoothDataset(Dataset):
 
         self.subject = subject
         self.identifier = self.dataset[0]["identifier"]
-        self.instance_prompt = f"A {self.identifier} {self.subject}"
+        subject_prompt = subject.replace("_", " ")
+        self.instance_prompt = f"A {self.identifier} {subject_prompt}"
         self.image_column = image_column
 
     def __len__(self) -> int:
