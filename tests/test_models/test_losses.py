@@ -16,7 +16,6 @@ def test_l2_loss():
             AssertionError, match="reduction should be 'mean' or 'none'"):
         _ = L2Loss(reduction="dummy")
 
-    # test asymmetric_loss
     pred = torch.Tensor([[5, -5, 0], [5, -5, 0]])
     gt = torch.Tensor([[1, 0, 1], [0, 1, 0]])
     weight = torch.Tensor([[1], [0.1]])
@@ -34,7 +33,6 @@ def test_snr_l2_loss():
             AssertionError, match="reduction should be 'mean' or 'none'"):
         _ = SNRL2Loss(reduction="dummy")
 
-    # test asymmetric_loss
     pred = torch.Tensor([[5, -5, 0], [5, -5, 0]])
     gt = torch.Tensor([[1, 0, 1], [0, 1, 0]])
     weight = torch.Tensor([[1], [0.1]])
@@ -81,7 +79,6 @@ def test_debias_estimation_loss():
             AssertionError, match="reduction should be 'mean' or 'none'"):
         _ = DeBiasEstimationLoss(reduction="dummy")
 
-    # test asymmetric_loss
     pred = torch.Tensor([[5, -5, 0], [5, -5, 0]])
     gt = torch.Tensor([[1, 0, 1], [0, 1, 0]])
     weight = torch.Tensor([[1], [0.1]])
@@ -128,7 +125,6 @@ def test_huber_loss():
             AssertionError, match="reduction should be 'mean' or 'none'"):
         _ = HuberLoss(reduction="dummy")
 
-    # test asymmetric_loss
     pred = torch.Tensor([[5, -5, 0], [5, -5, 0]])
     gt = torch.Tensor([[1, 0, 1], [0, 1, 0]])
     weight = torch.Tensor([[1], [0.1]])
@@ -150,7 +146,6 @@ def test_ce_loss():
             AssertionError, match="reduction should be 'mean' or 'none'"):
         _ = CrossEntropyLoss(reduction="dummy")
 
-    # test asymmetric_loss
     pred = torch.Tensor([[-1000, 1000], [100, -100]])
     gt = torch.Tensor([0, 1]).long()
     weight = torch.tensor([0.6, 0.4])

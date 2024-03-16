@@ -15,7 +15,7 @@ class DummyDataset(Dataset):
     def __init__(self, length, flag):
         self.length = length
         self.flag = flag
-        self.shapes = np.random.default_rng.random((length, 2))
+        self.shapes = np.random.default_rng().random((length, 2))
 
     def __len__(self):
         return self.length
