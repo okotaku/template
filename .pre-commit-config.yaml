@@ -21,6 +21,12 @@ repos:
       - id: mixed-line-ending
         args: ["--fix=lf"]
       - id: check-toml
+      - id: detect-private-key
+      - id: debug-statements
+  - repo: https://github.com/tox-dev/pyproject-fmt
+    rev: "1.7.0"
+    hooks:
+      - id: pyproject-fmt
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.6
     hooks:
@@ -36,6 +42,10 @@ repos:
           - mdformat-openmmlab
           - mdformat_frontmatter
           - linkify-it-py
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
     hooks:
