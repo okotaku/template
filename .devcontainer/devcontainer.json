@@ -9,7 +9,6 @@
 		"vscode": {
 			"extensions": [
 				"njpwerner.autodocstring",
-				"ms-python.black-formatter",
 				"ms-vscode-remote.remote-containers",
 				"ms-azuretools.vscode-docker",
 				"usernamehw.errorlens",
@@ -38,7 +37,9 @@
 				"ionutvmi.path-autocomplete",
 				"ms-vscode.vscode-speech",
 				"eamodio.gitlens",
-				"PKief.material-icon-theme"
+				"PKief.material-icon-theme",
+				"aaron-bond.better-comments",
+				"matangover.mypy"
 			]
 		}
 	}

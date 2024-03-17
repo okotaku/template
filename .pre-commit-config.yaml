@@ -21,6 +21,12 @@ repos:
       - id: mixed-line-ending
         args: ["--fix=lf"]
       - id: check-toml
+      - id: detect-private-key
+      - id: debug-statements
+  - repo: https://github.com/tox-dev/pyproject-fmt
+    rev: "1.7.0"
+    hooks:
+      - id: pyproject-fmt
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.6
     hooks:
