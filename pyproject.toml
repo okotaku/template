@@ -17,6 +17,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
+  "clean-fid",
   "datasets>=2.16.1",
   "diffusers@ git+https://github.com/huggingface/diffusers@f55873b#egg=diffusers",
   "joblib",
