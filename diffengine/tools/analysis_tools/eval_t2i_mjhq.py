@@ -22,7 +22,8 @@ def parse_args():
 def main():
     args = parse_args()
 
-    out_dir = "work_dirs/t2i_mjhq"
+    model_name = args.model.split("/")[-1]
+    out_dir = f"work_dirs/t2i_mjhq_{model_name}"
     data_dir = "work_dirs/mjhq"
     Path(out_dir).mkdir(exist_ok=True, parents=True)
 
@@ -53,7 +54,7 @@ def main():
     pred_imgs = list(Path(out_dir).glob("*.jpg"))
     cmmd_score = cmmd(ref_imgs, pred_imgs)
     print("CMMD", cmmd_score)
-    results_df.to_csv("work_dirs/t2i_mjhq/eval.csv", index=False)
+    results_df.to_csv(f"{out_dir}/eval.csv", index=False)
 
 if __name__ == "__main__":
     main()

@@ -21,7 +21,9 @@ def parse_args():
 def main():
     args = parse_args()
 
-    Path("work_dirs/t2i_text").mkdir(exist_ok=True, parents=True)
+    model_name = args.model.split("/")[-1]
+    out_dir = f"work_dirs/t2i_text_{model_name}"
+    Path(out_dir).mkdir(exist_ok=True, parents=True)
 
     pipe = DiffusionPipeline.from_pretrained(
         args.model,
@@ -38,12 +40,12 @@ def main():
     results = []
     for i, d in tqdm(enumerate(eval_ds)):
         img = pipe(d["prompt"], generator=generator).images[0]
-        img.save(f"work_dirs/t2i_text/img_{i}.jpg")
+        img.save(f"{out_dir}/img_{i}.jpg")
 
         results.append([d["category"], clipt(img, d["prompt"])])
     results_df = pd.DataFrame(results, columns=["category", "clipt"])
     print(results_df.mean())
-    results_df.to_csv("work_dirs/t2i_text/eval.csv", index=False)
+    results_df.to_csv(f"{out_dir}/eval.csv", index=False)
 
 if __name__ == "__main__":
     main()
