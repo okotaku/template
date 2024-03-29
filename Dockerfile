@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/pytorch:24.02-py3
+FROM nvcr.io/nvidia/pytorch:24.03-py3
 
 RUN apt update -y && apt install -y \
     git tmux gh
@@ -29,7 +29,6 @@ RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=8 && \
 
 # Install modules
 RUN pip install . && \
-    pip install pre-commit && \
     pip uninstall -y $(pip list --format=freeze | grep opencv) && \
     rm -rf /usr/local/lib/python3.10/dist-packages/cv2/ && \
     pip install opencv-python-headless
