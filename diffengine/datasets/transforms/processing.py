@@ -2,6 +2,7 @@ import random
 from collections.abc import Sequence
 
 import numpy as np
+import torch
 import torchvision
 from mmengine.dataset.base_dataset import Compose
 from torchvision.transforms.functional import crop
@@ -381,4 +382,33 @@ class RandomHorizontalFlip(BaseTransform):
             results[k] = components[k]
         if "crop_top_left" in results:
             results["crop_top_left"] = crop_top_left
+        return results
+
+
+class ConcatMultipleImgs(BaseTransform):
+    """ConcatMultipleImgs.
+
+    Args:
+    ----
+        keys (List[str], optional): `keys` to apply augmentation from results.
+            Defaults to None.
+
+    """
+
+    def __init__(self, keys: list[str] | None = None) -> None:
+        if keys is None:
+            keys = ["img"]
+        self.keys = keys
+
+    def transform(self,
+                  results: dict) -> dict | tuple[list, list] | None:
+        """Transform.
+
+        Args:
+        ----
+            results (dict): The result dict.
+
+        """
+        for k in self.keys:
+            results[k] = torch.cat(results[k], dim=0)
         return results

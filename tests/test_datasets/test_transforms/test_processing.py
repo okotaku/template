@@ -13,6 +13,7 @@ from torchvision import transforms
 
 from diffengine.datasets import (
     CenterCrop,
+    ConcatMultipleImgs,
     MultiAspectRatioResizeCenterCrop,
     RandomCrop,
     RandomHorizontalFlip,
@@ -602,3 +603,14 @@ class TestMultiAspectRatioResizeCenterCrop(TestCase):
         with pytest.raises(
                 AssertionError, match="MultiAspectRatioResizeCenterCrop only"):
             _ = trans(data)
+
+
+class TestConcatMultipleImgs(TestCase):
+
+    def test_transform_list(self):
+        data = {"img": [torch.zeros((3, 32, 32))] * 2}
+
+        # test transform
+        trans = TRANSFORMS.build(dict(type=ConcatMultipleImgs))
+        data = trans(data)
+        assert data["img"].shape == (6, 32, 32)  # type: ignore[attr-defined]

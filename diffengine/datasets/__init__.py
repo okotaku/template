@@ -4,6 +4,7 @@ from .hf_condition_datasets import (
     HFConditionDatasetPreComputeEmbs,
 )
 from .hf_datasets import HFDataset, HFDatasetPreComputeEmbs
+from .hf_dpo_dataset import HFDPODataset, HFDPODatasetPreComputeEmbs
 from .hf_dreambooth_datasets import (
     HFDreamBoothDataset,
     HFDreamBoothDatasetPreComputeEmbs,
@@ -21,4 +22,6 @@ __all__ = [
     "HFConditionDatasetPreComputeEmbs",
     "ConcatDataset",
     "ImageHubDreamBoothDataset",
+    "HFDPODataset",
+    "HFDPODatasetPreComputeEmbs",
 ]

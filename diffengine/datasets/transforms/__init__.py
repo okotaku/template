@@ -5,6 +5,7 @@ from .inpaint_processing import GetMaskedImage, MaskToTensor
 from .loading import LoadMask
 from .processing import (
     CenterCrop,
+    ConcatMultipleImgs,
     MultiAspectRatioResizeCenterCrop,
     RandomCrop,
     RandomHorizontalFlip,
@@ -29,4 +30,5 @@ __all__ = [
     "AddConstantCaption",
     "DumpMaskedImage",
     "TorchVisonTransformWrapper",
+    "ConcatMultipleImgs",
 ]
