@@ -4,6 +4,7 @@ import pytest
 from diffusers import DDPMScheduler, EDMEulerScheduler
 
 from diffengine.models.utils import (
+    DDIMTimeSteps,
     EarlierTimeSteps,
     EDMTimeSteps,
     LaterTimeSteps,
@@ -119,5 +120,23 @@ class TestRangeTimeSteps(TestCase):
         scheduler = DDPMScheduler.from_pretrained(
             "runwayml/stable-diffusion-v1-5", subfolder="scheduler")
         batch_size = 2
+        timesteps = module(scheduler, batch_size, "cpu")
+        assert timesteps.shape == (2,)
+
+
+class TestDDIMTimeSteps(TestCase):
+
+    def test_init(self):
+        module = DDIMTimeSteps()
+        assert module.ddim_timesteps.shape == (50,)
+
+        module = DDIMTimeSteps(num_ddim_timesteps=20)
+        assert module.ddim_timesteps.shape == (20,)
+
+    def test_forward(self):
+        module = DDIMTimeSteps()
+        batch_size = 2
+        scheduler = DDPMScheduler.from_pretrained(
+            "runwayml/stable-diffusion-v1-5", subfolder="scheduler")
         timesteps = module(scheduler, batch_size, "cpu")
         assert timesteps.shape == (2,)

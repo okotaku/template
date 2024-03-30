@@ -16,7 +16,7 @@ from diffengine.models.editors.stable_diffusion import StableDiffusion
 
 
 class StableDiffusionInpaint(StableDiffusion):
-    """Stable Diffusion Inpaint.
+    """Inpaint.
 
     Args:
     ----

@@ -13,7 +13,7 @@ from diffengine.models.losses import L2Loss
 
 
 class StableDiffusionDPO(StableDiffusion):
-    """Stable Diffusion DPO.
+    """DPO.
 
     Args:
     ----

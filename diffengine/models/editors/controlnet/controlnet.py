@@ -15,7 +15,7 @@ from diffengine.models.editors.stable_diffusion import StableDiffusion
 
 
 class StableDiffusionControlNet(StableDiffusion):
-    """Stable Diffusion ControlNet.
+    """ControlNet.
 
     Args:
     ----

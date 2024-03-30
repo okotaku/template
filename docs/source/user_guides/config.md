@@ -121,7 +121,7 @@ train_dataloader = dict(
     num_workers=4,
     dataset=dict(
         type=HFDataset,  # The type of dataset
-        dataset="lambdalabs/pokemon-blip-captions",  #  Dataset name or path.
+        dataset="diffusers/pokemon-gpt4-captions",  #  Dataset name or path.
         pipeline=train_pipeline),
     sampler=dict(type=DefaultSampler, shuffle=True),
 )

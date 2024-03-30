@@ -1,5 +1,6 @@
 from .noise import OffsetNoise, PyramidNoise, WhiteNoise
 from .timesteps import (
+    DDIMTimeSteps,
     EarlierTimeSteps,
     EDMTimeSteps,
     LaterTimeSteps,
@@ -9,4 +10,4 @@ from .timesteps import (
 
 __all__ = ["WhiteNoise", "OffsetNoise", "PyramidNoise",
            "TimeSteps", "LaterTimeSteps", "EarlierTimeSteps", "RangeTimeSteps",
-           "EDMTimeSteps"]
+           "EDMTimeSteps", "DDIMTimeSteps"]

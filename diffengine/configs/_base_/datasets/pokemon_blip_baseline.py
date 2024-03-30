@@ -29,7 +29,7 @@ train_dataloader = dict(
     num_workers=4,
     dataset=dict(
         type=HFDataset,
-        dataset="lambdalabs/pokemon-blip-captions",
+        dataset="diffusers/pokemon-gpt4-captions",
         pipeline=train_pipeline),
     sampler=dict(type=DefaultSampler, shuffle=True),
 )

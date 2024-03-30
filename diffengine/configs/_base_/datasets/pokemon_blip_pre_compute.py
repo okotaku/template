@@ -33,7 +33,7 @@ train_dataloader = dict(
     num_workers=4,
     dataset=dict(
         type=HFDatasetPreComputeEmbs,
-        dataset="lambdalabs/pokemon-blip-captions",
+        dataset="diffusers/pokemon-gpt4-captions",
         text_hasher="text_pokemon_blip_v1-5",
         model="runwayml/stable-diffusion-v1-5",
         tokenizer=dict(type=CLIPTokenizer.from_pretrained,
