@@ -49,7 +49,15 @@ test_dataloader = val_dataloader
 test_evaluator = val_evaluator
 
 custom_hooks = [
-    dict(type=VisualizationHook, prompt=["yoda pokemon"] * 4),
+    dict(type=VisualizationHook,
+         prompt=["Two cats playing chess on a tree branch",
+                 "A monk in an orange robe by a round window in a spaceship in dramatic lighting.",  # noqa
+                 "Concept art of a mythical sky alligator with wings, nature documentary.",  # noqa
+                 "A galaxy-colored figurine is floating over the sea at sunset, photorealistic."],  # noqa
+        by_epoch=False,
+        width=512,
+        height=512,
+        interval=10000),
     dict(type=CheckpointHook),
     dict(type=MemoryFormatHook),
     dict(type=CompileHook),
