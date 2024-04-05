@@ -29,6 +29,8 @@ class CheckpointHook(Hook):
         new_ckpt = OrderedDict()
         sd_keys = checkpoint["state_dict"].keys()
         for k in sd_keys:
+            if not checkpoint["state_dict"][k].requires_grad:
+                continue
             if k.startswith("unet"):
                 new_ckpt[k] = checkpoint["state_dict"][k]
             elif k.startswith("text_encoder") and hasattr(
@@ -73,3 +75,5 @@ class CheckpointHook(Hook):
             if hasattr(model, "text_encoder_two"):
                 model.text_encoder_two.save_pretrained(
                     osp.join(ckpt_path, "text_encoder_two"))
+        if hasattr(model, "adapter"):
+            model.adapter.save_pretrained(osp.join(ckpt_path, "adapter"))
