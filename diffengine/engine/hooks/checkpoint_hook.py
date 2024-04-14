@@ -31,14 +31,15 @@ class CheckpointHook(Hook):
         for k in sd_keys:
             if not checkpoint["state_dict"][k].requires_grad:
                 continue
+            new_k = k.replace("._orig_mod", "")
             if k.startswith("unet"):
-                new_ckpt[k] = checkpoint["state_dict"][k]
+                new_ckpt[new_k] = checkpoint["state_dict"][k]
             elif k.startswith("text_encoder") and hasattr(
                     model,
                     "finetune_text_encoder",
             ) and model.finetune_text_encoder:
                 # if not finetune text_encoder, then not save
-                new_ckpt[k] = checkpoint["state_dict"][k]
+                new_ckpt[new_k] = checkpoint["state_dict"][k]
         checkpoint["state_dict"] = new_ckpt
 
     def after_run(self, runner: Runner) -> None:  # noqa: C901
