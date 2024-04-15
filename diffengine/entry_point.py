@@ -11,9 +11,11 @@ from mmengine.logging import print_log
 import diffengine
 from diffengine.tools import copy_cfg, list_cfg, train
 from diffengine.tools.analysis_tools import (
+    eval_hps,
     eval_ip_adapter,
     eval_t2i_mjhq,
     eval_t2i_text,
+    eval_vqascore,
     mean_score,
 )
 from diffengine.tools.model_converters import publish_model2diffusers
@@ -55,6 +57,10 @@ CLI_HELP_MSG = \
             diffengine analyze eval_t2i_text --model $MODEL_NAME
         6-4. Eval T2I MJHQ on a set of images:
             diffengine analyze eval_t2i_mjhq --model $MODEL_NAME
+        6-5. Eval HPS on a set of images:
+            diffengine analyze eval_hps --model $MODEL_NAME
+        6-6. Eval VQAScore on a set of images:
+            diffengine analyze eval_vqascore --model $MODEL_NAME
 
     Run special commands:
 
@@ -103,6 +109,10 @@ ANALYZE_HELP_MSG = \
             diffengine analyze eval_t2i_text --model $MODEL_NAME
         4. Eval T2I MJHQ on a set of images:
             diffengine analyze eval_t2i_mjhq --model $MODEL_NAME
+        5. Eval HPS on a set of images:
+            diffengine analyze eval_hps --model $MODEL_NAME
+        6. Eval VQAScore on a set of images:
+            diffengine analyze eval_vqascore --model $MODEL_NAME
 
     GitHub: https://github.com/okotaku/diffengine
     """  # noqa: E501
@@ -134,6 +144,8 @@ modes: dict = {
         "eval_ip_adapter": eval_ip_adapter.__file__,
         "eval_t2i_text": eval_t2i_text.__file__,
         "eval_t2i_mjhq": eval_t2i_mjhq.__file__,
+        "eval_hps": eval_hps.__file__,
+        "eval_vqascore": eval_vqascore.__file__,
         "--help": lambda: print_log(ANALYZE_HELP_MSG, "current"),
         "-h": lambda: print_log(ANALYZE_HELP_MSG, "current"),
     },

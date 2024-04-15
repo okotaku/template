@@ -157,3 +157,7 @@ build/
 
 # test
 !tests/testdata/bucket_ids.pkl
+
+# HF
+hf_cache/
+*.gz

@@ -5,7 +5,8 @@ RUN apt update -y && apt install -y \
 RUN apt-get update && apt-get install -y \
     vim \
     libgl1-mesa-dev \
-    zsh
+    zsh \
+    python3-tk
 ENV FORCE_CUDA="1"
 
 # Zsh install
@@ -20,11 +21,11 @@ RUN pip install --upgrade pip
 
 # Install xformers
 RUN pip install ninja
-RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=4 && \
+RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=2 && \
     pip install -v -U git+https://github.com/facebookresearch/xformers.git@v0.0.24#egg=xformers
 
 # Install Stable Fast
-RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=8 && \
+RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=2 && \
     pip install -v -U git+https://github.com/chengzeyi/stable-fast.git@main#egg=stable-fast
 
 # Install modules

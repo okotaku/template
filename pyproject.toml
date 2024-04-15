@@ -55,6 +55,8 @@ docs = [
 optional = [
   "colossalai",
   "deepspeed",
+  "hpsv2",
+  "t2v-metrics",
 ]
 [project.scripts]
 diffengine = "diffengine:cli"
