@@ -9,8 +9,8 @@ from mmengine.registry import MODELS
 from diffengine.models.editors.stable_diffusion import StableDiffusion
 
 
-class StableDiffusionLaViBridge(StableDiffusion):
-    """LaVi-Bridge.
+class StableDiffusionELLA(StableDiffusion):
+    """ELLA.
 
     Args:
     ----
@@ -22,7 +22,7 @@ class StableDiffusionLaViBridge(StableDiffusion):
     def __init__(self,
                  *args,
                  adapter: dict,
-                 max_length: int | None = 77,
+                 max_length: int | None = 128,
                  **kwargs) -> None:
 
         self.adapter_config = adapter
@@ -32,7 +32,6 @@ class StableDiffusionLaViBridge(StableDiffusion):
             **kwargs)  # type: ignore[misc]
         if max_length is not None:
             self.tokenizer.model_max_length = max_length
-        self.tokenizer.pad_token = "[PAD]"  # noqa: S105
 
     def prepare_model(self) -> None:
         """Prepare model for training.
@@ -42,6 +41,7 @@ class StableDiffusionLaViBridge(StableDiffusion):
         self.adapter = MODELS.build(self.adapter_config)
 
         super().prepare_model()
+        self.unet.requires_grad_(requires_grad=False)
 
     @torch.no_grad()
     def infer(self,
@@ -101,23 +101,26 @@ class StableDiffusionLaViBridge(StableDiffusion):
             generator = torch.Generator(
                 device=self.device).manual_seed(i + seed)
             # Text embeddings
-            text_ids = self.tokenizer(
+            text_inputs = self.tokenizer(
                 p,
                 padding="max_length",
-                max_length=77,
-                return_tensors="pt", truncation=True).input_ids.to(self.device)
+                max_length=self.tokenizer.model_max_length,
+                return_tensors="pt", truncation=True)
             text_embeddings = self.text_encoder(
-                input_ids=text_ids,
-                output_hidden_states=True).hidden_states[-1].to(torch.float32)
-            text_embeddings = self.adapter(text_embeddings).sample
+                text_inputs.input_ids.to(self.device),
+                attention_mask=text_inputs.attention_mask.to(self.device),
+                ).last_hidden_state
+
             uncond_input = self.tokenizer(
-                ["" if negative_prompt is None else negative_prompt],
-                padding="max_length", max_length=77, return_tensors="pt")
+                "" if negative_prompt is None else negative_prompt,
+                padding="max_length",
+                max_length=self.tokenizer.model_max_length,
+                return_tensors="pt", truncation=True)
             # Convert the text embedding back to full precision
             uncond_embeddings = self.text_encoder(
                 uncond_input.input_ids.to(self.device),
-                output_hidden_states=True).hidden_states[-1].to(torch.float32)
-            uncond_embeddings =  self.adapter(uncond_embeddings).sample
+                attention_mask=uncond_input.attention_mask.to(self.device),
+                ).last_hidden_state
             text_embeddings = torch.cat([uncond_embeddings, text_embeddings])
 
             # Latent preparation
@@ -131,9 +134,10 @@ class StableDiffusionLaViBridge(StableDiffusion):
                 latent_model_input = torch.cat([latents] * 2)
                 latent_model_input = pipeline.scheduler.scale_model_input(
                     latent_model_input, timestep=t)
+                encoder_hidden_states = self.adapter(text_embeddings, t)
                 noise_pred = self.unet(
                     latent_model_input, t,
-                    encoder_hidden_states=text_embeddings).sample
+                    encoder_hidden_states=encoder_hidden_states).sample
                 noise_pred_uncond, noise_pred_text = noise_pred.chunk(2)
                 noise_pred = noise_pred_uncond + guidance_scale * (
                     noise_pred_text - noise_pred_uncond)
@@ -141,15 +145,15 @@ class StableDiffusionLaViBridge(StableDiffusion):
                     noise_pred, t, latents).prev_sample
 
             # Decoding
-            latents = 1 / 0.18215 * latents
+            latents = latents / self.vae.config.scaling_factor
 
             if output_type == "latent":
                 images.append(latents)
             else:
                 image = self.vae.decode(latents).sample
                 image = (image / 2 + 0.5).clamp(0, 1).squeeze()
-                image = (image.permute(1, 2, 0) * 255
-                         ).to(torch.uint8).cpu().numpy()
+                image = (
+                    image.permute(1, 2, 0) * 255).to(torch.uint8).cpu().numpy()
                 images.append(image)
 
         del pipeline
@@ -190,19 +194,23 @@ class StableDiffusionLaViBridge(StableDiffusion):
             latents, noise, timesteps)
 
         if not self.pre_compute_text_embeddings:
-            inputs["text"] = self.tokenizer(
+            text_inputs = self.tokenizer(
                 inputs["text"],
                 max_length=self.tokenizer.model_max_length,
                 padding="max_length",
                 truncation=True,
-                return_tensors="pt").input_ids.to(self.device)
+                return_tensors="pt")
+            inputs["text"] = text_inputs.input_ids.to(self.device)
+            inputs["attention_mask"] = text_inputs.attention_mask.to(self.device)
             encoder_hidden_states = self.text_encoder(
-                inputs["text"], output_hidden_states=True).hidden_states[-1]
+                inputs["text"], attention_mask=inputs["attention_mask"],
+            ).last_hidden_state
         else:
             msg = "Pre-computed text embeddings are not supported yet."
             raise NotImplementedError(msg)
 
-        encoder_hidden_states = self.adapter(encoder_hidden_states).sample
+        encoder_hidden_states = self.adapter(encoder_hidden_states,
+                                             timesteps)
 
         model_pred = self.unet(
             inp_noisy_latents,

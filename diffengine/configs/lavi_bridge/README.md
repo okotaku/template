@@ -32,5 +32,5 @@ $ diffengine train ${CONFIG_FILE}
 $ NPROC_PER_NODE=${GPU_NUM} diffengine train ${CONFIG_FILE}
 
 # Example.
-$ diffengine train lavi_bridge_v15_pokemon_blip
+$ diffengine wds_train lavi_bridge_v15_laion
 ```

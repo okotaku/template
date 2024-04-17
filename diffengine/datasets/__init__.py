@@ -10,6 +10,7 @@ from .hf_dreambooth_datasets import (
     HFDreamBoothDatasetPreComputeEmbs,
 )
 from .imagehub_dreambooth_datasets import ImageHubDreamBoothDataset
+from .loaders import *  # noqa: F403
 from .samplers import *  # noqa: F403
 from .transforms import *  # noqa: F403
 

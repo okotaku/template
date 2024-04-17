@@ -32,7 +32,7 @@ class CheckpointHook(Hook):
             if not checkpoint["state_dict"][k].requires_grad:
                 continue
             new_k = k.replace("._orig_mod", "")
-            if k.startswith("unet"):
+            if k.startswith(("unet", "adapter")):
                 new_ckpt[new_k] = checkpoint["state_dict"][k]
             elif k.startswith("text_encoder") and hasattr(
                     model,

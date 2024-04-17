@@ -6,7 +6,7 @@ from mmengine.runner import IterBasedTrainLoop
 optim_wrapper = dict(
     type=AmpOptimWrapper,
     dtype="bfloat16",
-    optimizer=dict(type=FusedAdam, lr=1e-5, weight_decay=1e-2),
+    optimizer=dict(type=FusedAdam, lr=1e-4, weight_decay=1e-2),
     clip_grad=dict(max_norm=1.0),
     accumulative_counts=512)
 

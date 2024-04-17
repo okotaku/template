@@ -19,7 +19,7 @@ class PeftSaveHook(Hook):
     priority = "VERY_LOW"
     last_step = -1
 
-    def before_save_checkpoint(self, runner: Runner, checkpoint: dict) -> None:
+    def before_save_checkpoint(self, runner: Runner, checkpoint: dict) -> None:  # noqa
         """Before save checkpoint hook.
 
         Args:
@@ -46,6 +46,10 @@ class PeftSaveHook(Hook):
             model.transformer.save_pretrained(
                 osp.join(ckpt_path, "transformer"))
             model_keys = ["transformer"]
+
+        if hasattr(model, "adapter"):
+            model.adapter.save_pretrained(
+                osp.join(ckpt_path, "adapter"))
 
         if hasattr(model,
                    "finetune_text_encoder") and model.finetune_text_encoder:
@@ -76,4 +80,8 @@ class PeftSaveHook(Hook):
                 new_k = ".".join(
                     k.split(".")[:-1] + ["default", k.split(".")[-1]])
                 new_ckpt[f"{model_key}.{new_k}"] = state_dict[k]
+        sd_keys = checkpoint["state_dict"].keys()
+        for k in sd_keys:
+            if k.startswith("adapter"):
+                new_ckpt[k] = checkpoint["state_dict"][k]
         checkpoint["state_dict"] = new_ckpt
