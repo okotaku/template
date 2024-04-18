@@ -17,7 +17,7 @@ class StableDiffusionDPO(StableDiffusion):
 
     Args:
     ----
-        beta_dpo (int): DPO KL Divergence penalty. Defaults to 5000.
+        beta_dpo (int): DPO KL Divergence penalty. Defaults to 2000.
         loss (dict, optional): The loss config. Defaults to
             ``dict(type='L2Loss', loss_weight=1.0, "reduction": "none")``.
         data_preprocessor (dict, optional): The pre-process config of
@@ -27,7 +27,7 @@ class StableDiffusionDPO(StableDiffusion):
 
     def __init__(self,
                  *args,
-                 beta_dpo: int = 5000,
+                 beta_dpo: int = 2000,
                  loss: dict | None = None,
                  data_preprocessor: dict | nn.Module | None = None,
                  **kwargs) -> None:
