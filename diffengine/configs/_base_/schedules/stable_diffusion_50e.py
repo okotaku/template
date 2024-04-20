@@ -1,10 +1,10 @@
-from apex.optimizers import FusedAdam
 from mmengine.hooks import CheckpointHook
 from mmengine.optim import OptimWrapper
+from optimi import AdamW
 
 optim_wrapper = dict(
     type=OptimWrapper,
-    optimizer=dict(type=FusedAdam, lr=1e-5, weight_decay=1e-2),
+    optimizer=dict(type=AdamW, lr=1e-5, weight_decay=1e-2),
     clip_grad=dict(max_norm=1.0))
 
 # train, val, test setting

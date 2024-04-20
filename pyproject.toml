@@ -26,6 +26,7 @@ dependencies = [
   "peft>=0.9",
   "sentencepiece>=0.1.99",
   "torch>=2.1.2",
+  "torch-optimi",
   "torchvision>=0.16.2",
   "tqdm",
   "transformers>=4.37.2",
