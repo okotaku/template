@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/pytorch:24.03-py3
+FROM nvcr.io/nvidia/pytorch:24.06-py3
 
 RUN apt update -y && apt install -y \
     git tmux gh
