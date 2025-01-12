@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/pytorch:24.06-py3
+FROM nvcr.io/nvidia/pytorch:24.12-py3
 
 RUN apt update -y && apt install -y \
     git tmux gh
@@ -17,11 +17,6 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 WORKDIR /modules
 COPY ./ /modules
 RUN pip install --upgrade pip
-
-# Install xformers
-RUN pip install ninja
-RUN export TORCH_CUDA_ARCH_LIST="8.6 9.0+PTX" MAX_JOBS=8 && \
-    pip install -v -U git+https://github.com/facebookresearch/xformers.git@v0.0.24#egg=xformers
 
 # Install modules
 RUN pip install . && \

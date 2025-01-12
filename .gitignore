@@ -154,3 +154,5 @@ data/
 dump/
 build/
 .dist_test/
+.ruff_cache/
+.specstory/

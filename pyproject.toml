@@ -7,30 +7,28 @@ keywords = [
   "computer vision",
 ]
 license = { file = "LICENSE" }
-authors = [{ name = "takuoko", email = "to78314910@gmail.com" }]
-requires-python = ">= 3.10"
+authors = [ { name = "takuoko", email = "to78314910@gmail.com" } ]
+requires-python = ">=3.12"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
   "mmengine",
   "torch>=2.1.2",
   "torchvision>=0.16.2",
 ]
-[project.optional-dependencies]
-dev = [
+optional-dependencies.dev = [
   "coverage",
   "pre-commit",
   "pytest",
 ]
-docs = [
+optional-dependencies.docs = [
   "docutils==0.18.1",
   "modelindex",
   "myst-parser",
-  "pytorch_sphinx_theme@ git+https://github.com/mzr1996/pytorch_sphinx_theme",
+  "pytorch-sphinx-theme @ git+https://github.com/mzr1996/pytorch_sphinx_theme",
   "sphinx==6.1.3",
   "sphinx-autoapi",
   "sphinx-autodoc-typehints",
@@ -41,19 +39,18 @@ docs = [
   "sphinxcontrib-jquery",
   "tabulate",
 ]
-[project.scripts]
-modules = "modules:cli"
+scripts.modules = "modules:cli"
 
 [tool.setuptools.packages.find]
 exclude = [
-    "build*",
-    "docs*",
-    "dist*",
-    "tests*",
-    "docker*",
-    "data*",
-    "work_dirs*",
-    "projects*",
+  "build*",
+  "docs*",
+  "dist*",
+  "tests*",
+  "docker*",
+  "data*",
+  "work_dirs*",
+  "projects*",
 ]
 
 [tool.distutils.bdist_wheel]
@@ -62,38 +59,35 @@ universal = true
 [tool.ruff]
 target-version = "py311"
 
-[tool.ruff.lint]
-select = ["ALL"]
-ignore = [
-    "PGH004",
-    "B028",
-    "ANN002",
-    "ANN003",
-    "ERA001",
-    "C408",
-    "INP001",
-    "D100",
-    "D107",
-    "D104",
+lint.select = [ "ALL" ]
+lint.ignore = [
+  "ANN002",
+  "ANN003",
+  "B028",
+  "C408",
+  "D100",
+  "D104",
+  "D107",
+  "ERA001",
+  "INP001",
+  "PGH004",
 ]
-
-[tool.ruff.lint.per-file-ignores]
-"modules/configs/*" = ["F403", "F405", "TID252"]
+lint.per-file-ignores."modules/configs/*" = [ "F403", "F405", "TID252" ]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 no_strict_optional = true
 ignore_missing_imports = true
 check_untyped_defs = true
 
 [tool.wheel]
 exclude = [
-    "build*",
-    "docs*",
-    "dist*",
-    "tests*",
-    "docker*",
-    "data*",
-    "work_dirs*",
-    "projects*",
+  "build*",
+  "docs*",
+  "dist*",
+  "tests*",
+  "docker*",
+  "data*",
+  "work_dirs*",
+  "projects*",
 ]

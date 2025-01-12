@@ -39,7 +39,8 @@
 				"eamodio.gitlens",
 				"PKief.material-icon-theme",
 				"aaron-bond.better-comments",
-				"matangover.mypy"
+				"matangover.mypy",
+				"SpecStory.specstory-vscode"
 			]
 		}
 	}
