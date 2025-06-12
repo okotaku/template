@@ -36,6 +36,7 @@ optional-dependencies.dev = [
 ]
 optional-dependencies.docs = [
   "furo>=2024.1.29",
+  "linkify-it-py>=2",
   "myst-parser>=3",
   "sphinx>=7",
   "sphinx-autoapi>=3",
