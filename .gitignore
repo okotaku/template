@@ -66,6 +66,7 @@ instance/
 .scrapy
 
 # Auto generate documentation
+docs/_build/
 docs/en/_build/
 docs/en/_model_zoo.rst
 docs/en/modelzoo_statistics.md
