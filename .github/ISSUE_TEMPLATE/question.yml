@@ -1,0 +1,77 @@
+name: ❓ Question
+description: Ask a question about usage, configuration, or development
+title: "[Question]: "
+labels: ["question", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question? We're here to help! Please provide as much detail as possible.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm you have completed the following
+      options:
+        - label: I have searched existing issues and discussions
+          required: true
+        - label: I have read the documentation
+          required: true
+        - label: I have read the Claude Code setup guide (CLAUDE.md)
+          required: false
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 📂 Question Category
+      description: What type of question is this?
+      options:
+        - Installation & Setup
+        - Usage & Configuration
+        - Development & Contributing
+        - AI Integration (Claude Code)
+        - Performance & Optimization
+        - Troubleshooting
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: ❓ Your Question
+      description: What would you like to know?
+      placeholder: Ask your question here...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 🔍 Context
+      description: Provide any relevant context that might help us answer your question
+      placeholder: |
+        - What are you trying to achieve?
+        - What have you tried so far?
+        - Any specific constraints or requirements?
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 🌍 Environment (if relevant)
+      description: Please provide your environment details if they're relevant to your question
+      placeholder: |
+        - OS: [e.g., Ubuntu 22.04, macOS 14.0, Windows 11]
+        - Python version: [e.g., 3.12.0]
+        - uv version: [e.g., 0.5.18]
+        - Package version: [e.g., 0.1.0]
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📎 Additional Information
+      description: Any other information that might be helpful
+      placeholder: Screenshots, code snippets, links, etc.

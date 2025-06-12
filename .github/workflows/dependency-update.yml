@@ -1,0 +1,62 @@
+name: Dependency Update
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Update dependencies
+        run: |
+          # Update uv.lock
+          uv lock --upgrade
+
+          # Update pre-commit hooks
+          uv run pre-commit autoupdate
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update dependencies"
+          title: "🔄 Automated dependency update"
+          body: |
+            ## 🔄 Automated Dependency Update
+
+            This PR updates dependencies to their latest versions.
+
+            ### Changes:
+            - Updated `uv.lock` with latest dependency versions
+            - Updated pre-commit hooks to latest versions
+
+            ### Testing:
+            - [ ] All tests pass
+            - [ ] Pre-commit hooks work correctly
+            - [ ] No breaking changes detected
+
+            This PR was created automatically by the dependency update workflow.
+          branch: chore/update-dependencies
+          delete-branch: true
+          labels: |
+            dependencies
+            automated

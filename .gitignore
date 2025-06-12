@@ -117,15 +117,20 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# custom
+# IDE and Editors
+.vscode/
+.idea/
+
+# Custom data and work directories
 /data
-.vscode
-.idea
 *.pkl
 *.pkl.json
 *.log.json
 /work_dirs
 .DS_Store
+
+# uv (keep lock file for reproducible builds)
+# uv.lock
 
 # Pytorch
 *.pth
@@ -156,3 +161,8 @@ build/
 .dist_test/
 .ruff_cache/
 .specstory/
+start-*.sh
+# SpecStory explanation file
+.specstory/.what-is-this.md
+.cursorignore/
+.cursorindexingignore/

@@ -1,17 +1,80 @@
 version: "3.8"
+
 services:
   template:
-    build: ./
-    environment:
-      - PYTHONPATH=/workspace:$PYTHONPATH
-    container_name: template
-    ipc: host
-    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USERNAME: developer
+        USER_UID: 1000
+        USER_GID: 1000
+    container_name: template-dev
     volumes:
-      - ./:/workspace
-    working_dir: /workspace
+      - .:/home/developer/workspace
+      - template-uv-cache:/home/developer/.cache/uv
+    working_dir: /home/developer/workspace
+    user: "1000:1000"
+    environment:
+      - TERM=xterm-256color
+      - FORCE_CUDA=1
+      - PYTHONPATH=/home/developer/workspace:$PYTHONPATH
+    stdin_open: true
+    tty: true
+    command: /bin/bash
     deploy:
       resources:
         reservations:
           devices:
             - capabilities: [gpu]
+
+  template-jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USERNAME: developer
+        USER_UID: 1000
+        USER_GID: 1000
+    container_name: template-jupyter
+    volumes:
+      - .:/home/developer/workspace
+      - template-uv-cache:/home/developer/.cache/uv
+    working_dir: /home/developer/workspace
+    user: "1000:1000"
+    ports:
+      - "8888:8888"
+    environment:
+      - TERM=xterm-256color
+      - FORCE_CUDA=1
+      - PYTHONPATH=/home/developer/workspace:$PYTHONPATH
+    command: uv run jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  template-docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USERNAME: developer
+        USER_UID: 1000
+        USER_GID: 1000
+    container_name: template-docs
+    volumes:
+      - .:/home/developer/workspace
+      - template-uv-cache:/home/developer/.cache/uv
+    working_dir: /home/developer/workspace/docs
+    user: "1000:1000"
+    ports:
+      - "8000:8000"
+    environment:
+      - TERM=xterm-256color
+      - PYTHONPATH=/home/developer/workspace:$PYTHONPATH
+    command: uv run sphinx-autobuild . _build/html --host 0.0.0.0 --port 8000
+
+volumes:
+  template-uv-cache:

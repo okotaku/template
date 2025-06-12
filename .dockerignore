@@ -1,104 +1,57 @@
 # Git
 .git
 .gitignore
-.github
 
-# CI
-.codeclimate.yml
-.travis.yml
-.taskcluster.yml
-
-# Docker
-docker-compose.yml
-.docker
-
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*/__pycache__/
-*/*/__pycache__/
-*/*/*/__pycache__/
-*.py[cod]
-*/*.py[cod]
-*/*/*.py[cod]
-*/*/*/*.py[cod]
-
-# C extensions
-*.so
-*.c
-
-# Distribution / packaging
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
 .Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
+*.egg-info
+.pytest_cache
 .coverage
-.cache
-nosetests.xml
-coverage.xml
+htmlcov
+.mypy_cache
+.ruff_cache
 
-# Translations
-*.mo
-*.pot
+# Build artifacts
+build
+dist
+*.egg-info
 
-# Django stuff:
-*.log
+# Documentation
+docs/_build
+docs/.doctrees
 
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Virtual environment
-.env/
-.venv/
-venv/
-
-# PyCharm
+# IDEs
+.vscode
 .idea
 
-# Python mode for VIM
-.ropeproject
-*/.ropeproject
-*/*/.ropeproject
-*/*/*/.ropeproject
+# OS
+.DS_Store
+Thumbs.db
 
-# Vim swap files
-*.swp
-*/*.swp
-*/*/*.swp
-*/*/*/*.swp
+# Project specific
+work_dirs
+data
+artifacts
+wandb
+.specstory
 
-# customs
-.isort.cfg
-.pre-commit-config.yaml
-work_dirs/
-artifacts/
-wandb/
-data/
-models/
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Node modules (if any)
+node_modules
+
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*
+
+# CI/CD
+.github
+.gitlab-ci.yml
