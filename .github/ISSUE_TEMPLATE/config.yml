@@ -1,1 +1,11 @@
 blank_issues_enabled: false
+contact_links:
+  - name: 📚 Documentation
+    url: https://template0.readthedocs.io/en/latest/
+    about: Check the documentation for usage guides and examples
+  - name: 💬 Discussions
+    url: https://github.com/okotaku/template/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 🤖 Claude Code Setup
+    url: https://github.com/okotaku/template/blob/main/CLAUDE.md
+    about: Learn about Claude Code integration and AI-assisted development
