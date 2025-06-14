@@ -108,12 +108,11 @@ class TestCLIMain:
     ) -> None:
         """Test handling of keyboard interrupt."""
 
-        def mock_print(*args, **kwargs) -> None:
-            if args and args[0] == "Hello from Template!":
-                raise KeyboardInterrupt
-            print(*args, **kwargs)
+        # Mock hello to raise KeyboardInterrupt instead of mocking print
+        def mock_hello() -> str:
+            raise KeyboardInterrupt
 
-        monkeypatch.setattr("builtins.print", mock_print)
+        monkeypatch.setattr("modules.cli.hello", mock_hello)
         exit_code = main([])
         assert exit_code == 130
         captured = capsys.readouterr()
@@ -154,7 +153,7 @@ class TestCLIMain:
         ([], "Hello from Template!"),
         (["--name", "Eve"], "Hello Eve!"),
         (["-n", "Frank"], "Hello Frank!"),
-        (["--name", ""], "Hello !"),
+        (["--name", ""], "Hello from Template!"),  # Empty name is treated as None
         (["--name", "123"], "Hello 123!"),
         (["--name", "Alice Smith"], "Hello Alice Smith!"),
     ],

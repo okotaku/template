@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 import pytest
@@ -9,9 +10,6 @@ import pytest
 import modules
 from modules import __version__, __version_tuple__, greet, hello
 from modules.version import __version_info__
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
 
 
 class TestVersion:
@@ -127,13 +125,15 @@ class TestTypeAnnotations:
         """Test hello function annotations."""
         annotations = hello.__annotations__
         assert "return" in annotations
-        assert annotations["return"] == str
+        # With from __future__ import annotations, the annotation is a string
+        assert annotations["return"] == "str"
 
     def test_greet_annotations(self) -> None:
         """Test greet function annotations."""
         annotations = greet.__annotations__
         assert "name" in annotations
         assert "return" in annotations
-        assert annotations["return"] == str
+        # With from __future__ import annotations, the annotation is a string
+        assert annotations["return"] == "str"
         # Check that name accepts str | None
-        assert str(annotations["name"]) in ["str | None", "typing.Union[str, None]"]
+        assert annotations["name"] in ["str | None", "typing.Union[str, None]"]

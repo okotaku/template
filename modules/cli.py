@@ -68,7 +68,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        message = greet(args.name) if args.name else hello()
+        # Treat empty string as None
+        name = args.name if args.name else None
+        message = greet(name) if name is not None else hello()
 
         print(message)
 
