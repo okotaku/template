@@ -5,46 +5,66 @@ requires = [ "hatchling" ]
 
 [project]
 name = "template"
-version = "0.1.0"
-description = "A modern Python project template optimized for AI-assisted development"
+version = "0.2.0"
+description = "Modern Python project template with AI-first development and latest tooling"
 readme = "README.md"
 keywords = [
   "ai-development",
   "claude-code",
+  "modern",
+  "pyright",
   "python",
+  "ruff",
   "template",
+  "uv",
 ]
 license = { file = "LICENSE" }
+maintainers = [ { name = "takuoko", email = "to78314910@gmail.com" } ]
 authors = [ { name = "takuoko", email = "to78314910@gmail.com" } ]
 requires-python = ">=3.12"
 classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Quality Assurance",
+  "Typing :: Typed",
 ]
 dependencies = [
   # Add your dependencies here
 ]
 
 optional-dependencies.dev = [
-  "coverage[toml]>=7",
-  "pre-commit>=3",
-  "pyright>=1.1",
-  "pytest>=8",
-  "pytest-cov>=4",
+  "coverage[toml]>=7.6",
+  "interrogate>=1.7",
+  "pre-commit>=4",
+  "pyright>=1.1.390",
+  "pytest>=8.3",
+  "pytest-cov>=6",
+  "pytest-timeout>=2.3",
+  "pytest-xdist>=3.6",
   "ruff>=0.8",
+  "types-requests>=2.32",
+  "types-setuptools>=75.6",
 ]
 optional-dependencies.docs = [
-  "furo>=2024.1.29",
-  "linkify-it-py>=2",
-  "myst-parser>=3",
-  "sphinx>=7",
-  "sphinx-autoapi>=3",
-  "sphinx-autobuild>=2024.4.16",
-  "sphinx-copybutton>=0.5",
-  "sphinx-design>=0.5",
-  "sphinx-tabs>=3",
+  "furo>=2024.8.6",
+  "linkify-it-py>=2.0.3",
+  "myst-parser>=4",
+  "sphinx>=8.1",
+  "sphinx-autoapi>=3.5",
+  "sphinx-autobuild>=2024.10.3",
+  "sphinx-autodoc-typehints>=2.5",
+  "sphinx-copybutton>=0.5.2",
+  "sphinx-design>=0.6.1",
+  "sphinx-tabs>=3.4.7",
 ]
+scripts.template = "modules.cli:run"
 
 [tool.hatch.build.targets.wheel]
 packages = [ "modules" ]
@@ -55,7 +75,47 @@ line-length = 88
 
 format.indent-style = "space"
 format.quote-style = "double"
+format.docstring-code-line-length = 72
+
+format.docstring-code-format = true
 lint.select = [ "ALL" ]
+lint.ignore = [
+  "COM812", # missing-trailing-comma (conflicts with formatter)
+  "D203",   # one-blank-line-before-class
+  "D213",   # multi-line-summary-second-line
+  "ISC001", # single-line-implicit-string-concatenation (conflicts with formatter)
+]
+lint.per-file-ignores."docs/conf.py" = [
+  "A001",   # shadowing-builtin
+  "BLE001", # blind-except
+  "E501",   # line-too-long
+  "INP001", # implicit-namespace-package
+]
+lint.per-file-ignores."modules/cli.py" = [
+  "BLE001", # blind-except
+  "T201",   # print-found
+  "TRY300", # consider-else-block
+]
+lint.per-file-ignores."modules/version.py" = [
+  "PLR2004", # magic-value-comparison
+]
+
+lint.per-file-ignores."tests/**/*.py" = [
+  "ANN002",  # missing-type-annotation-args
+  "ANN003",  # missing-type-annotation-kwargs
+  "ARG001",  # unused-function-argument
+  "E721",    # type-comparison
+  "EM101",   # raw-string-in-exception
+  "PLR2004", # magic-value-comparison
+  "S101",    # assert-used
+  "T201",    # print-found
+  "TC004",   # type-checking-import
+  "TRY003",  # long-messages-outside-exception
+]
+lint.unfixable = [ "F401" ] # unused imports
+
+lint.isort.known-first-party = [ "modules" ]
+lint.pydocstyle.convention = "google"
 
 [tool.pytest.ini_options]
 testpaths = [ "tests" ]
@@ -64,12 +124,28 @@ addopts = [
   "--cov=modules",
   "--cov-report=term-missing",
   "--cov-report=html",
+  "--cov-report=xml",
   "--strict-markers",
+  "--strict-config",
+  "--verbose",
+  "-ra",
+]
+markers = [
+  "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+  "integration: marks tests as integration tests",
+  "unit: marks tests as unit tests",
+]
+filterwarnings = [
+  "error",
+  "ignore::DeprecationWarning",
+  "ignore::PendingDeprecationWarning",
 ]
 
 [tool.coverage.run]
 source = [ "modules" ]
-omit = [ "*/tests/*", "*/test_*" ]
+omit = [ "*/tests/*", "*/test_*", "*/__pycache__/*" ]
+branch = true
+parallel = true
 
 [tool.coverage.report]
 exclude_lines = [
@@ -78,7 +154,14 @@ exclude_lines = [
   "if __name__ == .__main__.:",
   "raise AssertionError",
   "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+  "@overload",
+  "@abstractmethod",
 ]
+show_missing = true
+skip_covered = false
+precision = 2
+fail_under = 80
 
 [tool.pyright]
 pythonVersion = "3.12"

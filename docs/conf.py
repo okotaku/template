@@ -1,6 +1,5 @@
 """Sphinx configuration for the template project."""
 
-import os
 import sys
 from pathlib import Path
 
@@ -33,7 +32,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
     "sphinx.ext.extlinks",
-    
+
     # Third-party extensions
     "myst_parser",
     "sphinx_copybutton",
@@ -180,3 +179,4 @@ texinfo_documents = [
         "Miscellaneous",
     ),
 ]
+

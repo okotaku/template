@@ -1,0 +1,81 @@
+# Add labels to PRs based on file changes
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "docs/**"
+          - ".readthedocs.yml"
+          - "mkdocs.yml"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "pyproject.toml"
+          - "uv.lock"
+          - "requirements*.txt"
+          - ".pre-commit-config.yaml"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "tests/**"
+          - "**/*test*.py"
+          - "pytest.ini"
+          - "tox.ini"
+
+ci/cd:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+          - ".gitlab-ci.yml"
+          - "azure-pipelines.yml"
+          - "Jenkinsfile"
+
+docker:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "Dockerfile*"
+          - "docker-compose*.yml"
+          - ".dockerignore"
+          - "docker/**"
+
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/dependabot.yml"
+          - ".github/workflows/security.yml"
+          - "**/*security*"
+          - "**/*auth*"
+
+performance:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*bench*"
+          - "**/*perf*"
+          - "**/*profile*"
+
+breaking-change:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/version.py"
+  - head-branch:
+      - "^breaking/.*"
+      - "^major/.*"
+
+feature:
+  - head-branch:
+      - "^feat/.*"
+      - "^feature/.*"
+
+bugfix:
+  - head-branch:
+      - "^fix/.*"
+      - "^bug/.*"
+      - "^hotfix/.*"
+
+chore:
+  - head-branch:
+      - "^chore/.*"
+      - "^refactor/.*"
+      - "^style/.*"

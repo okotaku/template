@@ -1,6 +1,7 @@
 # Contributing to Template
 
-Thank you for your interest in contributing to this project! This guide will help you get started with contributing to our Python template project.
+Thank you for your interest in contributing to this project! This guide will help you
+get started with contributing to our Python template project.
 
 ## 📋 Table of Contents
 
@@ -16,7 +17,9 @@ Thank you for your interest in contributing to this project! This guide will hel
 
 ## 🤝 Code of Conduct
 
-This project follows a simple code of conduct: be respectful, inclusive, and constructive in all interactions. We welcome contributions from developers of all backgrounds and experience levels.
+This project follows a simple code of conduct: be respectful, inclusive, and
+constructive in all interactions. We welcome contributions from developers of all
+backgrounds and experience levels.
 
 ## 🚀 Getting Started
 
@@ -77,7 +80,8 @@ We welcome several types of contributions:
 
 ### Finding Something to Work On
 
-1. Check our [Issues](https://github.com/okotaku/template/issues) for open bugs and feature requests
+1. Check our [Issues](https://github.com/okotaku/template/issues) for open bugs and
+   feature requests
 2. Look for issues labeled `good first issue` if you're new to the project
 3. Check our [Discussions](https://github.com/okotaku/template/discussions) for ideas
 4. Propose your own improvements
@@ -146,7 +150,8 @@ git commit -m "feat: add your feature description"
 git push origin your-branch-name
 ```
 
-Then create a pull request on GitHub using our [PR template](.github/PULL_REQUEST_TEMPLATE.md).
+Then create a pull request on GitHub using our
+[PR template](.github/PULL_REQUEST_TEMPLATE.md).
 
 ## 📝 Coding Standards
 
@@ -283,7 +288,8 @@ Releases are managed by maintainers:
 
 ## ❓ Getting Help
 
-- **Questions**: Use [GitHub Discussions](https://github.com/okotaku/template/discussions)
+- **Questions**: Use
+  [GitHub Discussions](https://github.com/okotaku/template/discussions)
 - **Bugs**: Create an [Issue](https://github.com/okotaku/template/issues)
 - **Chat**: Join our community discussions
 
@@ -297,4 +303,5 @@ Contributors are recognized in:
 
 ______________________________________________________________________
 
-Thank you for contributing to our project! Every contribution, no matter how small, helps make this project better for everyone. 🎉
+Thank you for contributing to our project! Every contribution, no matter how small,
+helps make this project better for everyone. 🎉

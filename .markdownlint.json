@@ -1,0 +1,31 @@
+{
+  "MD013": {
+    "code_block_line_length": 88,
+    "code_blocks": false,
+    "heading_line_length": 88,
+    "headings": true,
+    "line_length": 88,
+    "stern": false,
+    "strict": false,
+    "tables": false
+  },
+  "MD024": {
+    "siblings_only": true
+  },
+  "MD033": {
+    "allowed_elements": [
+      "details",
+      "summary",
+      "img",
+      "a",
+      "br",
+      "code",
+      "pre",
+      "p"
+    ]
+  },
+  "MD041": false,
+  "MD046": false,
+  "MD051": false,
+  "default": true
+}

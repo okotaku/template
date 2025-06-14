@@ -1,45 +1,100 @@
-exclude: ^docs/
+ci:
+  autoupdate_schedule: weekly
+  autoupdate_commit_msg: "chore: update pre-commit hooks"
+  autofix_commit_msg: "style: pre-commit fixes"
+  skip: [pyright]
+
+exclude: ^(docs/|\.uv/)
 repos:
   - repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.24.1
     hooks:
       - id: validate-pyproject
+        name: Validate pyproject.toml
+        description: Verify pyproject.toml adheres to PEP 621
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.13
     hooks:
       - id: ruff
+        name: Ruff linter
         args: [--fix, --exit-non-zero-on-fix]
+        types_or: [python, pyi, jupyter]
       - id: ruff-format
+        name: Ruff formatter
+        types_or: [python, pyi, jupyter]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        name: Trim trailing whitespace
       - id: check-yaml
+        name: Check YAML syntax
+        args: [--unsafe]
       - id: end-of-file-fixer
+        name: Fix end of files
       - id: check-merge-conflict
+        name: Check merge conflicts
       - id: fix-encoding-pragma
+        name: Remove encoding pragma
         args: ["--remove"]
       - id: mixed-line-ending
+        name: Fix line endings
         args: ["--fix=lf"]
       - id: check-toml
+        name: Check TOML syntax
       - id: detect-private-key
+        name: Detect private keys
       - id: debug-statements
+        name: Check debug statements
       - id: check-added-large-files
+        name: Check large files
+        args: ["--maxkb=1000"]
       - id: check-case-conflict
+        name: Check case conflicts
       - id: check-docstring-first
+        name: Check docstring position
+      - id: check-executables-have-shebangs
+        name: Check executables
+      - id: check-shebang-scripts-are-executable
+        name: Check shebangs
+      - id: check-json
+        name: Check JSON syntax
+      - id: pretty-format-json
+        name: Format JSON files
+        args: ["--autofix", "--indent=2"]
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: "v2.6.0"
+    rev: v2.6.0
     hooks:
       - id: pyproject-fmt
+        name: Format pyproject.toml
+        args: ["--indent", "2"]
+
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.24.2
+    hooks:
+      - id: toml-sort-fix
+        name: Sort TOML files
+        exclude: ^(pyproject\.toml|poetry\.lock)$
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.0
+    hooks:
+      - id: check-github-workflows
+        name: Validate GitHub workflows
+      - id: check-github-actions
+        name: Validate GitHub actions
+      - id: check-dependabot
+        name: Validate Dependabot config
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
       - id: codespell
-        args: [--ignore-words=.codespell-ignore]
+        name: Check spelling
+        args: ["--ignore-words=.codespell-ignore", "--skip=*.svg,*.lock"]
         additional_dependencies:
           - tomli
 
@@ -47,27 +102,48 @@ repos:
     rev: 0.7.22
     hooks:
       - id: mdformat
-        args: ["--number"]
+        name: Format Markdown
+        args: ["--number", "--wrap=88"]
         additional_dependencies:
-          - mdformat_frontmatter
+          - mdformat-gfm
+          - mdformat-frontmatter
+          - mdformat-footnote
+          - mdformat-tables
           - linkify-it-py
 
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
+        name: Format YAML/JSON
         types_or: [yaml, json]
+        exclude: ^(\.github/dependabot\.yml|.*\.json)$
 
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.402
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
     hooks:
-      - id: pyright
-        exclude: |-
-          (?x)(
-              ^docs/
-          )
+      - id: markdownlint-fix
+        name: Fix Markdown lint issues
+        args: ["--config", ".markdownlint.json"]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.7.12
+    rev: 0.7.13
     hooks:
       - id: uv-lock
+        name: Lock dependencies with uv
+
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 40.55.0
+    hooks:
+      - id: renovate-config-validator
+        name: Validate Renovate config
+        files: renovate\.json$
+
+  - repo: local
+    hooks:
+      - id: check-no-print
+        name: Check for print statements
+        entry: '(?i)(^[^#]*print\()'
+        language: pygrep
+        types: [python]
+        exclude: ^(tests/|docs/|scripts/|modules/cli\.py)
