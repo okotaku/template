@@ -50,10 +50,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           validateSingleCommit: false
-      - name: Label PR
-        uses: actions/labeler@v5
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   # Code quality checks
   lint:
@@ -150,7 +146,7 @@ jobs:
     needs: [test, typecheck]
     uses: ./.github/workflows/reusable-build.yml
     with:
-      upload-artifacts: true
+      upload-artifact: true
 
   # Performance benchmarks
   benchmark:
@@ -186,7 +182,7 @@ jobs:
   all-checks:
     name: All Checks Passed
     if: always()
-    needs: [validation, lint, security, test, typecheck, docs, build]
+    needs: [lint, security, test, typecheck, docs, build]
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether all checks passed
@@ -195,18 +191,3 @@ jobs:
           allowed-skips: validation, benchmark
           jobs: ${{ toJSON(needs) }}
 
-  # Auto-merge for dependabot
-  auto-merge:
-    name: Auto-merge Dependabot PRs
-    if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
-    needs: [all-checks]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Auto-merge
-        uses: pascalgn/merge-action@v0.1.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MERGE_METHOD: squash
