@@ -22,7 +22,8 @@
 - **📦 uv Package Manager**: Lightning-fast dependency management
 - **🔧 Developer Tools**: Pre-configured with Ruff, Pyright, and pre-commit
 - **🤖 AI-First Development**: Optimized for Claude Code workflows
-- **✅ Comprehensive Testing**: Pytest with coverage, parallel execution, and benchmarking
+- **✅ Comprehensive Testing**: Pytest with coverage, parallel execution, and
+  benchmarking
 - **🔒 Security First**: Integrated security scanning with Trivy and Bandit
 - **🔄 CI/CD Pipeline**: Advanced GitHub Actions with reusable workflows
 - **📝 Type Safety**: Full type annotations with strict checking
@@ -98,22 +99,26 @@ pip install uv
 ### Setting up the project
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/okotaku/template.git
    cd template
    ```
 
 2. **Install dependencies**
+
    ```bash
    uv sync --all-extras
    ```
 
 3. **Install pre-commit hooks**
+
    ```bash
    uv run pre-commit install
    ```
 
 4. **Verify installation**
+
    ```bash
    uv run template --version
    ```
@@ -202,7 +207,7 @@ uv run sphinx-autobuild docs docs/_build
 
 ## 📁 Project Structure
 
-```
+```text
 template/
 ├── modules/                # Source code
 │   ├── __init__.py        # Package exports
@@ -226,7 +231,8 @@ template/
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for
+details.
 
 ### Development Workflow
 
@@ -252,13 +258,15 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for
+details.
 
 ## 🙏 Acknowledgments
 
 - Built with [uv](https://github.com/astral-sh/uv) for fast package management
 - Linted with [Ruff](https://github.com/astral-sh/ruff) for lightning-fast code quality
-- Type-checked with [Pyright](https://github.com/microsoft/pyright) for robust type safety
+- Type-checked with [Pyright](https://github.com/microsoft/pyright) for robust type
+  safety
 - Tested with [Pytest](https://pytest.org/) for comprehensive test coverage
 - Automated with [GitHub Actions](https://github.com/features/actions) for CI/CD
 - Optimized for [Claude Code](https://github.com/anthropics/claude-engineer) development
@@ -269,7 +277,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ![GitHub forks](https://img.shields.io/github/forks/okotaku/template?style=social)
 ![GitHub watchers](https://img.shields.io/github/watchers/okotaku/template?style=social)
 
----
+______________________________________________________________________
 
 <p align="center">
   Made with ❤️ by <a href="https://github.com/okotaku">okotaku</a>

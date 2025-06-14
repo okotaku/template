@@ -137,4 +137,3 @@ class TestTypeAnnotations:
         assert annotations["return"] == str
         # Check that name accepts str | None
         assert str(annotations["name"]) in ["str | None", "typing.Union[str, None]"]
-

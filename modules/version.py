@@ -37,10 +37,7 @@ def _parse_version(version_str: str) -> tuple[int, ...]:
     """
     # Remove any dev/alpha/beta suffixes
     base_version = (
-        version_str.split(".dev")[0]
-        .split("a")[0]
-        .split("b")[0]
-        .split("rc")[0]
+        version_str.split(".dev")[0].split("a")[0].split("b")[0].split("rc")[0]
     )
     return tuple(int(x) for x in base_version.split("."))
 
@@ -56,4 +53,3 @@ __version_info__ = {
 }
 
 __all__ = ["__version__", "__version_info__", "__version_tuple__"]
-

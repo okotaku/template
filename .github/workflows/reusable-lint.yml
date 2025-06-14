@@ -32,6 +32,4 @@ jobs:
         run: uv run pyright modules
 
       - name: Check docstring coverage
-        run: |
-          uv add interrogate
-          uv run interrogate -v --ignore-init-method --ignore-module --ignore-nested-functions --ignore-regex "__repr__" --fail-under 0 modules
+        run: uv run interrogate -v --ignore-init-method --ignore-module --ignore-nested-functions --ignore-regex "__repr__" --fail-under 0 modules

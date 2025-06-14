@@ -126,16 +126,6 @@ repos:
         name: Fix Markdown lint issues
         args: ["--config", ".markdownlint.json"]
 
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.402
-    hooks:
-      - id: pyright
-        name: Type check with pyright
-        language: node
-        pass_filenames: false
-        args: [--project=pyproject.toml]
-        additional_dependencies: ["pyright@1.1.390"]
-
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.5.28
     hooks:
@@ -143,7 +133,7 @@ repos:
         name: Lock dependencies with uv
 
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 39.90.1
+    rev: 40.55.0
     hooks:
       - id: renovate-config-validator
         name: Validate Renovate config
@@ -156,4 +146,4 @@ repos:
         entry: '(?i)(^[^#]*print\()'
         language: pygrep
         types: [python]
-        exclude: ^(tests/|docs/|scripts/)
+        exclude: ^(tests/|docs/|scripts/|modules/cli\.py)

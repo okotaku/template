@@ -1,26 +1,28 @@
 # Claude Code Configuration
 
-This file contains configuration and context for Claude Code to better understand and work with this project.
+This file contains configuration and context for Claude Code to better understand and
+work with this project.
 
 ## Project Overview
 
-This is a modern Python template project optimized for AI-assisted development with Claude Code:
+This is a modern Python template project optimized for AI-assisted development with
+Claude Code:
 
 - **Package Management**: Uses `uv` (0.5.28+) for fast, reliable dependency management
-- **Code Quality**: 
+- **Code Quality**:
   - `ruff` (0.8.0+) for lightning-fast linting and formatting
   - `pyright` (1.1.390+) for strict type checking
   - Comprehensive pre-commit hooks with auto-fixing
-- **Testing**: 
+- **Testing**:
   - `pytest` (8.3+) with coverage reporting
   - Parallel test execution with `pytest-xdist`
   - Type-annotated test suite
-- **CI/CD**: 
+- **CI/CD**:
   - Modern GitHub Actions with reusable workflows
   - Multi-platform testing (Linux, macOS, Windows)
   - Security scanning with Trivy and Bandit
   - Automated dependency updates with Renovate
-- **Type Safety**: 
+- **Type Safety**:
   - Full type annotations with Python 3.12+ features
   - Strict pyright configuration
   - Runtime type checking support
@@ -83,7 +85,7 @@ uv run template --version
 
 ## Project Structure
 
-```
+```text
 ├── modules/                 # Main package directory
 │   ├── __init__.py         # Package initialization with exports
 │   ├── cli.py              # CLI entry point
@@ -139,33 +141,39 @@ uv run template --version
 
 ## Best Practices for This Project
 
-1. **Type Hints**: 
+1. **Type Hints**:
+
    - Use Python 3.12+ syntax (`str | None` instead of `Optional[str]`)
    - Add `from __future__ import annotations` for better forward compatibility
    - Use `TYPE_CHECKING` blocks for import optimization
 
-2. **Testing**: 
+2. **Testing**:
+
    - Write comprehensive tests with type annotations
    - Use pytest fixtures and parametrization
    - Aim for >80% code coverage
    - Mark tests with appropriate markers (@pytest.mark.unit, etc.)
 
-3. **Documentation**: 
+3. **Documentation**:
+
    - Use Google-style docstrings
    - Include Examples sections in docstrings
    - Keep README and CLAUDE.md updated
 
-4. **Code Quality**: 
+4. **Code Quality**:
+
    - Run `uv run pre-commit run --all-files` before committing
    - Fix all ruff and pyright warnings
    - Use semantic commit messages (feat:, fix:, docs:, etc.)
 
-5. **Dependencies**: 
+5. **Dependencies**:
+
    - Use `uv add` for runtime dependencies
    - Use `uv add --dev` for development dependencies
    - Let Renovate handle updates automatically
 
 6. **Security**:
+
    - Never commit secrets or API keys
    - Review security scan results in CI
    - Keep dependencies up to date
@@ -197,6 +205,7 @@ uv run template --version
 ### Performance Benchmarking
 
 Create benchmarks in `tests/benchmarks/` and run with:
+
 ```bash
 uv run pytest tests/benchmarks/ --benchmark-only
 ```
@@ -204,6 +213,7 @@ uv run pytest tests/benchmarks/ --benchmark-only
 ### Security Scanning
 
 Security scans run automatically in CI, but you can run locally:
+
 ```bash
 # Install trivy first
 trivy fs .
@@ -215,10 +225,14 @@ uv run bandit -r modules/
 
 ### Multi-Platform Testing
 
-The CI pipeline tests on Ubuntu, macOS, and Windows automatically.
-To test locally on different Python versions:
+The CI pipeline tests on Ubuntu, macOS, and Windows automatically. To test locally on
+different Python versions:
+
 ```bash
 uv run --python 3.13 pytest
 ```
 
-This project follows modern Python development practices and is specifically optimized for productivity with Claude Code, Anthropic's official AI development CLI. It incorporates the latest tools and best practices as of 2024, providing a solid foundation for any Python project.
+This project follows modern Python development practices and is specifically optimized
+for productivity with Claude Code, Anthropic's official AI development CLI. It
+incorporates the latest tools and best practices as of 2024, providing a solid
+foundation for any Python project.

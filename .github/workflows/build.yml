@@ -17,7 +17,7 @@ on:
   merge_group:
     types: [checks_requested]
   schedule:
-    - cron: "0 0 * * 1"  # Weekly on Monday
+    - cron: "0 0 * * 1" # Weekly on Monday
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -190,4 +190,3 @@ jobs:
         with:
           allowed-skips: validation, benchmark
           jobs: ${{ toJSON(needs) }}
-

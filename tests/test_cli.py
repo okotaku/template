@@ -169,4 +169,3 @@ def test_main_various_inputs(
     assert exit_code == 0
     captured = capsys.readouterr()
     assert expected_output in captured.out
-
