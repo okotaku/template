@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING
 
 import pytest
 
@@ -112,9 +111,9 @@ class TestModuleExports:
             if expected_type is Callable:
                 assert callable(item), f"{name} should be callable"
             else:
-                assert isinstance(
-                    item, expected_type
-                ), f"{name} should be {expected_type}"
+                assert isinstance(item, expected_type), (
+                    f"{name} should be {expected_type}"
+                )
 
 
 @pytest.mark.unit

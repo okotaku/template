@@ -14,7 +14,7 @@ repos:
         description: Verify pyproject.toml adheres to PEP 621
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.6
+    rev: v0.11.13
     hooks:
       - id: ruff
         name: Ruff linter
@@ -80,7 +80,7 @@ repos:
         exclude: ^(pyproject\.toml|poetry\.lock)$
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.30.0
+    rev: 0.33.0
     hooks:
       - id: check-github-workflows
         name: Validate GitHub workflows
@@ -120,14 +120,14 @@ repos:
         exclude: ^(\.github/dependabot\.yml|.*\.json)$
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.43.0
+    rev: v0.45.0
     hooks:
       - id: markdownlint-fix
         name: Fix Markdown lint issues
         args: ["--config", ".markdownlint.json"]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.5.28
+    rev: 0.7.13
     hooks:
       - id: uv-lock
         name: Lock dependencies with uv
