@@ -1,201 +1,280 @@
-# template
+# Modern Python Template
 
-[![build](https://github.com/okotaku/template/actions/workflows/build.yml/badge.svg)](https://github.com/okotaku/template/actions/workflows/build.yml)
-[![Docs](https://img.shields.io/badge/docs-latest-blue)](https://template.readthedocs.io/en/latest/)
-[![license](https://img.shields.io/github/license/okotaku/template.svg)](https://github.com/okotaku/template/blob/main/LICENSE)
-[![open issues](https://isitmaintained.com/badge/open/okotaku/template.svg)](https://github.com/okotaku/template/issues)
-[![Linting: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Type checked with pyright](https://img.shields.io/badge/type%20checked-pyright-blue)](https://github.com/microsoft/pyright)
+[![CI/CD](https://github.com/okotaku/template/actions/workflows/build.yml/badge.svg)](https://github.com/okotaku/template/actions/workflows/build.yml)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://template.readthedocs.io/en/latest/)
+[![License](https://img.shields.io/github/license/okotaku/template.svg)](https://github.com/okotaku/template/blob/main/LICENSE)
+[![Python](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/)
+[![uv](https://img.shields.io/badge/uv-0.5.28%2B-green)](https://docs.astral.sh/uv/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
 [![Claude Code Ready](https://img.shields.io/badge/Claude%20Code-Ready-brightgreen)](CLAUDE.md)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+[![Renovate](https://img.shields.io/badge/renovate-enabled-brightgreen?logo=renovatebot)](https://github.com/renovatebot/renovate)
 
-[📘 Documentation](https://template0.readthedocs.io/en/latest/) |
-[🤔 Reporting Issues](https://github.com/okotaku/template/issues/new/choose) |
+[📘 Documentation](https://template.readthedocs.io/) |
+[🐛 Report Bug](https://github.com/okotaku/template/issues/new?labels=bug) |
+[✨ Request Feature](https://github.com/okotaku/template/issues/new?labels=enhancement) |
 [🤖 Claude Code Setup](CLAUDE.md)
 
-## 📄 Table of Contents
+## 🚀 Features
 
-- [template](#template)
-  - [📄 Table of Contents](#-table-of-contents)
-  - [📖 Introduction 🔝](#-introduction-)
-  - [🛠️ Installation 🔝](#%EF%B8%8F-installation-)
-  - [👨‍🏫 Get Started 🔝](#-get-started-)
-  - [📘 Documentation 🔝](#-documentation-)
-  - [🤖 AI Development Tools 🔝](#-ai-development-tools-)
-  - [🙌 Contributing 🔝](#-contributing-)
-  - [🎫 License 🔝](#-license-)
-  - [🖊️ Citation 🔝](#%EF%B8%8F-citation-)
-  - [Acknowledgement](#acknowledgement)
+- **🎯 Modern Python**: Built for Python 3.12+ with latest language features
+- **📦 uv Package Manager**: Lightning-fast dependency management
+- **🔧 Developer Tools**: Pre-configured with Ruff, Pyright, and pre-commit
+- **🤖 AI-First Development**: Optimized for Claude Code workflows
+- **✅ Comprehensive Testing**: Pytest with coverage, parallel execution, and benchmarking
+- **🔒 Security First**: Integrated security scanning with Trivy and Bandit
+- **🔄 CI/CD Pipeline**: Advanced GitHub Actions with reusable workflows
+- **📝 Type Safety**: Full type annotations with strict checking
+- **🎨 Code Quality**: 15+ pre-commit hooks for consistent code
+- **🔄 Auto Updates**: Renovate bot for dependency management
 
-## 📖 Introduction [🔝](#-table-of-contents)
+## 📋 Table of Contents
 
-Template is a modern Python project template optimized for AI-assisted development with Claude Code.
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Development](#-development)
+- [Project Structure](#-project-structure)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-## 🛠️ Installation [🔝](#-table-of-contents)
+## 🏃 Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/okotaku/template.git
+cd template
+
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install dependencies
+uv sync --all-extras
+
+# Run the CLI
+uv run template --name "Your Name"
+
+# Run tests
+uv run pytest
+```
+
+## 🛠️ Installation
 
 ### Prerequisites
 
 - Python 3.12 or higher
-- [uv](https://docs.astral.sh/uv/) package manager
+- [uv](https://docs.astral.sh/uv/) package manager (recommended) or pip
 
-### Install uv
+### Installing uv
+
+<details>
+<summary>macOS and Linux</summary>
 
 ```bash
-# macOS and Linux
 curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
-# Windows
+</details>
+
+<details>
+<summary>Windows</summary>
+
+```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
 
-# Or via pip
+</details>
+
+<details>
+<summary>Using pip</summary>
+
+```bash
 pip install uv
 ```
 
-### Install template
+</details>
 
-#### From GitHub (recommended)
+### Setting up the project
 
-```bash
-uv add git+https://github.com/okotaku/template.git
-```
-
-#### Development installation
-
-```bash
-git clone https://github.com/okotaku/template.git
-cd template
-uv sync --all-extras
-```
-
-#### Docker installation
-
-```bash
-# Development environment
-docker-compose up template
-
-# Jupyter Lab environment
-docker-compose up template-jupyter
-
-# Documentation development
-docker-compose up template-docs
-```
-
-## 👨‍🏫 Get Started [🔝](#-table-of-contents)
-
-### Development Setup
-
-1. Clone the repository:
-
+1. **Clone the repository**
    ```bash
    git clone https://github.com/okotaku/template.git
    cd template
    ```
 
-2. Install dependencies:
-
+2. **Install dependencies**
    ```bash
    uv sync --all-extras
    ```
 
-3. Install pre-commit hooks:
-
+3. **Install pre-commit hooks**
    ```bash
    uv run pre-commit install
    ```
 
-4. Run tests:
-
+4. **Verify installation**
    ```bash
-   uv run pytest
+   uv run template --version
    ```
 
-5. Run linting:
+## 📖 Usage
 
-   ```bash
-   uv run ruff check .
-   uv run pyright modules
-   ```
+### Command Line Interface
 
-### Usage
+The template provides a simple CLI for demonstration:
+
+```bash
+# Show help
+uv run template --help
+
+# Basic greeting
+uv run template
+
+# Personalized greeting
+uv run template --name Alice
+
+# Verbose output
+uv run template --verbose
+```
+
+### As a Python Package
 
 ```python
 import modules
 
-# Basic usage
-print(modules.hello())  # "Hello from Template!"
-
-# Check version
+# Get version
 print(modules.__version__)
+
+# Use functions
+print(modules.hello())
+print(modules.greet("World"))
 ```
 
-## 📘 Documentation [🔝](#-table-of-contents)
+## 🔧 Development
 
-For detailed user guides and advanced guides, please refer to our [Documentation](https://template0.readthedocs.io/en/latest/):
+### Running Tests
 
-- [Get Started](https://template0.readthedocs.io/en/latest/get_started.html) for get started.
+```bash
+# Run all tests
+uv run pytest
 
-## 🤖 AI Development Tools [🔝](#-table-of-contents)
+# Run with coverage
+uv run pytest --cov
 
-This template is optimized for AI-powered development with Claude Code, Anthropic's official CLI tool.
+# Run in parallel
+uv run pytest -n auto
 
-### Claude Code Integration
+# Run specific test file
+uv run pytest tests/test_basic.py
 
-This template is fully configured for [Claude Code](https://claude.ai/code):
+# Run with verbose output
+uv run pytest -v
+```
 
-- Comprehensive project understanding through CLAUDE.md
-- Automated development workflows with uv integration
-- Context-aware code generation and refactoring
-- Integrated testing and quality assurance
-- Modern Python development best practices
-- Pre-configured for optimal AI assistance
+### Code Quality
 
-See the [Claude Code Setup](CLAUDE.md) for detailed configuration and usage instructions.
+```bash
+# Run all pre-commit hooks
+uv run pre-commit run --all-files
 
-## 🙌 Contributing [🔝](#-table-of-contents)
+# Run specific hooks
+uv run ruff check . --fix
+uv run ruff format .
+uv run pyright modules
 
-We welcome contributions from the community! Please read our [Contributing Guide](CONTRIBUTING.md) for detailed information on how to contribute to this project.
+# Check types
+uv run pyright modules tests
+```
 
-### Quick Start for Contributors
+### Building Documentation
+
+```bash
+# Install doc dependencies
+uv sync --extra docs
+
+# Build docs
+uv run sphinx-build docs docs/_build
+
+# Serve docs locally
+uv run sphinx-autobuild docs docs/_build
+```
+
+## 📁 Project Structure
+
+```
+template/
+├── modules/                # Source code
+│   ├── __init__.py        # Package exports
+│   ├── cli.py             # CLI implementation
+│   ├── version.py         # Version management
+│   └── py.typed           # Type marker file
+├── tests/                 # Test suite
+│   ├── test_basic.py      # Basic tests
+│   └── test_cli.py        # CLI tests
+├── docs/                  # Documentation
+├── .github/               # GitHub configuration
+│   ├── workflows/         # CI/CD pipelines
+│   ├── actions/           # Reusable actions
+│   └── *.yml             # Various configs
+├── pyproject.toml         # Project metadata
+├── uv.lock               # Locked dependencies
+├── .pre-commit-config.yaml # Pre-commit hooks
+├── CLAUDE.md             # Claude Code config
+└── README.md             # This file
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Workflow
 
 1. Fork the repository
-2. Install dependencies: `uv sync --all-extras`
-3. Install pre-commit: `uv run pre-commit install`
-4. Make your changes and add tests
-5. Run quality checks: `uv run pre-commit run --all-files`
-6. Submit a pull request
+2. Create a feature branch (`git checkout -b feat/amazing-feature`)
+3. Make your changes
+4. Run tests and linting (`uv run pre-commit run --all-files`)
+5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+6. Push to the branch (`git push origin feat/amazing-feature`)
+7. Open a Pull Request
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+### Commit Convention
 
-## 🎫 License [🔝](#-table-of-contents)
+We use [Conventional Commits](https://www.conventionalcommits.org/):
 
-This project is released under the [Apache 2.0 license](LICENSE).
+- `feat:` New features
+- `fix:` Bug fixes
+- `docs:` Documentation changes
+- `style:` Code style changes
+- `refactor:` Code refactoring
+- `test:` Test additions or modifications
+- `chore:` Maintenance tasks
 
-## 🖊️ Citation [🔝](#-table-of-contents)
+## 📄 License
 
-If Modules is helpful to your research, please cite it as below.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-```
-@misc{modules2023,
-    title = {{Modules}: XXX},
-    author = {{Modules Contributors}},
-    howpublished = {\url{https://github.com/okotaku/template}},
-    year = {2023}
-}
-```
+## 🙏 Acknowledgments
 
-## Acknowledgement
+- Built with [uv](https://github.com/astral-sh/uv) for fast package management
+- Linted with [Ruff](https://github.com/astral-sh/ruff) for lightning-fast code quality
+- Type-checked with [Pyright](https://github.com/microsoft/pyright) for robust type safety
+- Tested with [Pytest](https://pytest.org/) for comprehensive test coverage
+- Automated with [GitHub Actions](https://github.com/features/actions) for CI/CD
+- Optimized for [Claude Code](https://github.com/anthropics/claude-engineer) development
 
-This repo borrows the architecture design and part of the code from [mmengine](https://github.com/open-mmlab/mmengine).
+## 📊 Stats
 
-Also, please check the following openmmlab projects and the corresponding Documentation.
+![GitHub stars](https://img.shields.io/github/stars/okotaku/template?style=social)
+![GitHub forks](https://img.shields.io/github/forks/okotaku/template?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/okotaku/template?style=social)
 
-- [OpenMMLab](https://openmmlab.com/)
-- [MMEngine](https://github.com/open-mmlab/mmengine): OpenMMLab foundational library for training deep learning models.
+---
 
-```
-@article{mmengine2022,
-  title   = {{MMEngine}: OpenMMLab Foundational Library for Training Deep Learning Models},
-  author  = {MMEngine Contributors},
-  howpublished = {\url{https://github.com/open-mmlab/mmengine}},
-  year={2022}
-}
-```
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/okotaku">okotaku</a>
+</p>
+
+<p align="center">
+  <a href="#modern-python-template">⬆ Back to top</a>
+</p>

@@ -1,16 +1,197 @@
-name: build
+name: CI/CD Pipeline
 
 on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: Run with debug logging
+        required: false
+        default: false
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: ["**"]
   push:
-    branches: [main]
+    branches: [main, develop, staging]
+    tags: ["v*.*.*"]
+  merge_group:
+    types: [checks_requested]
+  schedule:
+    - cron: "0 0 * * 1"  # Weekly on Monday
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: write
+  security-events: write
+  actions: read
+
+env:
+  PYTHON_VERSION: "3.12"
+  UV_VERSION: "0.5.28"
+  NODE_VERSION: "20"
 
 jobs:
-  lint:
-    uses: ./.github/workflows/reusable-lint.yml
+  # Quick validation checks
+  validation:
+    name: Validate PR
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check PR title
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Label PR
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
+  # Code quality checks
+  lint:
+    name: Lint & Format
+    uses: ./.github/workflows/reusable-lint.yml
+    permissions:
+      contents: read
+      pull-requests: write
+    secrets: inherit
+
+  # Security scanning
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner (repo)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH,MEDIUM
+          exit-code: 0
+
+      - name: Run Bandit security linter
+        uses: tj-actions/bandit@v10
+        with:
+          options: "-r modules/ -f json -o bandit-results.json"
+        continue-on-error: true
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+
+      - name: Check for secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --debug --only-verified
+
+  # Testing across multiple platforms
   test:
+    name: Test Suite
+    needs: [lint]
     uses: ./.github/workflows/reusable-test.yml
     with:
       python-versions: '["3.12", "3.13"]'
+      os-matrix: '["ubuntu-latest", "macos-latest", "windows-latest"]'
       codecov-upload: true
+      run-integration-tests: true
+    secrets: inherit
+
+  # Type checking
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Run pyright
+        run: |
+          uv run pyright modules/
+          uv run pyright tests/ || true
+
+  # Documentation check
+  docs:
+    name: Documentation
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/reusable-docs-build.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+  # Build distribution packages
+  build:
+    name: Build Package
+    needs: [test, typecheck]
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      upload-artifacts: true
+
+  # Performance benchmarks
+  benchmark:
+    name: Performance Benchmark
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'performance')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Run benchmarks
+        run: |
+          uv run pytest tests/benchmarks/ --benchmark-only --benchmark-json=benchmark.json
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: pytest
+          output-file-path: benchmark.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: false
+          comment-on-alert: true
+
+  # Final status check
+  all-checks:
+    name: All Checks Passed
+    if: always()
+    needs: [validation, lint, security, test, typecheck, docs, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether all checks passed
+        uses: re-actors/alls-green@v1.2.2
+        with:
+          allowed-skips: validation, benchmark
+          jobs: ${{ toJSON(needs) }}
+
+  # Auto-merge for dependabot
+  auto-merge:
+    name: Auto-merge Dependabot PRs
+    if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
+    needs: [all-checks]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Auto-merge
+        uses: pascalgn/merge-action@v0.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MERGE_METHOD: squash

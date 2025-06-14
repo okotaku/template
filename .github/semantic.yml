@@ -1,0 +1,32 @@
+# Configuration for semantic pull requests
+# https://github.com/amannn/action-semantic-pull-request
+
+titleOnly: true
+types:
+  - feat     # New feature
+  - fix      # Bug fix
+  - docs     # Documentation only changes
+  - style    # Code style changes (formatting, etc)
+  - refactor # Code refactoring
+  - perf     # Performance improvements
+  - test     # Adding or updating tests
+  - build    # Build system or dependency updates
+  - ci       # CI/CD configuration changes
+  - chore    # Other changes that don't modify src or test files
+  - revert   # Reverts a previous commit
+
+scopes:
+  - core
+  - cli
+  - api
+  - ui
+  - docs
+  - deps
+  - config
+  - ci
+  - tests
+
+requireScope: false
+allowCustomScopes: true
+allowRevertCommits: true
+allowMergeCommits: false

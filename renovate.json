@@ -1,0 +1,91 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "schedule:weekly",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":prHourlyLimit2",
+    ":prConcurrentLimit10"
+  ],
+  "timezone": "UTC",
+  "labels": ["dependencies", "renovate"],
+  "assignees": ["takuoko"],
+  "reviewers": ["takuoko"],
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["before 4am on monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Automatically merge minor and patch updates",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Disable automerge for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Group Python dev dependencies",
+      "matchDepTypes": ["devDependencies"],
+      "matchManagers": ["pip_requirements", "pip_setup", "pipenv", "poetry", "pyproject"],
+      "groupName": "python-dev-dependencies"
+    },
+    {
+      "description": "Group pre-commit hooks",
+      "matchManagers": ["pre-commit"],
+      "groupName": "pre-commit-hooks",
+      "automerge": true
+    },
+    {
+      "description": "Group GitHub Actions",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "automerge": true
+    },
+    {
+      "description": "Security updates",
+      "matchDatasources": ["pypi"],
+      "matchUpdateTypes": ["patch"],
+      "matchPackagePatterns": ["^(certifi|cryptography|urllib3|requests|setuptools|pip)"],
+      "groupName": "security-updates",
+      "automerge": true,
+      "schedule": ["at any time"]
+    }
+  ],
+  "python": {
+    "addManagePyenvVersions": true
+  },
+  "pip_requirements": {
+    "fileMatch": ["(^|/)requirements[\\w-]*\\.txt$"]
+  },
+  "pre-commit": {
+    "enabled": true
+  },
+  "github-actions": {
+    "fileMatch": ["^\\.github/workflows/[^/]+\\.ya?ml$", "^\\.github/actions/[^/]+/action\\.ya?ml$"]
+  },
+  "regexManagers": [
+    {
+      "description": "Update uv version in GitHub Actions",
+      "fileMatch": ["^\\.github/workflows/[^/]+\\.ya?ml$"],
+      "matchStrings": ["UV_VERSION: \"(?<currentValue>.*?)\""],
+      "datasourceTemplate": "pypi",
+      "depNameTemplate": "uv"
+    }
+  ],
+  "postUpdateOptions": ["uvLockFileMaintenance"],
+  "ignoreDeps": [],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"]
+  },
+  "osvVulnerabilityAlerts": true,
+  "transitiveRemediation": true
+}
