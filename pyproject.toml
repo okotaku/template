@@ -42,7 +42,8 @@ dependencies = [
 [project.scripts]
 template = "modules.cli:run"
 
-optional-dependencies.dev = [
+[project.optional-dependencies]
+dev = [
   "coverage[toml]>=7.6",
   "pre-commit>=4.0",
   "pyright>=1.1.390",
@@ -54,7 +55,7 @@ optional-dependencies.dev = [
   "types-requests>=2.32",
   "types-setuptools>=75.6",
 ]
-optional-dependencies.docs = [
+docs = [
   "furo>=2024.8.6",
   "linkify-it-py>=2.0.3",
   "myst-parser>=4.0",
@@ -92,6 +93,27 @@ lint.per-file-ignores."tests/**/*.py" = [
   "S101",    # assert-used
   "PLR2004", # magic-value-comparison
   "ARG001",  # unused-function-argument
+  "ANN002",  # missing-type-annotation-args
+  "ANN003",  # missing-type-annotation-kwargs
+  "E721",    # type-comparison
+  "TC004",   # type-checking-import
+  "TRY003",  # long-messages-outside-exception
+  "EM101",   # raw-string-in-exception
+  "T201",    # print-found
+]
+lint.per-file-ignores."docs/conf.py" = [
+  "INP001",  # implicit-namespace-package
+  "A001",    # shadowing-builtin
+  "BLE001",  # blind-except
+  "E501",    # line-too-long
+]
+lint.per-file-ignores."modules/cli.py" = [
+  "T201",    # print-found
+  "BLE001",  # blind-except
+  "TRY300",  # consider-else-block
+]
+lint.per-file-ignores."modules/version.py" = [
+  "PLR2004", # magic-value-comparison
 ]
 
 lint.isort.known-first-party = [ "modules" ]

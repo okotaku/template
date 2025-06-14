@@ -15,13 +15,15 @@ try:
     from importlib.metadata import PackageNotFoundError, version
 
     try:
-        __version__: Final[str] = version("template")
+        _version = version("template")
     except PackageNotFoundError:
         # Package is not installed, use development version
-        __version__ = "0.2.0.dev0"
+        _version = "0.2.0.dev0"
 except ImportError:
     # Python < 3.8 compatibility (though we require 3.12+)
-    __version__ = "0.2.0"
+    _version = "0.2.0"
+
+__version__: Final[str] = _version
 
 
 def _parse_version(version_str: str) -> tuple[int, ...]:
@@ -34,7 +36,12 @@ def _parse_version(version_str: str) -> tuple[int, ...]:
         Tuple of version components as integers.
     """
     # Remove any dev/alpha/beta suffixes
-    base_version = version_str.split(".dev")[0].split("a")[0].split("b")[0].split("rc")[0]
+    base_version = (
+        version_str.split(".dev")[0]
+        .split("a")[0]
+        .split("b")[0]
+        .split("rc")[0]
+    )
     return tuple(int(x) for x in base_version.split("."))
 
 
@@ -48,4 +55,5 @@ __version_info__ = {
     "release": "dev" not in __version__,
 }
 
-__all__ = ["__version__", "__version_tuple__", "__version_info__"]
+__all__ = ["__version__", "__version_info__", "__version_tuple__"]
+

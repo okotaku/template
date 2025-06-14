@@ -114,7 +114,9 @@ class TestModuleExports:
             if expected_type is Callable:
                 assert callable(item), f"{name} should be callable"
             else:
-                assert isinstance(item, expected_type), f"{name} should be {expected_type}"
+                assert isinstance(
+                    item, expected_type
+                ), f"{name} should be {expected_type}"
 
 
 @pytest.mark.unit
@@ -135,3 +137,4 @@ class TestTypeAnnotations:
         assert annotations["return"] == str
         # Check that name accepts str | None
         assert str(annotations["name"]) in ["str | None", "typing.Union[str, None]"]
+

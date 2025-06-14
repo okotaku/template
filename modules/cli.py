@@ -68,10 +68,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        if args.name:
-            message = greet(args.name)
-        else:
-            message = hello()
+        message = greet(args.name) if args.name else hello()
 
         print(message)
 
@@ -95,3 +92,4 @@ def run() -> NoReturn:
 
 if __name__ == "__main__":
     run()
+

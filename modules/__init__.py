@@ -19,8 +19,8 @@ if TYPE_CHECKING:
 __all__: Final[list[str]] = [
     "__version__",
     "__version_tuple__",
-    "hello",
     "greet",
+    "hello",
 ]
 
 
@@ -55,3 +55,4 @@ def greet(name: str | None = None) -> str:
     if name is None:
         return "Hello there!"
     return f"Hello {name}!"
+

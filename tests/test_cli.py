@@ -110,7 +110,7 @@ class TestCLIMain:
 
         def mock_print(*args, **kwargs) -> None:
             if args and args[0] == "Hello from Template!":
-                raise KeyboardInterrupt()
+                raise KeyboardInterrupt
             print(*args, **kwargs)
 
         monkeypatch.setattr("builtins.print", mock_print)
@@ -169,3 +169,4 @@ def test_main_various_inputs(
     assert exit_code == 0
     captured = capsys.readouterr()
     assert expected_output in captured.out
+
