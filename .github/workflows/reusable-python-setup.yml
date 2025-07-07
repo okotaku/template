@@ -14,7 +14,7 @@ on:
         type: string
         default: "latest"
       install-extras:
-        description: 'Extras to install (e.g., "docs" or "all-extras")'
+        description: 'Extras to install (e.g., "dev" or "all-extras")'
         required: false
         type: string
         default: "all-extras"

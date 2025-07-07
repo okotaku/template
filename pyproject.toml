@@ -52,18 +52,6 @@ optional-dependencies.dev = [
   "types-requests>=2.32",
   "types-setuptools>=75.6",
 ]
-optional-dependencies.docs = [
-  "furo>=2024.8.6",
-  "linkify-it-py>=2.0.3",
-  "myst-parser>=4",
-  "sphinx>=8.1",
-  "sphinx-autoapi>=3.5",
-  "sphinx-autobuild>=2024.10.3",
-  "sphinx-autodoc-typehints>=2.5",
-  "sphinx-copybutton>=0.5.2",
-  "sphinx-design>=0.6.1",
-  "sphinx-tabs>=3.4.7",
-]
 scripts.template = "modules.cli:run"
 
 [tool.hatch.build.targets.wheel]
@@ -84,12 +72,6 @@ lint.ignore = [
   "D203",   # one-blank-line-before-class
   "D213",   # multi-line-summary-second-line
   "ISC001", # single-line-implicit-string-concatenation (conflicts with formatter)
-]
-lint.per-file-ignores."docs/conf.py" = [
-  "A001",   # shadowing-builtin
-  "BLE001", # blind-except
-  "E501",   # line-too-long
-  "INP001", # implicit-namespace-package
 ]
 lint.per-file-ignores."modules/cli.py" = [
   "BLE001", # blind-except
@@ -193,7 +175,6 @@ include = [
 [tool.wheel]
 exclude = [
   "build*",
-  "docs*",
   "dist*",
   "tests*",
   "docker*",

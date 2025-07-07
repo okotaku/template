@@ -130,16 +130,6 @@ jobs:
           uv run pyright modules/
           uv run pyright tests/ || true
 
-  # Documentation check
-  docs:
-    name: Documentation
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/reusable-docs-build.yml
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-
   # Build distribution packages
   build:
     name: Build Package
@@ -182,7 +172,7 @@ jobs:
   all-checks:
     name: All Checks Passed
     if: always()
-    needs: [lint, security, test, typecheck, docs, build]
+    needs: [lint, security, test, typecheck, build]
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether all checks passed

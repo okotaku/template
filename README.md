@@ -1,7 +1,7 @@
 # Modern Python Template
 
 [![CI/CD](https://github.com/okotaku/template/actions/workflows/build.yml/badge.svg)](https://github.com/okotaku/template/actions/workflows/build.yml)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://template.readthedocs.io/en/latest/)
+[![Documentation](https://img.shields.io/badge/docs-README-blue)](README.md)
 [![License](https://img.shields.io/github/license/okotaku/template.svg)](https://github.com/okotaku/template/blob/main/LICENSE)
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-0.5.28%2B-green)](https://docs.astral.sh/uv/)
@@ -11,7 +11,7 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Renovate](https://img.shields.io/badge/renovate-enabled-brightgreen?logo=renovatebot)](https://github.com/renovatebot/renovate)
 
-[📘 Documentation](https://template.readthedocs.io/) |
+[📘 Documentation](README.md) |
 [🐛 Report Bug](https://github.com/okotaku/template/issues/new?labels=bug) |
 [✨ Request Feature](https://github.com/okotaku/template/issues/new?labels=enhancement) |
 [🤖 Claude Code Setup](CLAUDE.md)
@@ -192,17 +192,17 @@ uv run pyright modules
 uv run pyright modules tests
 ```
 
-### Building Documentation
+### Additional Resources
 
 ```bash
-# Install doc dependencies
-uv sync --extra docs
+# View changelog
+cat CHANGELOG.md
 
-# Build docs
-uv run sphinx-build docs docs/_build
+# View comprehensive development guide
+cat CLAUDE.md
 
-# Serve docs locally
-uv run sphinx-autobuild docs docs/_build
+# View project structure
+ls -la
 ```
 
 ## 📁 Project Structure
@@ -217,7 +217,6 @@ template/
 ├── tests/                 # Test suite
 │   ├── test_basic.py      # Basic tests
 │   └── test_cli.py        # CLI tests
-├── docs/                  # Documentation
 ├── .github/               # GitHub configuration
 │   ├── workflows/         # CI/CD pipelines
 │   ├── actions/           # Reusable actions
