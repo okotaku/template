@@ -248,6 +248,82 @@ foundation for any Python project.
 This template is designed from the ground up for AI-assisted development, specifically
 optimized for Claude Code.
 
+### Development Philosophy
+
+This project follows an **AI-first development approach** where:
+
+- **Claude Code performs primary development**: AI handles code generation, bug fixes,
+  feature implementation, and refactoring
+- **Humans provide guidance and review**: Humans set requirements, review changes, and
+  provide strategic direction
+- **Quality gates ensure reliability**: Automated testing, linting, and type checking
+  maintain code quality
+- **CLAUDE.md serves as the development guide**: This file contains all necessary
+  context for AI-assisted development
+
+### Project Standards
+
+#### Code Quality Requirements
+
+**All code must pass these quality gates**:
+
+```bash
+# Linting and formatting
+uv run ruff check . --fix
+uv run ruff format .
+
+# Type checking
+uv run pyright modules
+uv run pyright tests
+
+# Testing
+uv run pytest --cov
+
+# Pre-commit hooks
+uv run pre-commit run --all-files
+```
+
+#### Commit Standards
+
+**Use conventional commit format**:
+
+- `feat:` for new features
+- `fix:` for bug fixes
+- `docs:` for documentation changes
+- `test:` for test additions/modifications
+- `refactor:` for code refactoring
+- `perf:` for performance improvements
+- `chore:` for maintenance tasks
+
+#### Development Workflow
+
+1. **Requirements Gathering**: Human provides clear requirements and context
+2. **AI Implementation**: Claude Code generates code following project patterns
+3. **Quality Verification**: Run all quality gates to ensure standards
+4. **Human Review**: Human reviews changes for correctness and alignment
+5. **Integration**: Merge changes after successful review
+
+#### Code Patterns
+
+**Follow these established patterns**:
+
+- Use Python 3.12+ syntax (`str | None` instead of `Optional[str]`)
+- Add comprehensive type hints to all functions
+- Write Google-style docstrings with examples
+- Include error handling and validation
+- Write corresponding tests for new functionality
+- Update documentation as needed
+
+#### Project Structure Guidelines
+
+**Maintain clean organization**:
+
+- `modules/` - Main package code
+- `tests/` - Test files mirroring source structure
+- Root-level documentation files (README.md, CLAUDE.md, CHANGELOG.md)
+- Configuration in `pyproject.toml`
+- GitHub Actions in `.github/workflows/`
+
 ### Why AI-First Development?
 
 Modern software development is increasingly enhanced by AI tools that can:
