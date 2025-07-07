@@ -230,8 +230,9 @@ template/
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for
-details.
+This project uses an **AI-first development approach**. Claude Code handles primary
+development while humans provide guidance and review. See [CLAUDE.md](CLAUDE.md) for
+comprehensive development guidelines and AI-assisted workflows.
 
 ### Development Workflow
 
